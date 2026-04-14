@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="192" height="192" viewBox="0 0 192 192">
+  <rect width="192" height="192" rx="44" fill="#0d1117"/>
+  <rect width="192" height="192" rx="44" fill="none" stroke="#ffffff" stroke-width="1" opacity="0.06"/>
+  <!-- Outer ring track -->
+  <circle cx="96" cy="96" r="70" fill="none" stroke="#ffffff" stroke-width="1" opacity="0.05"/>
+  <!-- Outer arc 300deg CW -->
+  <path d="M96,26 A70,70 0 1 1 35.5,131" fill="none" stroke="#c8392b" stroke-width="7" stroke-linecap="round"/>
+  <!-- Inner ring track -->
+  <circle cx="96" cy="96" r="50" fill="none" stroke="#ffffff" stroke-width="1" opacity="0.04"/>
+  <!-- Inner arc 240deg CW -->
+  <path d="M96,46 A50,50 0 1 1 46,96" fill="none" stroke="#c9a84c" stroke-width="5" stroke-linecap="round"/>
+  <!-- K — sharp geometric -->
+  <line x1="83" y1="70" x2="83" y2="122" stroke="#f0efe8" stroke-width="8" stroke-linecap="square"/>
+  <line x1="83" y1="96" x2="112" y2="70" stroke="#f0efe8" stroke-width="8" stroke-linecap="square"/>
+  <line x1="83" y1="96" x2="112" y2="122" stroke="#f0efe8" stroke-width="8" stroke-linecap="square"/>
+</svg>

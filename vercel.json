@@ -1,11 +1,12 @@
 {
   "version": 2,
-  "builds": [
-    { "src": "index.html", "use": "@vercel/static" },
-    { "src": "api/*.js", "use": "@vercel/node" }
-  ],
+  "functions": {
+    "api/review.js": {
+      "runtime": "nodejs20.x"
+    }
+  },
   "routes": [
-    { "src": "/api/(.*)", "dest": "/api/$1" },
+    { "src": "/api/review", "dest": "/api/review.js" },
     { "src": "/(.*)", "dest": "/index.html" }
   ]
 }

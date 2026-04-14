@@ -1,8 +1,0 @@
-{
-  "name": "lifeos",
-  "private": true,
-  "version": "1.0.0",
-  "scripts": {
-    "start": "node -e \"require('http').createServer((req,res)=>{require('fs').readFile('./index.html',(e,d)=>{res.end(d)})}).listen(3000, ()=>console.log('http://localhost:3000'))\""
-  }
-}

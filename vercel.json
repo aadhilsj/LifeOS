@@ -1,7 +1,12 @@
 {
   "routes": [
+    { "src": "/manifest.json", "dest": "/manifest.json" },
+    { "src": "/icon-192.png", "dest": "/icon-192.png" },
+    { "src": "/icon-512.png", "dest": "/icon-512.png" },
     { "src": "/sw.js", "dest": "/sw.js" },
+
     { "src": "/api/review", "dest": "/api/review.js" },
+
     { "src": "/(.*)", "dest": "/index.html" }
   ]
 }

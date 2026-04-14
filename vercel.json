@@ -1,10 +1,5 @@
 {
   "version": 2,
-  "functions": {
-    "api/review.js": {
-      "runtime": "nodejs20.x"
-    }
-  },
   "routes": [
     { "src": "/api/review", "dest": "/api/review.js" },
     { "src": "/(.*)", "dest": "/index.html" }

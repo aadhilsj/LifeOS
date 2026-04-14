@@ -1285,22 +1285,21 @@ FOCUS FOR NEXT WEEK
 Be direct, specific, honest. Max 3 sentences per section. No filler.`;
 
   try {
-    // In production (Vercel) this hits /api/review serverless function
-    // When testing locally as HTML, this will fail gracefully
     const res=await fetch('/api/review',{
       method:'POST',headers:{'Content-Type':'application/json'},
       body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:900,
         messages:[{role:'user',content:prompt}]})
     });
-    if(!res.ok) throw new Error(`${res.status}`);
     const result=await res.json();
+    if(!res.ok) throw new Error(result.error||`Server error ${res.status}`);
     const text=result.content?.map(c=>c.text||'').join('')||'';
+    if(!text) throw new Error('Empty response from API');
     renderReviewOutput(text);
   } catch(e) {
     document.getElementById('review-output').innerHTML=`
-      <div style="color:var(--gold);font-size:13px;padding:12px 14px;background:var(--gold-soft);border-radius:8px;line-height:1.6">
-        ℹ The AI review works once deployed to Vercel (requires the <code>/api/review</code> serverless function).<br>
-        All other features work fully in this HTML file.
+      <div style="color:var(--accent);font-size:13px;padding:12px 14px;background:var(--accent-soft);border-radius:8px;line-height:1.6">
+        ⚠ ${e.message||'Failed to generate review.'}<br>
+        <span style="color:var(--text-3);font-size:11px;margin-top:4px;display:block">Check that ANTHROPIC_API_KEY is set in Vercel → Settings → Environment Variables, then redeploy.</span>
       </div>`;
   }
   btn.disabled=false; btn.innerHTML='Regenerate';

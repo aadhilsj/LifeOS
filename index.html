@@ -309,6 +309,12 @@ input[type="date"].input,input[type="time"].input{color-scheme:dark}
   border-radius:var(--radius-sm);cursor:pointer;transition:all var(--transition)}
 .capture-nudge:hover{background:#c9a84c25;border-color:#c9a84c35}
 
+/* ── Review ready nudge ── */
+.review-nudge{display:flex;align-items:center;justify-content:space-between;
+  padding:9px 12px;background:var(--blue-soft);border:1px solid #4a7ec822;
+  border-radius:var(--radius-sm);cursor:pointer;transition:all var(--transition);margin-bottom:14px}
+.review-nudge:hover{background:#4a7ec828;border-color:#4a7ec835}
+
 /* ── Project next action ── */
 .project-next{font-size:11px;color:var(--text-3);margin-top:3px;
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -591,6 +597,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;heigh
         <div class="stat-row" id="home-stats"></div>
         <div id="home-context-bar"></div>
         <div class="capture-nudge mb14" id="home-capture-nudge" style="display:none" onclick="navigate('capture')"></div>
+        <div class="review-nudge" id="home-review-nudge" style="display:none" onclick="navigate('projects');switchHub('review')"></div>
         <div class="grid-2" style="gap:14px">
           <div>
             <div class="dtn-card" id="home-dtn-card">
@@ -876,6 +883,8 @@ async function loadData() {
     setSyncStatus('ok','Synced');
   } catch(e){ console.error('Load error:',e); setSyncStatus('error','Offline'); }
   renderAll();
+  // Auto-generate weekly review on Sunday if not yet done this week
+  maybeAutoGenerateReview();
 }
 
 async function saveNow() {
@@ -1697,6 +1706,20 @@ function renderHome(){
     } else nudge.style.display='none';
   }
 
+  // Review ready nudge
+  const reviewNudge=document.getElementById('home-review-nudge');
+  if(reviewNudge){
+    const cached=DATA.weeklyReview;
+    const thisWeekStr=(() => { const d=new Date(); d.setDate(d.getDate()-d.getDay()); return d.toISOString().split('T')[0]; })();
+    const reviewIsThisWeek = cached?.weekStart === thisWeekStr;
+    if(cached?.text && reviewIsThisWeek){
+      reviewNudge.style.display='flex';
+      reviewNudge.innerHTML=`<div class="flex-gap"><span style="font-size:14px">📋</span><span style="font-size:12.5px;color:#7cb9e8;font-weight:500">Your weekly review is ready</span></div><span class="text-xs text-dim">View →</span>`;
+    } else {
+      reviewNudge.style.display='none';
+    }
+  }
+
   // Do This Now
   let dtnTasks=[], dtnMode='empty';
   if(pinnedTasks.length>0){dtnTasks=pinnedTasks.slice(0,3);dtnMode='pinned';}
@@ -1845,6 +1868,79 @@ function undoVoiceTasks(ids){
 }
 
 // ─── Review (with cache) ──────────────────────────────────────────────────────
+
+// Shared: build the weekly review prompt from current DATA
+function buildReviewPrompt() {
+  const td=today();
+  const wa=new Date(); wa.setDate(wa.getDate()-7);
+  const waStr=wa.toISOString().split('T')[0];
+  const cw=DATA.tasks.filter(t=>t.completed&&t.completedDate>=waStr);
+  const ov=DATA.tasks.filter(t=>isOverdue(t));
+  const hs=DATA.habitDefs.map(h=>({
+    habit:h.label, streak:calcStreak(h.id),
+    done:Object.entries(DATA.habits).filter(([d,v])=>d>=waStr&&v[h.id]).length
+  }));
+  const ap=DATA.projects.filter(p=>p.status==='Active');
+  const lb=FOCUS_AREAS.reduce((a,fa)=>{a[fa]=cw.filter(t=>t.focusArea===fa).length;return a},{});
+  const dismissed=DATA.tasks.filter(t=>t.dismissed&&t.dismissedDate>=waStr).length;
+
+  return `You are a direct, honest personal productivity coach. Weekly review for Aadhil.
+
+TODAY: ${td}
+COMPLETED THIS WEEK (${cw.length}): ${cw.slice(0,20).map(t=>`[${t.focusArea}] ${t.title}`).join(', ')||'None'}
+OVERDUE (${ov.length}): ${ov.slice(0,8).map(t=>t.title).join(', ')||'None'}
+DISMISSED THIS WEEK: ${dismissed}
+HABITS: ${hs.map(h=>`${h.habit}: ${h.done}/7 days, ${h.streak}d streak`).join(' | ')}
+ACTIVE PROJECTS: ${ap.map(p=>`${p.title} (${calcProjectProgress(p.id)}%)`).join(', ')||'None'}
+FOCUS AREAS: ${Object.entries(lb).map(([a,c])=>`${a}:${c}`).join(', ')}
+OPPORTUNITIES: ${DATA.jobs.filter(j=>j.stage==='In Progress').length} in progress, ${DATA.jobs.filter(j=>j.stage==='Contacted').length} contacted
+
+Write a weekly review with EXACTLY these section headers (all caps, no numbers):
+WEEK IN REVIEW
+WINS
+GAPS & MISSES
+FOCUS AREA BALANCE
+FOCUS FOR NEXT WEEK
+
+Be direct, specific, honest. Max 3 sentences per section. No filler.`;
+}
+
+// Auto-generate on Sunday if no review exists for this week
+async function maybeAutoGenerateReview() {
+  const dayOfWeek = new Date().getDay(); // 0 = Sunday
+  if (dayOfWeek !== 0) return; // only Sundays
+
+  // Check if we already have a review for this week
+  const wStart = new Date(); wStart.setDate(wStart.getDate() - wStart.getDay());
+  const thisWeekStr = wStart.toISOString().split('T')[0];
+  if (DATA.weeklyReview?.weekStart === thisWeekStr) return; // already done
+
+  // Generate silently in background
+  try {
+    const res=await fetch('/api/review',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:900,
+        messages:[{role:'user',content:buildReviewPrompt()}]})
+    });
+    if(!res.ok) return; // fail silently
+    const result=await res.json();
+    const text=result.content?.map(c=>c.text||'').join('')||'';
+    if(!text) return;
+
+    DATA.weeklyReview={
+      text,
+      weekStart: thisWeekStr,
+      date: new Date().toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short'})
+    };
+    scheduleSave();
+    renderAll(); // re-render home to show the nudge
+  } catch(e) {
+    // Fail silently — don't bother the user if auto-review fails
+    console.log('Auto-review failed silently:', e.message);
+  }
+}
+
 function renderReview(){
   const completed=DATA.tasks.filter(t=>t.completed).length;
   const overdue=DATA.tasks.filter(t=>isOverdue(t)).length;
@@ -1881,21 +1977,23 @@ async function generateReview(){
   const btn=document.getElementById('review-btn');
   btn.disabled=true;btn.innerHTML='<span style="display:inline-block;animation:spin 1s linear infinite">◌</span> Generating…';
   document.getElementById('review-output').innerHTML=`<div class="empty"><div class="empty-icon" style="animation:spin 1.5s linear infinite">◌</div>Analysing your week…</div>`;
-  const td=today(),wa=new Date();wa.setDate(wa.getDate()-7);const waStr=wa.toISOString().split('T')[0];
-  const cw=DATA.tasks.filter(t=>t.completed&&t.dueDate>=waStr);
-  const ov=DATA.tasks.filter(t=>isOverdue(t));
-  const hs=DATA.habitDefs.map(h=>({habit:h.label,streak:calcStreak(h.id),done:Object.entries(DATA.habits).filter(([d,v])=>d>=waStr&&v[h.id]).length}));
-  const ap=DATA.projects.filter(p=>p.status==='Active');
-  const lb=FOCUS_AREAS.reduce((a,fa)=>{a[fa]=cw.filter(t=>t.focusArea===fa).length;return a},{});
-  const prompt=`You are a direct, honest personal productivity coach. Weekly review for Aadhil.\n\nTODAY: ${td}\nCOMPLETED THIS WEEK (${cw.length}): ${cw.slice(0,20).map(t=>`[${t.focusArea}] ${t.title}`).join(', ')||'None'}\nOVERDUE (${ov.length}): ${ov.slice(0,8).map(t=>t.title).join(', ')||'None'}\nHABITS: ${hs.map(h=>`${h.habit}: ${h.done}/7 days, ${h.streak}d streak`).join(' | ')}\nACTIVE PROJECTS: ${ap.map(p=>`${p.title} (${calcProjectProgress(p.id)}%)`).join(', ')||'None'}\nFOCUS AREAS: ${Object.entries(lb).map(([a,c])=>`${a}:${c}`).join(', ')}\nJOB SEARCH: ${DATA.jobs.filter(j=>j.stage==='Interview').length} interviewing, ${DATA.jobs.filter(j=>j.stage==='Applied').length} applied\n\nWrite a weekly review with EXACTLY these section headers (all caps, no numbers):\nWEEK IN REVIEW\nWINS\nGAPS & MISSES\nFOCUS AREA BALANCE\nFOCUS FOR NEXT WEEK\n\nBe direct, specific, honest. Max 3 sentences per section. No filler.`;
+
+  const wStart=new Date(); wStart.setDate(wStart.getDate()-wStart.getDay());
+  const thisWeekStr=wStart.toISOString().split('T')[0];
+
   try{
-    const res=await fetch('/api/review',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:900,messages:[{role:'user',content:prompt}]})});
+    const res=await fetch('/api/review',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:900,
+        messages:[{role:'user',content:buildReviewPrompt()}]})});
     if(!res.ok) throw new Error(res.status);
     const result=await res.json();
     const text=result.content?.map(c=>c.text||'').join('')||'';
     renderReviewOutput(text);
-    // Cache it
-    DATA.weeklyReview={text,date:new Date().toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short'})};
+    DATA.weeklyReview={
+      text,
+      weekStart: thisWeekStr,
+      date:new Date().toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short'})
+    };
     scheduleSave();
     const lastEl=document.getElementById('review-last-generated');
     if(lastEl) lastEl.textContent=`Generated ${DATA.weeklyReview.date}`;

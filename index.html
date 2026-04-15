@@ -353,7 +353,36 @@ a{color:#7cb9e8;text-decoration:none}a:hover{text-decoration:underline}
 input[type=range]{-webkit-appearance:none;width:100%;height:3px;border-radius:2px;background:var(--surface3);outline:none}
 input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;height:13px;border-radius:50%;background:var(--accent);cursor:pointer}
 
-/* ── Floating Action Button (mobile) ── */
+/* ── Do This Now card ── */
+.dtn-card{
+  background:linear-gradient(135deg,#1a0c0c,#110e18);
+  border:1px solid #c8392b30;
+  border-left:3px solid var(--accent);
+  border-radius:var(--radius);
+  padding:18px 20px;
+  box-shadow:0 0 32px rgba(200,57,43,.08),var(--shadow-sm);
+  backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+  margin-bottom:14px;
+  transition:border-color var(--transition);
+}
+.dtn-card:hover{border-color:#c8392b50;border-left-color:var(--accent)}
+.dtn-label{font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);opacity:.9;margin-bottom:4px}
+.dtn-sub{font-size:10.5px;color:var(--text-3);margin-bottom:12px}
+
+/* ── Context bar (drift detection) ── */
+.context-bar{
+  display:flex;align-items:center;gap:8px;
+  padding:8px 12px;border-radius:var(--radius-sm);
+  font-size:12px;font-weight:500;margin-bottom:14px;
+  border:1px solid transparent;
+}
+.context-bar.warn{background:#c8392b0d;border-color:#c8392b20;color:#e57373}
+.context-bar.gold{background:var(--gold-soft);border-color:#c9a84c22;color:var(--gold)}
+.context-bar.green{background:var(--green-soft);border-color:#4a9e6e22;color:var(--green)}
+.context-bar.dim{background:var(--surface);border-color:var(--border);color:var(--text-3)}
+.context-icon{font-size:14px;flex-shrink:0}
+
+/* ── Floating Action Button ── */
 .fab{
   display:none;
   position:fixed;bottom:76px;right:18px;z-index:200;
@@ -365,26 +394,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;heigh
   transition:transform var(--transition),box-shadow var(--transition);
   font-family:var(--font-sans);
 }
-.fab:active{transform:scale(.92);box-shadow:0 2px 10px rgba(200,57,43,.35)}
-
-/* ── Bottom sheet modal (mobile) ── */
-@media(max-width:768px){
-  .modal-overlay{align-items:flex-end;padding:0}
-  .modal{
-    border-radius:20px 20px 0 0;
-    max-width:100%;width:100%;
-    max-height:92vh;
-    padding:20px 20px max(20px,env(safe-area-inset-bottom));
-    animation:slideUpSheet .25s cubic-bezier(.32,0,.67,0);
-  }
-  @keyframes slideUpSheet{from{transform:translateY(100%)}to{transform:none}}
-  /* Pull handle */
-  .modal::before{
-    content:'';display:block;width:36px;height:4px;
-    background:#ffffff20;border-radius:4px;
-    margin:0 auto 16px;
-  }
-}
+.fab:active{transform:scale(.92)}
 
 /* ── Responsive ── */
 @media(max-width:768px){
@@ -397,26 +407,28 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;heigh
   .stat-row{grid-template-columns:repeat(3,1fr)}
   .form-grid{grid-template-columns:1fr}
   .topbar{padding:10px 14px}
-  /* Tighter topbar on mobile */
   .page-title{font-size:18px}
   .page-sub{display:none}
   .breadcrumb{display:none}
   .topbar-actions .btn{padding:5px 11px;font-size:11.5px}
-  /* Task actions always visible on mobile */
   .task-actions{opacity:1}
-  /* Bigger tap targets for task checkboxes */
-  .task-check{width:20px;height:20px;margin-top:1px}
-  /* Bigger habit dots on mobile */
+  .task-check{width:20px;height:20px}
   .habit-dot{width:32px;height:32px;font-size:11px}
-  .habit-strip-dot{width:26px;height:26px}
-  /* Card padding tighter */
   .card{padding:14px 16px}
-  /* Stat cards slightly shorter */
   .stat-card{min-height:60px;padding:10px 12px}
   .stat-value{font-size:24px}
-  /* Tabs scroll naturally */
+  .modal-overlay{align-items:flex-end;padding:0}
+  .modal{
+    border-radius:20px 20px 0 0;max-width:100%;width:100%;
+    max-height:92vh;
+    padding:20px 20px max(20px,env(safe-area-inset-bottom));
+    animation:slideUpSheet .25s cubic-bezier(.32,0,.67,0);
+  }
+  .modal::before{content:'';display:block;width:36px;height:4px;
+    background:#ffffff20;border-radius:4px;margin:0 auto 16px}
   .tabs{-webkit-overflow-scrolling:touch}
 }
+@keyframes slideUpSheet{from{transform:translateY(100%)}to{transform:none}}
 @media(min-width:769px) and (max-width:1024px){
   :root{--sidebar:160px}
 }
@@ -515,17 +527,13 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;heigh
       <!-- HOME -->
       <div class="page active" id="page-home">
         <div class="stat-row" id="home-stats"></div>
+        <div id="home-context-bar"></div>
         <div class="capture-nudge mb14" id="home-capture-nudge" style="display:none" onclick="navigate('capture')"></div>
         <div class="grid-2" style="gap:14px">
           <div>
-            <div class="card mb14">
-              <div class="flex-between mb12">
-                <div>
-                  <div class="card-title" style="margin:0">Today's Focus</div>
-                  <div style="font-size:10.5px;color:var(--text-3);margin-top:2px">What matters most right now</div>
-                </div>
-                <button class="btn btn-primary btn-sm" onclick="openAddTask()">+ Task</button>
-              </div>
+            <div class="dtn-card" id="home-dtn-card">
+              <div class="dtn-label">Do This Now</div>
+              <div class="dtn-sub" id="home-dtn-sub">What matters most right now</div>
               <div id="home-focus-list"></div>
             </div>
             <div class="card">
@@ -627,7 +635,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;heigh
   </div>
 </div>
 
-<!-- ── Floating Action Button (mobile only) ── -->
+<!-- ── Floating Action Button ── -->
 <button class="fab" id="fab" onclick="openAddTask()" aria-label="Add task">+</button>
 
 <!-- ── Mobile Bottom Nav ── -->
@@ -826,13 +834,11 @@ function navigate(page) {
   if(page==='jobs')     ta.innerHTML=`<button class="btn btn-primary btn-sm" onclick="openAddJob()">+ Add Opportunity</button>`;
   if(page==='habits')   ta.innerHTML=`<button class="btn btn-primary btn-sm" onclick="openAddHabit()">+ New Habit</button>`;
   if(page!=='projects'){projectDetailId=null;document.getElementById('projects-list-view').style.display='';document.getElementById('project-detail-view').style.display='none';}
-  // FAB — show on task-friendly pages, hide on review/jobs
   const fab=document.getElementById('fab');
   if(fab){
-    const fabPages={home:true,tasks:true,projects:true,habits:false,capture:false,jobs:false,review:false};
-    fab.style.display=fabPages[page]?'flex':'none';
-    if(page==='projects') { fab.onclick=()=>openAddProject(); }
-    else { fab.onclick=()=>openAddTask(); }
+    const showFab={home:true,tasks:true,projects:true,habits:false,capture:false,jobs:false,review:false};
+    fab.style.display=showFab[page]?'flex':'none';
+    fab.onclick=page==='projects'?()=>openAddProject():()=>openAddTask();
   }
   renderPage(page);
 }
@@ -857,86 +863,177 @@ function updateBadges(){
   if(cbm){if(cap>0){cbm.style.display='';cbm.textContent=cap;}else cbm.style.display='none';}
 }
 
+// ─── Drift detection → context bar message ────────────────────────────────────
+function getContextBar() {
+  const td = today();
+  const wStart = new Date(); wStart.setDate(wStart.getDate() - wStart.getDay());
+  const wStr   = wStart.toISOString().split('T')[0];
+
+  const overdue      = DATA.tasks.filter(t => isOverdue(t));
+  const doneToday    = DATA.tasks.filter(t => t.completed && t.completedDate === td);
+  const doneWeek     = DATA.tasks.filter(t => t.completed && t.completedDate >= wStr);
+  const habitsDoneToday = DATA.habitDefs.filter(h => DATA.habits[td]?.[h.id]).length;
+  const allHabitsDone   = habitsDoneToday === DATA.habitDefs.length && DATA.habitDefs.length > 0;
+
+  // Check habit streak broken — any habit with no completion for 2+ days
+  const yesterday = new Date(); yesterday.setDate(yesterday.getDate()-1);
+  const yStr = yesterday.toISOString().split('T')[0];
+  const dayBefore = new Date(); dayBefore.setDate(dayBefore.getDate()-2);
+  const dbStr = dayBefore.toISOString().split('T')[0];
+  const habitsDriftCount = DATA.habitDefs.filter(h =>
+    !DATA.habits[yStr]?.[h.id] && !DATA.habits[dbStr]?.[h.id]
+  ).length;
+
+  // Priority order: worst situation first
+  if (overdue.length >= 3)
+    return {cls:'warn', icon:'⚠️', msg:`${overdue.length} tasks overdue — clear the backlog first.`};
+  if (overdue.length > 0 && doneToday.length === 0)
+    return {cls:'warn', icon:'↩️', msg:`${overdue.length} overdue task${overdue.length>1?'s':''} — start there.`};
+  if (habitsDriftCount >= 2 && !allHabitsDone)
+    return {cls:'gold', icon:'〰️', msg:`${habitsDriftCount} habits missed 2 days in a row — today's a reset.`};
+  if (allHabitsDone && doneToday.length > 0)
+    return {cls:'green', icon:'🔥', msg:`Habits done + ${doneToday.length} task${doneToday.length>1?'s':''} completed. Strong day.`};
+  if (allHabitsDone)
+    return {cls:'green', icon:'✓', msg:`All habits done today — now tackle the tasks.`};
+  if (doneWeek.length === 0 && new Date().getDay() >= 3)
+    return {cls:'warn', icon:'📉', msg:`No tasks completed yet this week — let's change that.`};
+  if (doneToday.length >= 3)
+    return {cls:'green', icon:'⚡', msg:`${doneToday.length} tasks done today. Good momentum — keep going.`};
+  if (doneWeek.length >= 5)
+    return {cls:'gold', icon:'📈', msg:`Strong week so far — ${doneWeek.length} tasks done. Stay consistent.`};
+  return null; // no bar if nothing notable
+}
+
+// Format due date nicely (no ISO strings)
+function formatDueLabel(dateStr) {
+  if (!dateStr) return '';
+  const d = new Date(dateStr + 'T12:00:00');
+  return d.toLocaleDateString('en-GB', {weekday:'short', day:'numeric', month:'short'});
+}
+
 // ─── Home ─────────────────────────────────────────────────────────────────────
 function renderHome(){
-  const td=today();
-  const todayTasks=DATA.tasks.filter(t=>!t.completed&&t.dueDate===td);
-  const overdueTasks=DATA.tasks.filter(t=>isOverdue(t));
-  const focusTasks=DATA.tasks.filter(t=>DATA.focusTasks.includes(t.id)&&!t.completed);
-  const wStart=new Date(); wStart.setDate(wStart.getDate()-wStart.getDay());
-  const wStr=wStart.toISOString().split('T')[0];
-  const doneToday=DATA.tasks.filter(t=>t.completed&&t.completedDate===td).length;
-  // Count days this week where at least 1 task was completed
-  const daysActive=Array.from({length:7},(_,i)=>{const d=new Date(wStart);d.setDate(d.getDate()+i);return d.toISOString().split('T')[0];})
-    .filter(d=>DATA.tasks.some(t=>t.completed&&t.completedDate===d)).length;
+  const td = today();
+  const todayTasks   = DATA.tasks.filter(t => !t.completed && t.dueDate === td);
+  const overdueTasks = DATA.tasks.filter(t => isOverdue(t));
+  const pinnedTasks  = DATA.tasks.filter(t => DATA.focusTasks.includes(t.id) && !t.completed);
+  const wStart = new Date(); wStart.setDate(wStart.getDate() - wStart.getDay());
+  const wStr   = wStart.toISOString().split('T')[0];
+  const doneToday = DATA.tasks.filter(t => t.completed && t.completedDate === td).length;
+  const daysActive = Array.from({length:7},(_,i)=>{
+    const d=new Date(wStart); d.setDate(d.getDate()+i);
+    return d.toISOString().split('T')[0];
+  }).filter(d => DATA.tasks.some(t => t.completed && t.completedDate === d)).length;
 
-  // Stats row — coherent daily story: what's left / what's done today / weekly momentum
+  // Stats
   document.getElementById('home-stats').innerHTML=[
-    {val:todayTasks.length+overdueTasks.length,label:'Remaining Today',color:'var(--text)'},
-    {val:doneToday,label:'Done Today',color:doneToday>0?'var(--green)':'var(--text-3)'},
-    {val:`${daysActive}/7`,label:'Active Days This Week',color:daysActive>=5?'var(--gold)':daysActive>0?'var(--text-2)':'var(--text-3)'},
+    {val:todayTasks.length+overdueTasks.length, label:'Remaining Today', color:'var(--text)'},
+    {val:doneToday, label:'Done Today', color:doneToday>0?'var(--green)':'var(--text-3)'},
+    {val:`${daysActive}/7`, label:'Active Days This Week', color:daysActive>=5?'var(--gold)':daysActive>0?'var(--text-2)':'var(--text-3)'},
   ].map(s=>`<div class="stat-card"><div class="stat-value" style="color:${s.color}">${s.val}</div><div class="stat-label">${s.label}</div></div>`).join('');
 
-  // Capture nudge — shown if inbox has items
-  const captureNudge=document.getElementById('home-capture-nudge');
-  if(captureNudge){
-    if(DATA.captures.length>0){
-      captureNudge.style.display='flex';
-      captureNudge.innerHTML=`
+  // Context bar (drift detection)
+  const ctx = getContextBar();
+  const ctxEl = document.getElementById('home-context-bar');
+  if (ctxEl) {
+    ctxEl.innerHTML = ctx
+      ? `<div class="context-bar ${ctx.cls}"><span class="context-icon">${ctx.icon}</span>${ctx.msg}</div>`
+      : '';
+  }
+
+  // Capture nudge
+  const captureNudge = document.getElementById('home-capture-nudge');
+  if (captureNudge) {
+    if (DATA.captures.length > 0) {
+      captureNudge.style.display = 'flex';
+      captureNudge.innerHTML = `
         <div class="flex-gap">
           <span style="font-size:14px">💡</span>
           <span style="font-size:12.5px;color:var(--gold);font-weight:500">${DATA.captures.length} item${DATA.captures.length>1?'s':''} in capture inbox</span>
         </div>
         <span class="text-xs text-dim">Process →</span>`;
     } else {
-      captureNudge.style.display='none';
+      captureNudge.style.display = 'none';
     }
   }
 
-  // Focus list — auto-suggest when no pinned tasks
-  if (focusTasks.length === 0) {
-    // Find best candidate: first overdue, then due today, then any pending
-    const candidate = overdueTasks[0] || DATA.tasks.find(t=>!t.completed&&t.dueDate===td) || DATA.tasks.find(t=>!t.completed);
-    const reason = !candidate ? null : overdueTasks.includes(candidate) ? `overdue since ${candidate.dueDate}` : candidate.dueDate===td ? 'due today' : 'next up';
-    document.getElementById('home-focus-list').innerHTML = candidate
-      ? `<div style="padding:6px 0">
-          <div style="font-size:10px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:var(--text-3);margin-bottom:8px">Suggested focus</div>
-          ${taskHTML(candidate, false)}
-          <div style="font-size:11px;color:var(--text-3);margin-top:6px;padding:5px 8px;background:var(--surface);border-radius:6px;display:inline-flex;align-items:center;gap:5px">
-            <span style="opacity:.5">↑</span> Star to pin · <span style="color:var(--gold)">${reason}</span>
-          </div>
-        </div>`
-      : `<div class="text-dim text-sm" style="padding:6px 0">No tasks yet — add something to get started.</div>`;
+  // ── Do This Now card ──────────────────────────────────────────────────────
+  // Priority: pinned → overdue → due today → next pending
+  let dtnTasks = [];
+  let dtnMode  = 'pinned';
+  if (pinnedTasks.length > 0) {
+    dtnTasks = pinnedTasks.slice(0, 3);
+    dtnMode  = 'pinned';
   } else {
-    document.getElementById('home-focus-list').innerHTML = focusTasks.map(t=>taskHTML(t,true)).join('');
+    // Auto-surface: up to 2 overdue, pad with today's tasks
+    const auto = [...overdueTasks, ...todayTasks].slice(0, 2);
+    if (!auto.length) {
+      const next = DATA.tasks.find(t => !t.completed);
+      if (next) auto.push(next);
+    }
+    dtnTasks = auto;
+    dtnMode  = auto.length ? 'auto' : 'empty';
   }
 
-  // Today's tasks
-  const nonFocus=[...overdueTasks,...todayTasks.filter(t=>!DATA.focusTasks.includes(t.id))].slice(0,6);
-  document.getElementById('home-tasks-list').innerHTML=nonFocus.length===0
-    ?`<div class="empty" style="padding:10px 0"><div class="empty-icon">✅</div>All clear!</div>`
-    :nonFocus.map(t=>taskHTML(t,false)).join('');
+  const dtnSubEl = document.getElementById('home-dtn-sub');
+  if (dtnSubEl) {
+    if (dtnMode === 'pinned') dtnSubEl.textContent = 'Your starred priorities';
+    else if (dtnMode === 'auto') dtnSubEl.textContent = 'Suggested — star a task to pin it';
+    else dtnSubEl.textContent = 'Nothing pending — you\'re clear!';
+  }
 
-  // Habits — collapsed (today only) with expand toggle
-  const days7=Array.from({length:7},(_,i)=>{
-    const d=new Date(); d.setDate(d.getDate()-(6-i));
+  const dtnIds = new Set(dtnTasks.map(t => t.id));
+
+  if (dtnMode === 'empty') {
+    document.getElementById('home-focus-list').innerHTML =
+      `<div class="text-dim text-sm" style="padding:6px 0">🎉 No pending tasks. Add something to get started.</div>`;
+  } else {
+    document.getElementById('home-focus-list').innerHTML = dtnTasks.map(t => {
+      const isFocus = DATA.focusTasks.includes(t.id);
+      const over    = isOverdue(t);
+      const label   = over
+        ? `overdue since ${formatDueLabel(t.dueDate)}`
+        : t.dueDate === td ? 'due today' : 'next up';
+      return taskHTML(t, isFocus) +
+        (dtnMode === 'auto'
+          ? `<div style="font-size:10.5px;color:var(--text-3);margin:-4px 0 6px 25px;display:flex;align-items:center;gap:5px">
+               <span style="opacity:.4">↑</span> Star to pin · <span style="color:${over?'#e57373':'var(--gold)'}">${label}</span>
+             </div>`
+          : '');
+    }).join('');
+  }
+
+  // ── Today's Tasks — exclude anything shown in DTN ──────────────────────────
+  const nonDtn = [
+    ...overdueTasks.filter(t => !dtnIds.has(t.id)),
+    ...todayTasks.filter(t => !dtnIds.has(t.id) && !DATA.focusTasks.includes(t.id))
+  ].slice(0, 6);
+
+  document.getElementById('home-tasks-list').innerHTML = nonDtn.length === 0
+    ? `<div class="empty" style="padding:10px 0"><div class="empty-icon">✅</div>All clear here!</div>`
+    : nonDtn.map(t => taskHTML(t, false)).join('');
+
+  // ── Habits — collapsed with expand toggle ──────────────────────────────────
+  const days7 = Array.from({length:7}, (_,i) => {
+    const d = new Date(); d.setDate(d.getDate()-(6-i));
     return d.toISOString().split('T')[0];
   });
-  const habitsDueToday=DATA.habitDefs.length;
-  const habitsDoneToday=DATA.habitDefs.filter(h=>DATA.habits[td]?.[h.id]).length;
-  const allDone = habitsDoneToday === habitsDueToday;
+  const habitsDueToday  = DATA.habitDefs.length;
+  const habitsDoneToday = DATA.habitDefs.filter(h => DATA.habits[td]?.[h.id]).length;
+  const allDone = habitsDoneToday === habitsDueToday && habitsDueToday > 0;
+
   const habitsSummary = `<div style="font-size:11.5px;font-weight:${allDone?'600':'500'};margin-bottom:10px;padding:5px 10px;background:${allDone?'var(--green-soft)':'var(--gold-soft)'};border-radius:6px;display:inline-flex;align-items:center;gap:5px;color:${allDone?'var(--green)':'var(--gold)'}">
-    ${allDone?'✓ All habits done today':`${habitsDoneToday}/${habitsDueToday} habits done today`}
+    ${allDone ? '✓ All habits done today' : `${habitsDoneToday}/${habitsDueToday} habits done today`}
   </div>`;
 
-  const habitRows = DATA.habitDefs.map(h=>{
-    const done=DATA.habits[td]?.[h.id], streak=calcStreak(h.id);
-    const weekDots=days7.map(d=>{
-      const isDone=DATA.habits[d]?.[h.id], isToday=d===td;
-      const dayLetter=new Date(d+'T12:00:00').toLocaleDateString('en-US',{weekday:'short'}).slice(0,1);
+  const habitRows = DATA.habitDefs.map(h => {
+    const done = DATA.habits[td]?.[h.id], streak = calcStreak(h.id);
+    const weekDots = days7.map(d => {
+      const isDone = DATA.habits[d]?.[h.id], isToday = d === td;
+      const dayLetter = new Date(d+'T12:00:00').toLocaleDateString('en-US',{weekday:'short'}).slice(0,1);
       return `<div style="text-align:center;flex:1">
         <div class="text-xs" style="margin-bottom:3px;font-size:9px;${isToday?'color:var(--text-2);font-weight:700':'color:var(--text-3)'}">
-          ${isToday?'▾':dayLetter}
+          ${isToday ? '▾' : dayLetter}
         </div>
         <div class="habit-strip-dot${isDone?' done':''}${isToday?' today':''}"
           style="${isToday&&!isDone?'border-color:#ffffff35;box-shadow:0 0 8px rgba(255,255,255,0.08)':''}"
@@ -963,22 +1060,22 @@ function renderHome(){
 
   document.getElementById('home-habits-list').innerHTML = habitsSummary + habitRows + expandBtn;
 
-  // Active projects with next action
-  const active=DATA.projects.filter(p=>p.status==='Active').slice(0,3);
-  document.getElementById('home-projects-list').innerHTML=active.length===0
-    ?`<div class="text-dim text-sm">No active projects.</div>`
-    :active.map(p=>{
-      const pct=calcProjectProgress(p.id);
-      const nextTask=DATA.tasks.find(t=>t.projectId===p.id&&!t.completed);
-      return `<div style="margin-bottom:13px;cursor:pointer" onclick="openProjectDetail('${p.id}')">
-        <div class="flex-between">
-          <span style="font-size:13px;font-weight:500">${escHtml(p.title)}</span>
-          <span class="text-xs text-dim">${pct}%</span>
-        </div>
-        ${nextTask?`<div class="project-next">↳ <span>${escHtml(nextTask.title)}</span></div>`:'<div class="project-next" style="color:var(--green)">↳ All tasks done</div>'}
-        <div class="progress-track"><div class="progress-fill" style="width:${pct}%"></div></div>
-      </div>`;
-    }).join('');
+  // ── Active projects with next action ──────────────────────────────────────
+  const active = DATA.projects.filter(p => p.status === 'Active').slice(0, 3);
+  document.getElementById('home-projects-list').innerHTML = active.length === 0
+    ? `<div class="text-dim text-sm">No active projects.</div>`
+    : active.map(p => {
+        const pct = calcProjectProgress(p.id);
+        const nextTask = DATA.tasks.find(t => t.projectId === p.id && !t.completed);
+        return `<div style="margin-bottom:13px;cursor:pointer" onclick="openProjectDetail('${p.id}')">
+          <div class="flex-between">
+            <span style="font-size:13px;font-weight:500">${escHtml(p.title)}</span>
+            <span class="text-xs text-dim">${pct}%</span>
+          </div>
+          ${nextTask ? `<div class="project-next">↳ <span>${escHtml(nextTask.title)}</span></div>` : '<div class="project-next" style="color:var(--green)">↳ All tasks done</div>'}
+          <div class="progress-track"><div class="progress-fill" style="width:${pct}%"></div></div>
+        </div>`;
+      }).join('');
 }
 
 // ─── Tasks ────────────────────────────────────────────────────────────────────
@@ -1506,36 +1603,36 @@ function attachSwipeHandlers() {
     el.dataset.swipe = '1';
     let startX=0, startY=0, dx=0;
     const id = el.id.replace('task-','');
-
-    el.addEventListener('touchstart', e => {
-      startX = e.touches[0].clientX;
-      startY = e.touches[0].clientY;
-      dx = 0;
-    }, {passive:true});
-
+    el.addEventListener('touchstart', e => { startX=e.touches[0].clientX; startY=e.touches[0].clientY; dx=0; },{passive:true});
     el.addEventListener('touchmove', e => {
       dx = e.touches[0].clientX - startX;
       const dy = Math.abs(e.touches[0].clientY - startY);
-      if (Math.abs(dx) < dy) { dx=0; return; } // vertical scroll wins
+      if (Math.abs(dx) < dy) { dx=0; return; }
       if (dx > 0 && dx < 80) {
-        el.style.transform = `translateX(${dx}px)`;
-        el.style.background = `rgba(74,158,110,${dx/160})`;
+        el.style.transform=`translateX(${dx}px)`;
+        el.style.background=`rgba(74,158,110,${dx/160})`;
       }
-    }, {passive:true});
-
+    },{passive:true});
     el.addEventListener('touchend', () => {
       if (dx > 60) {
-        el.style.transform = 'translateX(100%)';
-        el.style.opacity = '0';
-        el.style.transition = 'transform .25s ease, opacity .25s ease';
-        setTimeout(() => toggleTask(id), 220);
+        el.style.transform='translateX(100%)';
+        el.style.opacity='0';
+        el.style.transition='transform .25s ease,opacity .25s ease';
+        setTimeout(()=>toggleTask(id),220);
       } else {
-        el.style.transform = '';
-        el.style.background = '';
+        el.style.transform=''; el.style.background='';
       }
-      dx = 0;
-    }, {passive:true});
+      dx=0;
+    },{passive:true});
   });
+}
+
+function toggleHabitsExpand(){
+  const strips=document.querySelectorAll('.habit-week-strip');
+  const btn=document.getElementById('habits-expand-btn');
+  const isExpanded=strips[0]?.style.display!=='none';
+  strips.forEach(el=>el.style.display=isExpanded?'none':'');
+  if(btn) btn.innerHTML=isExpanded?'Show week view ▾':'Hide week view ▴';
 }
 
 // ─── Boot ─────────────────────────────────────────────────────────────────────

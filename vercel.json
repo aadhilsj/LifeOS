@@ -6,6 +6,7 @@
     { "src": "/sw.js", "dest": "/sw.js" },
 
     { "src": "/api/review", "dest": "/api/review.js" },
+    { "src": "/api/voice", "dest": "/api/voice.js" },
 
     { "src": "/(.*)", "dest": "/index.html" }
   ]

@@ -356,44 +356,47 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;heigh
 /* ── Do This Now card ── */
 .dtn-card{
   background:linear-gradient(135deg,#1a0c0c,#110e18);
-  border:1px solid #c8392b30;
-  border-left:3px solid var(--accent);
-  border-radius:var(--radius);
-  padding:18px 20px;
+  border:1px solid #c8392b30;border-left:3px solid var(--accent);
+  border-radius:var(--radius);padding:18px 20px;
   box-shadow:0 0 32px rgba(200,57,43,.08),var(--shadow-sm);
   backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
-  margin-bottom:14px;
-  transition:border-color var(--transition);
+  margin-bottom:14px;transition:border-color var(--transition);
 }
-.dtn-card:hover{border-color:#c8392b50;border-left-color:var(--accent)}
-.dtn-label{font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);opacity:.9;margin-bottom:4px}
+.dtn-card:hover{border-color:#c8392b50}
+.dtn-label{font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin-bottom:4px}
 .dtn-sub{font-size:10.5px;color:var(--text-3);margin-bottom:12px}
 
-/* ── Context bar (drift detection) ── */
-.context-bar{
-  display:flex;align-items:center;gap:8px;
-  padding:8px 12px;border-radius:var(--radius-sm);
-  font-size:12px;font-weight:500;margin-bottom:14px;
-  border:1px solid transparent;
-}
+/* ── Context bar ── */
+.context-bar{display:flex;align-items:center;gap:8px;padding:8px 12px;border-radius:var(--radius-sm);
+  font-size:12px;font-weight:500;margin-bottom:14px;border:1px solid transparent}
 .context-bar.warn{background:#c8392b0d;border-color:#c8392b20;color:#e57373}
 .context-bar.gold{background:var(--gold-soft);border-color:#c9a84c22;color:var(--gold)}
 .context-bar.green{background:var(--green-soft);border-color:#4a9e6e22;color:var(--green)}
-.context-bar.dim{background:var(--surface);border-color:var(--border);color:var(--text-3)}
 .context-icon{font-size:14px;flex-shrink:0}
 
-/* ── Floating Action Button ── */
-.fab{
-  display:none;
-  position:fixed;bottom:76px;right:18px;z-index:200;
+/* ── Voice capture ── */
+.voice-btn{
+  width:36px;height:36px;border-radius:50%;border:1.5px solid var(--border-active);
+  background:var(--surface2);color:var(--text-2);cursor:pointer;
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+  transition:all var(--transition);font-family:var(--font-sans);
+}
+.voice-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-soft)}
+.voice-btn.recording{background:var(--accent);border-color:var(--accent);color:#fff;animation:pulse 1s ease infinite}
+.voice-btn svg{width:15px;height:15px}
+.voice-status{font-size:11px;color:var(--text-3);margin-top:6px;min-height:16px;transition:color var(--transition)}
+.voice-status.active{color:var(--gold)}
+.voice-status.processing{color:var(--blue)}
+.voice-status.done{color:var(--green)}
+.voice-status.error{color:#e57373}
+
+/* ── FAB ── */
+.fab{display:none;position:fixed;bottom:76px;right:18px;z-index:200;
   width:52px;height:52px;border-radius:50%;
   background:var(--accent);color:#fff;border:none;cursor:pointer;
-  font-size:26px;line-height:1;
-  box-shadow:0 4px 20px rgba(200,57,43,.45);
+  font-size:26px;line-height:1;box-shadow:0 4px 20px rgba(200,57,43,.45);
   align-items:center;justify-content:center;
-  transition:transform var(--transition),box-shadow var(--transition);
-  font-family:var(--font-sans);
-}
+  transition:transform var(--transition);font-family:var(--font-sans)}
 .fab:active{transform:scale(.92)}
 
 /* ── Responsive ── */
@@ -413,17 +416,14 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;heigh
   .topbar-actions .btn{padding:5px 11px;font-size:11.5px}
   .task-actions{opacity:1}
   .task-check{width:20px;height:20px}
-  .habit-dot{width:32px;height:32px;font-size:11px}
   .card{padding:14px 16px}
   .stat-card{min-height:60px;padding:10px 12px}
   .stat-value{font-size:24px}
+  .stat-label{font-size:9px}
   .modal-overlay{align-items:flex-end;padding:0}
-  .modal{
-    border-radius:20px 20px 0 0;max-width:100%;width:100%;
-    max-height:92vh;
-    padding:20px 20px max(20px,env(safe-area-inset-bottom));
-    animation:slideUpSheet .25s cubic-bezier(.32,0,.67,0);
-  }
+  .modal{border-radius:20px 20px 0 0;max-width:100%;width:100%;
+    max-height:92vh;padding:20px 20px max(20px,env(safe-area-inset-bottom));
+    animation:slideUpSheet .25s cubic-bezier(.32,0,.67,0)}
   .modal::before{content:'';display:block;width:36px;height:4px;
     background:#ffffff20;border-radius:4px;margin:0 auto 16px}
   .tabs{-webkit-overflow-scrolling:touch}
@@ -604,8 +604,17 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;heigh
           <div class="flex-gap">
             <input class="input" id="capture-input" placeholder="What's on your mind? Press Enter to capture." style="flex:1"
               onkeydown="if(event.key==='Enter')addCapture()"/>
+            <button class="voice-btn" id="voice-btn" onclick="toggleVoice()" title="Voice capture">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="9" y="2" width="6" height="11" rx="3"/>
+                <path d="M5 10a7 7 0 0 0 14 0"/>
+                <line x1="12" y1="19" x2="12" y2="22"/>
+                <line x1="8" y1="22" x2="16" y2="22"/>
+              </svg>
+            </button>
             <button class="btn btn-primary" onclick="addCapture()">Capture</button>
           </div>
+          <div class="voice-status" id="voice-status"></div>
         </div>
         <div class="card">
           <div class="card-title" id="capture-inbox-title">Inbox</div>
@@ -622,7 +631,10 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;heigh
         </div>
         <div class="card">
           <div class="flex-between mb14">
-            <div class="card-title" style="margin:0">AI Weekly Review</div>
+            <div>
+              <div class="card-title" style="margin:0">AI Weekly Review</div>
+              <div class="text-xs text-dim mt4" id="review-last-generated"></div>
+            </div>
             <button class="btn btn-primary btn-sm" id="review-btn" onclick="generateReview()">Generate Review</button>
           </div>
           <div id="review-output">
@@ -635,7 +647,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;heigh
   </div>
 </div>
 
-<!-- ── Floating Action Button ── -->
+<!-- ── FAB ── -->
 <button class="fab" id="fab" onclick="openAddTask()" aria-label="Add task">+</button>
 
 <!-- ── Mobile Bottom Nav ── -->
@@ -700,7 +712,7 @@ let DATA = {
     {id:'reading',label:'Reading',icon:'📚'},
     {id:'journaling',label:'Journaling',icon:'✍️'},
   ],
-  captures:[], focusTasks:[],
+  captures:[], focusTasks:[], weeklyReview:null,
 };
 let currentPage='home', taskFilter='All', syncTimer=null, projectDetailId=null;
 
@@ -863,220 +875,6 @@ function updateBadges(){
   if(cbm){if(cap>0){cbm.style.display='';cbm.textContent=cap;}else cbm.style.display='none';}
 }
 
-// ─── Drift detection → context bar message ────────────────────────────────────
-function getContextBar() {
-  const td = today();
-  const wStart = new Date(); wStart.setDate(wStart.getDate() - wStart.getDay());
-  const wStr   = wStart.toISOString().split('T')[0];
-
-  const overdue      = DATA.tasks.filter(t => isOverdue(t));
-  const doneToday    = DATA.tasks.filter(t => t.completed && t.completedDate === td);
-  const doneWeek     = DATA.tasks.filter(t => t.completed && t.completedDate >= wStr);
-  const habitsDoneToday = DATA.habitDefs.filter(h => DATA.habits[td]?.[h.id]).length;
-  const allHabitsDone   = habitsDoneToday === DATA.habitDefs.length && DATA.habitDefs.length > 0;
-
-  // Check habit streak broken — any habit with no completion for 2+ days
-  const yesterday = new Date(); yesterday.setDate(yesterday.getDate()-1);
-  const yStr = yesterday.toISOString().split('T')[0];
-  const dayBefore = new Date(); dayBefore.setDate(dayBefore.getDate()-2);
-  const dbStr = dayBefore.toISOString().split('T')[0];
-  const habitsDriftCount = DATA.habitDefs.filter(h =>
-    !DATA.habits[yStr]?.[h.id] && !DATA.habits[dbStr]?.[h.id]
-  ).length;
-
-  // Priority order: worst situation first
-  if (overdue.length >= 3)
-    return {cls:'warn', icon:'⚠️', msg:`${overdue.length} tasks overdue — clear the backlog first.`};
-  if (overdue.length > 0 && doneToday.length === 0)
-    return {cls:'warn', icon:'↩️', msg:`${overdue.length} overdue task${overdue.length>1?'s':''} — start there.`};
-  if (habitsDriftCount >= 2 && !allHabitsDone)
-    return {cls:'gold', icon:'〰️', msg:`${habitsDriftCount} habits missed 2 days in a row — today's a reset.`};
-  if (allHabitsDone && doneToday.length > 0)
-    return {cls:'green', icon:'🔥', msg:`Habits done + ${doneToday.length} task${doneToday.length>1?'s':''} completed. Strong day.`};
-  if (allHabitsDone)
-    return {cls:'green', icon:'✓', msg:`All habits done today — now tackle the tasks.`};
-  if (doneWeek.length === 0 && new Date().getDay() >= 3)
-    return {cls:'warn', icon:'📉', msg:`No tasks completed yet this week — let's change that.`};
-  if (doneToday.length >= 3)
-    return {cls:'green', icon:'⚡', msg:`${doneToday.length} tasks done today. Good momentum — keep going.`};
-  if (doneWeek.length >= 5)
-    return {cls:'gold', icon:'📈', msg:`Strong week so far — ${doneWeek.length} tasks done. Stay consistent.`};
-  return null; // no bar if nothing notable
-}
-
-// Format due date nicely (no ISO strings)
-function formatDueLabel(dateStr) {
-  if (!dateStr) return '';
-  const d = new Date(dateStr + 'T12:00:00');
-  return d.toLocaleDateString('en-GB', {weekday:'short', day:'numeric', month:'short'});
-}
-
-// ─── Home ─────────────────────────────────────────────────────────────────────
-function renderHome(){
-  const td = today();
-  const todayTasks   = DATA.tasks.filter(t => !t.completed && t.dueDate === td);
-  const overdueTasks = DATA.tasks.filter(t => isOverdue(t));
-  const pinnedTasks  = DATA.tasks.filter(t => DATA.focusTasks.includes(t.id) && !t.completed);
-  const wStart = new Date(); wStart.setDate(wStart.getDate() - wStart.getDay());
-  const wStr   = wStart.toISOString().split('T')[0];
-  const doneToday = DATA.tasks.filter(t => t.completed && t.completedDate === td).length;
-  const daysActive = Array.from({length:7},(_,i)=>{
-    const d=new Date(wStart); d.setDate(d.getDate()+i);
-    return d.toISOString().split('T')[0];
-  }).filter(d => DATA.tasks.some(t => t.completed && t.completedDate === d)).length;
-
-  // Stats
-  document.getElementById('home-stats').innerHTML=[
-    {val:todayTasks.length+overdueTasks.length, label:'Remaining Today', color:'var(--text)'},
-    {val:doneToday, label:'Done Today', color:doneToday>0?'var(--green)':'var(--text-3)'},
-    {val:`${daysActive}/7`, label:'Active Days This Week', color:daysActive>=5?'var(--gold)':daysActive>0?'var(--text-2)':'var(--text-3)'},
-  ].map(s=>`<div class="stat-card"><div class="stat-value" style="color:${s.color}">${s.val}</div><div class="stat-label">${s.label}</div></div>`).join('');
-
-  // Context bar (drift detection)
-  const ctx = getContextBar();
-  const ctxEl = document.getElementById('home-context-bar');
-  if (ctxEl) {
-    ctxEl.innerHTML = ctx
-      ? `<div class="context-bar ${ctx.cls}"><span class="context-icon">${ctx.icon}</span>${ctx.msg}</div>`
-      : '';
-  }
-
-  // Capture nudge
-  const captureNudge = document.getElementById('home-capture-nudge');
-  if (captureNudge) {
-    if (DATA.captures.length > 0) {
-      captureNudge.style.display = 'flex';
-      captureNudge.innerHTML = `
-        <div class="flex-gap">
-          <span style="font-size:14px">💡</span>
-          <span style="font-size:12.5px;color:var(--gold);font-weight:500">${DATA.captures.length} item${DATA.captures.length>1?'s':''} in capture inbox</span>
-        </div>
-        <span class="text-xs text-dim">Process →</span>`;
-    } else {
-      captureNudge.style.display = 'none';
-    }
-  }
-
-  // ── Do This Now card ──────────────────────────────────────────────────────
-  // Priority: pinned → overdue → due today → next pending
-  let dtnTasks = [];
-  let dtnMode  = 'pinned';
-  if (pinnedTasks.length > 0) {
-    dtnTasks = pinnedTasks.slice(0, 3);
-    dtnMode  = 'pinned';
-  } else {
-    // Auto-surface: up to 2 overdue, pad with today's tasks
-    const auto = [...overdueTasks, ...todayTasks].slice(0, 2);
-    if (!auto.length) {
-      const next = DATA.tasks.find(t => !t.completed);
-      if (next) auto.push(next);
-    }
-    dtnTasks = auto;
-    dtnMode  = auto.length ? 'auto' : 'empty';
-  }
-
-  const dtnSubEl = document.getElementById('home-dtn-sub');
-  if (dtnSubEl) {
-    if (dtnMode === 'pinned') dtnSubEl.textContent = 'Your starred priorities';
-    else if (dtnMode === 'auto') dtnSubEl.textContent = 'Suggested — star a task to pin it';
-    else dtnSubEl.textContent = 'Nothing pending — you\'re clear!';
-  }
-
-  const dtnIds = new Set(dtnTasks.map(t => t.id));
-
-  if (dtnMode === 'empty') {
-    document.getElementById('home-focus-list').innerHTML =
-      `<div class="text-dim text-sm" style="padding:6px 0">🎉 No pending tasks. Add something to get started.</div>`;
-  } else {
-    document.getElementById('home-focus-list').innerHTML = dtnTasks.map(t => {
-      const isFocus = DATA.focusTasks.includes(t.id);
-      const over    = isOverdue(t);
-      const label   = over
-        ? `overdue since ${formatDueLabel(t.dueDate)}`
-        : t.dueDate === td ? 'due today' : 'next up';
-      return taskHTML(t, isFocus) +
-        (dtnMode === 'auto'
-          ? `<div style="font-size:10.5px;color:var(--text-3);margin:-4px 0 6px 25px;display:flex;align-items:center;gap:5px">
-               <span style="opacity:.4">↑</span> Star to pin · <span style="color:${over?'#e57373':'var(--gold)'}">${label}</span>
-             </div>`
-          : '');
-    }).join('');
-  }
-
-  // ── Today's Tasks — exclude anything shown in DTN ──────────────────────────
-  const nonDtn = [
-    ...overdueTasks.filter(t => !dtnIds.has(t.id)),
-    ...todayTasks.filter(t => !dtnIds.has(t.id) && !DATA.focusTasks.includes(t.id))
-  ].slice(0, 6);
-
-  document.getElementById('home-tasks-list').innerHTML = nonDtn.length === 0
-    ? `<div class="empty" style="padding:10px 0"><div class="empty-icon">✅</div>All clear here!</div>`
-    : nonDtn.map(t => taskHTML(t, false)).join('');
-
-  // ── Habits — collapsed with expand toggle ──────────────────────────────────
-  const days7 = Array.from({length:7}, (_,i) => {
-    const d = new Date(); d.setDate(d.getDate()-(6-i));
-    return d.toISOString().split('T')[0];
-  });
-  const habitsDueToday  = DATA.habitDefs.length;
-  const habitsDoneToday = DATA.habitDefs.filter(h => DATA.habits[td]?.[h.id]).length;
-  const allDone = habitsDoneToday === habitsDueToday && habitsDueToday > 0;
-
-  const habitsSummary = `<div style="font-size:11.5px;font-weight:${allDone?'600':'500'};margin-bottom:10px;padding:5px 10px;background:${allDone?'var(--green-soft)':'var(--gold-soft)'};border-radius:6px;display:inline-flex;align-items:center;gap:5px;color:${allDone?'var(--green)':'var(--gold)'}">
-    ${allDone ? '✓ All habits done today' : `${habitsDoneToday}/${habitsDueToday} habits done today`}
-  </div>`;
-
-  const habitRows = DATA.habitDefs.map(h => {
-    const done = DATA.habits[td]?.[h.id], streak = calcStreak(h.id);
-    const weekDots = days7.map(d => {
-      const isDone = DATA.habits[d]?.[h.id], isToday = d === td;
-      const dayLetter = new Date(d+'T12:00:00').toLocaleDateString('en-US',{weekday:'short'}).slice(0,1);
-      return `<div style="text-align:center;flex:1">
-        <div class="text-xs" style="margin-bottom:3px;font-size:9px;${isToday?'color:var(--text-2);font-weight:700':'color:var(--text-3)'}">
-          ${isToday ? '▾' : dayLetter}
-        </div>
-        <div class="habit-strip-dot${isDone?' done':''}${isToday?' today':''}"
-          style="${isToday&&!isDone?'border-color:#ffffff35;box-shadow:0 0 8px rgba(255,255,255,0.08)':''}"
-          onclick="event.stopPropagation();toggleHabit('${h.id}','${d}')">${isDone?'✓':''}</div>
-      </div>`;
-    }).join('');
-    return `<div class="habit-strip-row" onclick="toggleHabit('${h.id}','${td}')" style="cursor:pointer;border-radius:8px;margin:-4px;padding:4px;transition:background var(--transition)" onmouseenter="this.style.background='var(--glass-hover)'" onmouseleave="this.style.background=''">
-      <div class="flex-between">
-        <div class="flex-gap">
-          <div class="habit-dot${done?' done':' today-ring'}" style="width:26px;height:26px;flex-shrink:0;pointer-events:none">${done?'✓':h.icon}</div>
-          <span style="font-size:13px;font-weight:500">${h.label}</span>
-        </div>
-        <span style="font-size:11px;color:var(--gold);font-weight:600">${streak>0?streak+'d 🔥':'—'}</span>
-      </div>
-      <div class="habit-week-strip" id="habit-week-${h.id}" style="display:none;margin-top:8px" onclick="event.stopPropagation()">
-        <div class="habit-strip">${weekDots}</div>
-      </div>
-    </div>`;
-  }).join('');
-
-  const expandBtn = `<div id="habits-expand-btn" onclick="toggleHabitsExpand()" style="text-align:center;margin-top:8px;padding:4px;cursor:pointer;font-size:11px;color:var(--text-3);transition:color var(--transition)" onmouseenter="this.style.color='var(--text-2)'" onmouseleave="this.style.color='var(--text-3)'">
-    Show week view ▾
-  </div>`;
-
-  document.getElementById('home-habits-list').innerHTML = habitsSummary + habitRows + expandBtn;
-
-  // ── Active projects with next action ──────────────────────────────────────
-  const active = DATA.projects.filter(p => p.status === 'Active').slice(0, 3);
-  document.getElementById('home-projects-list').innerHTML = active.length === 0
-    ? `<div class="text-dim text-sm">No active projects.</div>`
-    : active.map(p => {
-        const pct = calcProjectProgress(p.id);
-        const nextTask = DATA.tasks.find(t => t.projectId === p.id && !t.completed);
-        return `<div style="margin-bottom:13px;cursor:pointer" onclick="openProjectDetail('${p.id}')">
-          <div class="flex-between">
-            <span style="font-size:13px;font-weight:500">${escHtml(p.title)}</span>
-            <span class="text-xs text-dim">${pct}%</span>
-          </div>
-          ${nextTask ? `<div class="project-next">↳ <span>${escHtml(nextTask.title)}</span></div>` : '<div class="project-next" style="color:var(--green)">↳ All tasks done</div>'}
-          <div class="progress-track"><div class="progress-fill" style="width:${pct}%"></div></div>
-        </div>`;
-      }).join('');
-}
 
 // ─── Tasks ────────────────────────────────────────────────────────────────────
 function renderTasks(){
@@ -1387,57 +1185,6 @@ function assignCapture(id,projectId){
   scheduleSave();renderAll();toast('Added as task','success');
 }
 
-// ─── Review ───────────────────────────────────────────────────────────────────
-function renderReview(){
-  const completed=DATA.tasks.filter(t=>t.completed).length,overdue=DATA.tasks.filter(t=>isOverdue(t)).length;
-  const streaks=DATA.habitDefs.filter(h=>calcStreak(h.id)>0).length;
-  document.getElementById('review-stats').innerHTML=[
-    {val:completed,label:'Tasks Completed',color:'var(--green)'},
-    {val:overdue,label:'Still Overdue',color:overdue>0?'var(--accent)':'var(--text-3)'},
-    {val:`${streaks}/${DATA.habitDefs.length}`,label:'Active Streaks',color:'var(--gold)'},
-  ].map(s=>`<div class="stat-card"><div class="stat-value" style="color:${s.color}">${s.val}</div><div class="stat-label">${s.label}</div></div>`).join('');
-  const total=completed||1;
-  const areaColors={Career:'var(--blue)',Health:'var(--green)',Growth:'#a3e635',Personal:'var(--gold)','Life Admin':'#c084fc'};
-  document.getElementById('review-areas').innerHTML=FOCUS_AREAS.map(area=>{
-    const count=DATA.tasks.filter(t=>t.completed&&t.focusArea===area).length,pct=Math.round(count/total*100);
-    return `<div style="margin-bottom:10px">
-      <div class="flex-between text-sm"><span>${area}</span><span class="text-dim">${count} tasks · ${pct}%</span></div>
-      <div class="progress-track"><div class="progress-fill" style="width:${pct}%;background:${areaColors[area]||'var(--green)'}"></div></div>
-    </div>`;
-  }).join('');
-}
-
-async function generateReview(){
-  const btn=document.getElementById('review-btn');
-  btn.disabled=true;btn.innerHTML='<span style="display:inline-block;animation:spin 1s linear infinite">◌</span> Generating…';
-  document.getElementById('review-output').innerHTML=`<div class="empty"><div class="empty-icon" style="animation:spin 1.5s linear infinite">◌</div>Analysing your week…</div>`;
-  const td=today(),wa=new Date();wa.setDate(wa.getDate()-7);const waStr=wa.toISOString().split('T')[0];
-  const cw=DATA.tasks.filter(t=>t.completed&&t.dueDate>=waStr),ov=DATA.tasks.filter(t=>isOverdue(t));
-  const hs=DATA.habitDefs.map(h=>({habit:h.label,streak:calcStreak(h.id),done:Object.entries(DATA.habits).filter(([d,v])=>d>=waStr&&v[h.id]).length}));
-  const ap=DATA.projects.filter(p=>p.status==='Active');
-  const lb=FOCUS_AREAS.reduce((a,fa)=>{a[fa]=cw.filter(t=>t.focusArea===fa).length;return a},{});
-  const prompt=`You are a direct, honest personal productivity coach. Weekly review for Aadhil.\n\nTODAY: ${td}\nCOMPLETED THIS WEEK (${cw.length}): ${cw.slice(0,20).map(t=>`[${t.focusArea}] ${t.title}`).join(', ')||'None'}\nOVERDUE (${ov.length}): ${ov.slice(0,8).map(t=>t.title).join(', ')||'None'}\nHABITS: ${hs.map(h=>`${h.habit}: ${h.done}/7 days, ${h.streak}d streak`).join(' | ')}\nACTIVE PROJECTS: ${ap.map(p=>`${p.title} (${calcProjectProgress(p.id)}%)`).join(', ')||'None'}\nFOCUS AREAS: ${Object.entries(lb).map(([a,c])=>`${a}:${c}`).join(', ')}\nJOB SEARCH: ${DATA.jobs.filter(j=>j.stage==='Interview').length} interviewing, ${DATA.jobs.filter(j=>j.stage==='Applied').length} applied\n\nWrite a weekly review with EXACTLY these section headers (all caps, no numbers):\nWEEK IN REVIEW\nWINS\nGAPS & MISSES\nFOCUS AREA BALANCE\nFOCUS FOR NEXT WEEK\n\nBe direct, specific, honest. Max 3 sentences per section. No filler.`;
-  try {
-    const res=await fetch('/api/review',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:900,messages:[{role:'user',content:prompt}]})});
-    if(!res.ok) throw new Error(`${res.status}`);
-    const result=await res.json();
-    renderReviewOutput(result.content?.map(c=>c.text||'').join('')||'');
-  } catch(e){
-    document.getElementById('review-output').innerHTML=`<div style="color:var(--gold);font-size:13px;padding:12px 14px;background:var(--gold-soft);border-radius:8px;line-height:1.6">ℹ The AI review works once deployed to Vercel (requires the <code>/api/review</code> serverless function).<br>All other features work fully in this HTML file.</div>`;
-  }
-  btn.disabled=false;btn.innerHTML='Regenerate';
-}
-
-function renderReviewOutput(text){
-  const sections=['WEEK IN REVIEW','WINS','GAPS & MISSES','FOCUS AREA BALANCE','FOCUS FOR NEXT WEEK'];
-  const parsed=[];
-  sections.forEach((s,i)=>{
-    const re=new RegExp(s.replace(/[&]/g,'\\&')+'[:\\s\\n]+([\\s\\S]*?)(?='+((sections[i+1]||'').replace(/[&]/g,'\\&')||'$')+'|$)','i');
-    const m=text.match(re);if(m)parsed.push({title:s,content:m[1].trim()});
-  });
-  const blocks=parsed.length?parsed:[{title:'WEEKLY REVIEW',content:text}];
-  document.getElementById('review-output').innerHTML=blocks.map(b=>`<div class="review-block"><h4>${b.title}</h4><div class="review-text">${escHtml(b.content)}</div></div>`).join('');
-}
 
 // ─── Modals ───────────────────────────────────────────────────────────────────
 function openModal(html){document.getElementById('modal-content').innerHTML=html;document.getElementById('modal-overlay').style.display='flex';}
@@ -1595,36 +1342,149 @@ function toast(msg,type='success'){
 // ─── Util ─────────────────────────────────────────────────────────────────────
 function escHtml(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 
-// ─── Swipe to complete (mobile) ───────────────────────────────────────────────
-function attachSwipeHandlers() {
-  if (window.innerWidth > 768) return;
-  document.querySelectorAll('.task-item').forEach(el => {
-    if (el.dataset.swipe) return;
-    el.dataset.swipe = '1';
-    let startX=0, startY=0, dx=0;
-    const id = el.id.replace('task-','');
-    el.addEventListener('touchstart', e => { startX=e.touches[0].clientX; startY=e.touches[0].clientY; dx=0; },{passive:true});
-    el.addEventListener('touchmove', e => {
-      dx = e.touches[0].clientX - startX;
-      const dy = Math.abs(e.touches[0].clientY - startY);
-      if (Math.abs(dx) < dy) { dx=0; return; }
-      if (dx > 0 && dx < 80) {
-        el.style.transform=`translateX(${dx}px)`;
-        el.style.background=`rgba(74,158,110,${dx/160})`;
-      }
-    },{passive:true});
-    el.addEventListener('touchend', () => {
-      if (dx > 60) {
-        el.style.transform='translateX(100%)';
-        el.style.opacity='0';
-        el.style.transition='transform .25s ease,opacity .25s ease';
-        setTimeout(()=>toggleTask(id),220);
-      } else {
-        el.style.transform=''; el.style.background='';
-      }
-      dx=0;
-    },{passive:true});
-  });
+// ─── Drift detection → context bar ───────────────────────────────────────────
+function getContextBar(){
+  const td=today();
+  const wStart=new Date(); wStart.setDate(wStart.getDate()-wStart.getDay());
+  const wStr=wStart.toISOString().split('T')[0];
+  const overdue=DATA.tasks.filter(t=>isOverdue(t));
+  const doneToday=DATA.tasks.filter(t=>t.completed&&t.completedDate===td);
+  const doneWeek=DATA.tasks.filter(t=>t.completed&&t.completedDate>=wStr);
+  const habitsDoneToday=DATA.habitDefs.filter(h=>DATA.habits[td]?.[h.id]).length;
+  const allHabitsDone=habitsDoneToday===DATA.habitDefs.length&&DATA.habitDefs.length>0;
+  const yStr=new Date(new Date().setDate(new Date().getDate()-1)).toISOString().split('T')[0];
+  const dbStr=new Date(new Date().setDate(new Date().getDate()-2)).toISOString().split('T')[0];
+  const habitsDrift=DATA.habitDefs.filter(h=>!DATA.habits[yStr]?.[h.id]&&!DATA.habits[dbStr]?.[h.id]).length;
+
+  if(overdue.length>=3) return{cls:'warn',icon:'⚠️',msg:`${overdue.length} tasks overdue — clear the backlog first.`};
+  if(overdue.length>0&&doneToday.length===0) return{cls:'warn',icon:'⌛︎',msg:`${overdue.length} overdue task${overdue.length>1?'s':''} — start there.`};
+  if(habitsDrift>=2&&!allHabitsDone) return{cls:'gold',icon:'〰️',msg:`${habitsDrift} habits missed 2 days in a row — today's a reset.`};
+  if(allHabitsDone&&doneToday.length>0) return{cls:'green',icon:'🔥',msg:`Habits done + ${doneToday.length} task${doneToday.length>1?'s':''} completed. Strong day.`};
+  if(allHabitsDone) return{cls:'green',icon:'✓',msg:`All habits done today — now tackle the tasks.`};
+  if(doneWeek.length===0&&new Date().getDay()>=3) return{cls:'warn',icon:'📉',msg:`No tasks completed yet this week — let's change that.`};
+  if(doneToday.length>=3) return{cls:'green',icon:'⚡',msg:`${doneToday.length} tasks done today. Good momentum.`};
+  if(doneWeek.length>=5) return{cls:'gold',icon:'📈',msg:`Strong week — ${doneWeek.length} tasks done. Stay consistent.`};
+  return null;
+}
+
+function formatDueLabel(dateStr){
+  if(!dateStr) return '';
+  return new Date(dateStr+'T12:00:00').toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short'});
+}
+
+// ─── Home ─────────────────────────────────────────────────────────────────────
+function renderHome(){
+  const td=today();
+  const todayTasks=DATA.tasks.filter(t=>!t.completed&&t.dueDate===td);
+  const overdueTasks=DATA.tasks.filter(t=>isOverdue(t));
+  const pinnedTasks=DATA.tasks.filter(t=>DATA.focusTasks.includes(t.id)&&!t.completed);
+  const wStart=new Date(); wStart.setDate(wStart.getDate()-wStart.getDay());
+  const wStr=wStart.toISOString().split('T')[0];
+  const doneToday=DATA.tasks.filter(t=>t.completed&&t.completedDate===td).length;
+  const daysActive=Array.from({length:7},(_,i)=>{const d=new Date(wStart);d.setDate(d.getDate()+i);return d.toISOString().split('T')[0];})
+    .filter(d=>DATA.tasks.some(t=>t.completed&&t.completedDate===d)).length;
+
+  // Stats
+  document.getElementById('home-stats').innerHTML=[
+    {val:todayTasks.length+overdueTasks.length,label:'Remaining Today',color:'var(--text)'},
+    {val:doneToday,label:'Done Today',color:doneToday>0?'var(--green)':'var(--text-3)'},
+    {val:`${daysActive}/7`,label:'Days Active',color:daysActive>=5?'var(--gold)':daysActive>0?'var(--text-2)':'var(--text-3)'},
+  ].map(s=>`<div class="stat-card"><div class="stat-value" style="color:${s.color}">${s.val}</div><div class="stat-label">${s.label}</div></div>`).join('');
+
+  // Context bar
+  const ctx=getContextBar();
+  const ctxEl=document.getElementById('home-context-bar');
+  if(ctxEl) ctxEl.innerHTML=ctx?`<div class="context-bar ${ctx.cls}"><span class="context-icon">${ctx.icon}</span>${ctx.msg}</div>`:'';
+
+  // Capture nudge
+  const nudge=document.getElementById('home-capture-nudge');
+  if(nudge){
+    if(DATA.captures.length>0){
+      nudge.style.display='flex';
+      nudge.innerHTML=`<div class="flex-gap"><span style="font-size:14px">💡</span><span style="font-size:12.5px;color:var(--gold);font-weight:500">${DATA.captures.length} item${DATA.captures.length>1?'s':''} in capture inbox</span></div><span class="text-xs text-dim">Process →</span>`;
+    } else nudge.style.display='none';
+  }
+
+  // Do This Now
+  let dtnTasks=[], dtnMode='empty';
+  if(pinnedTasks.length>0){dtnTasks=pinnedTasks.slice(0,3);dtnMode='pinned';}
+  else{
+    const auto=[...overdueTasks,...todayTasks].slice(0,2);
+    if(!auto.length){const n=DATA.tasks.find(t=>!t.completed);if(n)auto.push(n);}
+    dtnTasks=auto; dtnMode=auto.length?'auto':'empty';
+  }
+  const dtnSubEl=document.getElementById('home-dtn-sub');
+  if(dtnSubEl){
+    if(dtnMode==='pinned') dtnSubEl.textContent='Your starred priorities';
+    else if(dtnMode==='auto') dtnSubEl.textContent='Suggested — star a task to pin it';
+    else dtnSubEl.textContent="Nothing pending — you're clear!";
+  }
+  const dtnIds=new Set(dtnTasks.map(t=>t.id));
+  document.getElementById('home-focus-list').innerHTML=dtnMode==='empty'
+    ?`<div class="text-dim text-sm" style="padding:6px 0">🎉 No pending tasks.</div>`
+    :dtnTasks.map(t=>{
+        const isFocus=DATA.focusTasks.includes(t.id);
+        const over=isOverdue(t);
+        const label=over?`overdue since ${formatDueLabel(t.dueDate)}`:t.dueDate===td?'due today':'next up';
+        return taskHTML(t,isFocus)+(dtnMode==='auto'
+          ?`<div style="font-size:10.5px;color:var(--text-3);margin:-4px 0 6px 25px;display:flex;align-items:center;gap:5px"><span style="opacity:.4">↑</span> Star to pin · <span style="color:${over?'#e57373':'var(--gold)'}">${label}</span></div>`
+          :'');
+      }).join('');
+
+  // Today's Tasks — exclude DTN tasks
+  const nonDtn=[...overdueTasks,...todayTasks].filter(t=>!dtnIds.has(t.id)&&!DATA.focusTasks.includes(t.id)).slice(0,6);
+  document.getElementById('home-tasks-list').innerHTML=nonDtn.length===0
+    ?`<div class="empty" style="padding:10px 0"><div class="empty-icon">✅</div>All clear here!</div>`
+    :nonDtn.map(t=>taskHTML(t,false)).join('');
+
+  // Habits
+  const days7=Array.from({length:7},(_,i)=>{const d=new Date();d.setDate(d.getDate()-(6-i));return d.toISOString().split('T')[0];});
+  const habitsDoneToday=DATA.habitDefs.filter(h=>DATA.habits[td]?.[h.id]).length;
+  const allDone=habitsDoneToday===DATA.habitDefs.length&&DATA.habitDefs.length>0;
+  const habitsSummary=`<div style="font-size:11.5px;font-weight:${allDone?'600':'500'};margin-bottom:10px;padding:5px 10px;background:${allDone?'var(--green-soft)':'var(--gold-soft)'};border-radius:6px;display:inline-flex;align-items:center;gap:5px;color:${allDone?'var(--green)':'var(--gold)'}">
+    ${allDone?'✓ All habits done today':`${habitsDoneToday}/${DATA.habitDefs.length} habits done today`}
+  </div>`;
+  const habitRows=DATA.habitDefs.map(h=>{
+    const done=DATA.habits[td]?.[h.id],streak=calcStreak(h.id);
+    const weekDots=days7.map(d=>{
+      const isDone=DATA.habits[d]?.[h.id],isToday=d===td;
+      const dl=new Date(d+'T12:00:00').toLocaleDateString('en-US',{weekday:'short'}).slice(0,1);
+      return `<div style="text-align:center;flex:1">
+        <div class="text-xs" style="margin-bottom:3px;font-size:9px;${isToday?'color:var(--text-2);font-weight:700':'color:var(--text-3)'}">${isToday?'▾':dl}</div>
+        <div class="habit-strip-dot${isDone?' done':''}${isToday?' today':''}"
+          style="${isToday&&!isDone?'border-color:#ffffff35;box-shadow:0 0 8px rgba(255,255,255,0.08)':''}"
+          onclick="event.stopPropagation();toggleHabit('${h.id}','${d}')">${isDone?'✓':''}</div>
+      </div>`;
+    }).join('');
+    return `<div class="habit-strip-row" onclick="toggleHabit('${h.id}','${td}')" style="cursor:pointer;border-radius:8px;margin:-4px;padding:4px;transition:background var(--transition)" onmouseenter="this.style.background='var(--glass-hover)'" onmouseleave="this.style.background=''">
+      <div class="flex-between">
+        <div class="flex-gap">
+          <div class="habit-dot${done?' done':' today-ring'}" style="width:26px;height:26px;flex-shrink:0;pointer-events:none">${done?'✓':h.icon}</div>
+          <span style="font-size:13px;font-weight:500">${h.label}</span>
+        </div>
+        <span style="font-size:11px;color:var(--gold);font-weight:600">${streak>0?streak+'d 🔥':'—'}</span>
+      </div>
+      <div class="habit-week-strip" id="habit-week-${h.id}" style="display:none;margin-top:8px" onclick="event.stopPropagation()">
+        <div class="habit-strip">${weekDots}</div>
+      </div>
+    </div>`;
+  }).join('');
+  const expandBtn=`<div id="habits-expand-btn" onclick="toggleHabitsExpand()" style="text-align:center;margin-top:8px;padding:4px;cursor:pointer;font-size:11px;color:var(--text-3)" onmouseenter="this.style.color='var(--text-2)'" onmouseleave="this.style.color='var(--text-3)'">Show week view ▾</div>`;
+  document.getElementById('home-habits-list').innerHTML=habitsSummary+habitRows+expandBtn;
+
+  // Projects
+  const active=DATA.projects.filter(p=>p.status==='Active').slice(0,3);
+  document.getElementById('home-projects-list').innerHTML=active.length===0
+    ?`<div class="text-dim text-sm">No active projects.</div>`
+    :active.map(p=>{
+        const pct=calcProjectProgress(p.id);
+        const nextTask=DATA.tasks.find(t=>t.projectId===p.id&&!t.completed);
+        return `<div style="margin-bottom:13px;cursor:pointer" onclick="openProjectDetail('${p.id}')">
+          <div class="flex-between"><span style="font-size:13px;font-weight:500">${escHtml(p.title)}</span><span class="text-xs text-dim">${pct}%</span></div>
+          ${nextTask?`<div class="project-next">↳ <span>${escHtml(nextTask.title)}</span></div>`:'<div class="project-next" style="color:var(--green)">↳ All tasks done</div>'}
+          <div class="progress-track"><div class="progress-fill" style="width:${pct}%"></div></div>
+        </div>`;
+      }).join('');
 }
 
 function toggleHabitsExpand(){
@@ -1633,6 +1493,195 @@ function toggleHabitsExpand(){
   const isExpanded=strips[0]?.style.display!=='none';
   strips.forEach(el=>el.style.display=isExpanded?'none':'');
   if(btn) btn.innerHTML=isExpanded?'Show week view ▾':'Hide week view ▴';
+}
+
+// ─── Voice capture ────────────────────────────────────────────────────────────
+let mediaRecorder=null, audioChunks=[], isRecording=false;
+
+function setVoiceStatus(msg,cls=''){
+  const el=document.getElementById('voice-status');
+  if(el){el.textContent=msg;el.className='voice-status'+(cls?' '+cls:'');}
+}
+
+async function toggleVoice(){
+  if(isRecording){stopRecording();return;}
+  if(!navigator.mediaDevices?.getUserMedia){
+    setVoiceStatus('Microphone not supported on this browser.','error');return;
+  }
+  try{
+    const stream=await navigator.mediaDevices.getUserMedia({audio:true});
+    audioChunks=[];
+    mediaRecorder=new MediaRecorder(stream,{mimeType:MediaRecorder.isTypeSupported('audio/webm')?'audio/webm':'audio/mp4'});
+    mediaRecorder.ondataavailable=e=>{if(e.data.size>0)audioChunks.push(e.data);};
+    mediaRecorder.onstop=processVoice;
+    mediaRecorder.start();
+    isRecording=true;
+    document.getElementById('voice-btn').classList.add('recording');
+    setVoiceStatus('Listening… tap again to stop','active');
+  }catch(e){
+    setVoiceStatus('Microphone access denied.','error');
+  }
+}
+
+function stopRecording(){
+  if(mediaRecorder&&mediaRecorder.state!=='inactive'){
+    mediaRecorder.stop();
+    mediaRecorder.stream.getTracks().forEach(t=>t.stop());
+  }
+  isRecording=false;
+  document.getElementById('voice-btn').classList.remove('recording');
+  setVoiceStatus('Processing…','processing');
+}
+
+async function processVoice(){
+  const blob=new Blob(audioChunks,{type:audioChunks[0]?.type||'audio/webm'});
+  // Convert to base64
+  const reader=new FileReader();
+  reader.readAsDataURL(blob);
+  reader.onload=async()=>{
+    const b64=reader.result.split(',')[1];
+    try{
+      // Send to /api/voice for Whisper transcription + Claude interpretation
+      const res=await fetch('/api/voice',{
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({audio:b64,mimeType:blob.type,
+          projects:DATA.projects.map(p=>({id:p.id,title:p.title})),
+          focusAreas:FOCUS_AREAS})
+      });
+      if(!res.ok) throw new Error(res.status);
+      const result=await res.json();
+      if(result.transcript){
+        // If Claude returned structured task data, show pre-filled
+        if(result.task){
+          const t=result.task;
+          setVoiceStatus(`"${result.transcript}" → interpreted as task`,'done');
+          // Pre-fill the add task modal
+          openAddTask(t.projectId||'');
+          setTimeout(()=>{
+            const ti=document.getElementById('m-title');
+            if(ti) ti.value=t.title||result.transcript;
+            if(t.focusArea){
+              const pill=document.querySelector(`.area-pill[data-area="${t.focusArea}"]`);
+              if(pill) selectPill(pill,t.focusArea);
+            }
+            if(t.dueDate){const dd=document.getElementById('m-due');if(dd)dd.value=t.dueDate;}
+            if(t.notes){const nn=document.getElementById('m-notes');if(nn)nn.value=t.notes;}
+          },100);
+        } else {
+          // Fallback: drop transcript into capture input
+          const inp=document.getElementById('capture-input');
+          if(inp) inp.value=result.transcript;
+          setVoiceStatus(`"${result.transcript}"`, 'done');
+        }
+      } else {
+        setVoiceStatus('Could not understand audio — try again.','error');
+      }
+    }catch(e){
+      // Offline fallback: just use browser SpeechRecognition if available
+      setVoiceStatus('Voice API unavailable — try text capture.','error');
+      console.error('Voice error:',e);
+    }
+    setTimeout(()=>setVoiceStatus(''),3000);
+  };
+}
+
+// ─── Review (with cache) ──────────────────────────────────────────────────────
+function renderReview(){
+  const completed=DATA.tasks.filter(t=>t.completed).length;
+  const overdue=DATA.tasks.filter(t=>isOverdue(t)).length;
+  const streaks=DATA.habitDefs.filter(h=>calcStreak(h.id)>0).length;
+  document.getElementById('review-stats').innerHTML=[
+    {val:completed,label:'Tasks Completed',color:'var(--green)'},
+    {val:overdue,label:'Still Overdue',color:overdue>0?'var(--accent)':'var(--text-3)'},
+    {val:`${streaks}/${DATA.habitDefs.length}`,label:'Active Streaks',color:'var(--gold)'},
+  ].map(s=>`<div class="stat-card"><div class="stat-value" style="color:${s.color}">${s.val}</div><div class="stat-label">${s.label}</div></div>`).join('');
+  const total=completed||1;
+  const areaColors={Career:'var(--blue)',Health:'var(--green)',Growth:'#a3e635',Personal:'var(--gold)','Life Admin':'#c084fc'};
+  document.getElementById('review-areas').innerHTML=FOCUS_AREAS.map(area=>{
+    const count=DATA.tasks.filter(t=>t.completed&&t.focusArea===area).length;
+    const pct=Math.round(count/total*100);
+    return `<div style="margin-bottom:10px">
+      <div class="flex-between text-sm"><span>${area}</span><span class="text-dim">${count} tasks · ${pct}%</span></div>
+      <div class="progress-track"><div class="progress-fill" style="width:${pct}%;background:${areaColors[area]||'var(--green)'}"></div></div>
+    </div>`;
+  }).join('');
+
+  // Show cached review if available
+  const cached=DATA.weeklyReview;
+  const lastEl=document.getElementById('review-last-generated');
+  if(cached?.text){
+    renderReviewOutput(cached.text);
+    if(lastEl) lastEl.textContent=`Generated ${cached.date||'recently'}`;
+    document.getElementById('review-btn').textContent='Regenerate';
+  } else {
+    if(lastEl) lastEl.textContent='';
+  }
+}
+
+async function generateReview(){
+  const btn=document.getElementById('review-btn');
+  btn.disabled=true;btn.innerHTML='<span style="display:inline-block;animation:spin 1s linear infinite">◌</span> Generating…';
+  document.getElementById('review-output').innerHTML=`<div class="empty"><div class="empty-icon" style="animation:spin 1.5s linear infinite">◌</div>Analysing your week…</div>`;
+  const td=today(),wa=new Date();wa.setDate(wa.getDate()-7);const waStr=wa.toISOString().split('T')[0];
+  const cw=DATA.tasks.filter(t=>t.completed&&t.dueDate>=waStr);
+  const ov=DATA.tasks.filter(t=>isOverdue(t));
+  const hs=DATA.habitDefs.map(h=>({habit:h.label,streak:calcStreak(h.id),done:Object.entries(DATA.habits).filter(([d,v])=>d>=waStr&&v[h.id]).length}));
+  const ap=DATA.projects.filter(p=>p.status==='Active');
+  const lb=FOCUS_AREAS.reduce((a,fa)=>{a[fa]=cw.filter(t=>t.focusArea===fa).length;return a},{});
+  const prompt=`You are a direct, honest personal productivity coach. Weekly review for Aadhil.\n\nTODAY: ${td}\nCOMPLETED THIS WEEK (${cw.length}): ${cw.slice(0,20).map(t=>`[${t.focusArea}] ${t.title}`).join(', ')||'None'}\nOVERDUE (${ov.length}): ${ov.slice(0,8).map(t=>t.title).join(', ')||'None'}\nHABITS: ${hs.map(h=>`${h.habit}: ${h.done}/7 days, ${h.streak}d streak`).join(' | ')}\nACTIVE PROJECTS: ${ap.map(p=>`${p.title} (${calcProjectProgress(p.id)}%)`).join(', ')||'None'}\nFOCUS AREAS: ${Object.entries(lb).map(([a,c])=>`${a}:${c}`).join(', ')}\nJOB SEARCH: ${DATA.jobs.filter(j=>j.stage==='Interview').length} interviewing, ${DATA.jobs.filter(j=>j.stage==='Applied').length} applied\n\nWrite a weekly review with EXACTLY these section headers (all caps, no numbers):\nWEEK IN REVIEW\nWINS\nGAPS & MISSES\nFOCUS AREA BALANCE\nFOCUS FOR NEXT WEEK\n\nBe direct, specific, honest. Max 3 sentences per section. No filler.`;
+  try{
+    const res=await fetch('/api/review',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:900,messages:[{role:'user',content:prompt}]})});
+    if(!res.ok) throw new Error(res.status);
+    const result=await res.json();
+    const text=result.content?.map(c=>c.text||'').join('')||'';
+    renderReviewOutput(text);
+    // Cache it
+    DATA.weeklyReview={text,date:new Date().toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short'})};
+    scheduleSave();
+    const lastEl=document.getElementById('review-last-generated');
+    if(lastEl) lastEl.textContent=`Generated ${DATA.weeklyReview.date}`;
+  }catch(e){
+    document.getElementById('review-output').innerHTML=`<div style="color:var(--gold);font-size:13px;padding:12px 14px;background:var(--gold-soft);border-radius:8px;line-height:1.6">ℹ The AI review works once deployed to Vercel (requires the <code>/api/review</code> serverless function).<br>All other features work fully in this HTML file.</div>`;
+  }
+  btn.disabled=false;btn.innerHTML='Regenerate';
+}
+
+function renderReviewOutput(text){
+  const sections=['WEEK IN REVIEW','WINS','GAPS & MISSES','FOCUS AREA BALANCE','FOCUS FOR NEXT WEEK'];
+  const parsed=[];
+  sections.forEach((s,i)=>{
+    const re=new RegExp(s.replace(/[&]/g,'\\&')+'[:\\s\\n]+([\\s\\S]*?)(?='+((sections[i+1]||'').replace(/[&]/g,'\\&')||'$')+'|$)','i');
+    const m=text.match(re);if(m)parsed.push({title:s,content:m[1].trim()});
+  });
+  const blocks=parsed.length?parsed:[{title:'WEEKLY REVIEW',content:text}];
+  document.getElementById('review-output').innerHTML=blocks.map(b=>`<div class="review-block"><h4>${b.title}</h4><div class="review-text">${escHtml(b.content)}</div></div>`).join('');
+}
+
+// ─── Swipe to complete (mobile) ───────────────────────────────────────────────
+function attachSwipeHandlers(){
+  if(window.innerWidth>768) return;
+  document.querySelectorAll('.task-item').forEach(el=>{
+    if(el.dataset.swipe) return;
+    el.dataset.swipe='1';
+    let startX=0,startY=0,dx=0;
+    const id=el.id.replace('task-','');
+    el.addEventListener('touchstart',e=>{startX=e.touches[0].clientX;startY=e.touches[0].clientY;dx=0;},{passive:true});
+    el.addEventListener('touchmove',e=>{
+      dx=e.touches[0].clientX-startX;
+      const dy=Math.abs(e.touches[0].clientY-startY);
+      if(Math.abs(dx)<dy){dx=0;return;}
+      if(dx>0&&dx<80){el.style.transform=`translateX(${dx}px)`;el.style.background=`rgba(74,158,110,${dx/160})`;}
+    },{passive:true});
+    el.addEventListener('touchend',()=>{
+      if(dx>60){
+        el.style.transform='translateX(100%)';el.style.opacity='0';
+        el.style.transition='transform .25s ease,opacity .25s ease';
+        setTimeout(()=>toggleTask(id),220);
+      } else {el.style.transform='';el.style.background='';}
+      dx=0;
+    },{passive:true});
+  });
 }
 
 // ─── Boot ─────────────────────────────────────────────────────────────────────

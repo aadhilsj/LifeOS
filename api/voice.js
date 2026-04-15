@@ -75,7 +75,7 @@ RULES:
 - title: concise, starts with action verb
 - focusArea: shopping/bills → "Life Admin", work → "Career", health/gym → "Health", learning → "Growth", else → "Personal"
 - dueDate: YYYY-MM-DD only, or null
-- projectId: exact id from list above, or null
+- projectId: ONLY assign if the user explicitly names a project (e.g. "for Moolah League"). Do NOT infer project from topic or keywords. Default is null.
 
 Respond ONLY with a JSON array, no markdown:
 [{"title":"...","focusArea":"...","dueDate":null,"projectId":null,"notes":null}]`;

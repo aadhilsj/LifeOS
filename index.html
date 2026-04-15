@@ -524,7 +524,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;heigh
         <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></span>
         <span class="nav-label">Projects</span>
       </div>
-      <div class="nav-item" data-page="jobs" onclick="navigate('projects');switchHub('opportunities')" style="cursor:pointer">
+      <div class="nav-item" data-page="jobs" onclick="navigate('projects');setTimeout(()=>switchHub('opportunities'),50)" style="cursor:pointer">
         <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/><path d="M3.05 11a9 9 0 1 0 .5-2.5"/></svg></span>
         <span class="nav-label">Opportunities</span>
       </div>
@@ -541,7 +541,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;heigh
         <span class="nav-label">Quick Capture</span>
         <span class="nav-badge" id="capture-badge" style="display:none">0</span>
       </div>
-      <div class="nav-item" data-page="review-link" onclick="navigate('projects');switchHub('review')" style="cursor:pointer">
+      <div class="nav-item" data-page="review-link" onclick="navigate('projects');setTimeout(()=>switchHub('review'),50)" style="cursor:pointer">
         <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg></span>
         <span class="nav-label">Weekly Review</span>
       </div>
@@ -597,7 +597,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;heigh
         <div class="stat-row" id="home-stats"></div>
         <div id="home-context-bar"></div>
         <div class="capture-nudge mb14" id="home-capture-nudge" style="display:none" onclick="navigate('capture')"></div>
-        <div class="review-nudge" id="home-review-nudge" style="display:none" onclick="navigate('projects');switchHub('review')"></div>
+        <div class="review-nudge" id="home-review-nudge" style="display:none" onclick="navigate('projects');setTimeout(()=>switchHub('review'),50)"></div>
         <div class="grid-2" style="gap:14px">
           <div>
             <div class="dtn-card" id="home-dtn-card">
@@ -968,7 +968,7 @@ function renderAll(){renderPage(currentPage);updateBadges();requestAnimationFram
 function renderPage(p){
   if(p==='home')     renderHome();
   if(p==='tasks')    renderTasks();
-  if(p==='projects') { renderProjects(); if(currentHub!=='projects') switchHub(currentHub); }
+  if(p==='projects') renderProjects();
   if(p==='habits')   renderHabits();
   if(p==='capture')  renderCapture();
 }

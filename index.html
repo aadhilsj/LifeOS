@@ -399,6 +399,48 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;heigh
   transition:transform var(--transition);font-family:var(--font-sans)}
 .fab:active{transform:scale(.92)}
 
+/* ── Home command bar ── */
+.command-bar{
+  background:linear-gradient(135deg,#13151e,#0f1118);
+  border:1px solid var(--glass-border);border-radius:var(--radius);
+  padding:16px 18px;margin-bottom:16px;
+  box-shadow:var(--shadow-sm);
+  backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+}
+.command-bar-label{font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--text-3);margin-bottom:10px}
+.command-bar-input-row{display:flex;gap:8px;align-items:center}
+.command-bar-input{
+  flex:1;background:#ffffff08;border:1px solid var(--glass-border);
+  border-radius:var(--radius-sm);color:var(--text);font-family:var(--font-sans);
+  font-size:14px;padding:10px 14px;outline:none;
+  transition:border-color var(--transition),background var(--transition);
+}
+.command-bar-input:focus{border-color:#ffffff25;background:#ffffff0d}
+.command-bar-input::placeholder{color:var(--text-3)}
+.command-bar-hint{font-size:10.5px;color:var(--text-3);margin-top:8px}
+.command-bar-hint span{color:var(--text-2)}
+
+/* ── Opportunity stage badges ── */
+.stage-exploring{background:var(--surface2);color:var(--text-3);border:1px solid var(--border)}
+.stage-contacted{background:#1e3a5f20;color:#7cb9e8;border:1px solid #7cb9e818}
+.stage-in-progress{background:var(--gold-soft);color:var(--gold);border:1px solid #c9a84c18}
+.stage-won{background:var(--green-soft);color:var(--green);border:1px solid #4a9e6e18}
+.stage-dropped{background:#c8392b12;color:#e57373;border:1px solid #c8392b20}
+
+/* ── Dismissed task state ── */
+.task-item.dismissed{opacity:.45}
+.task-item.dismissed .task-title-text{text-decoration:line-through;color:var(--text-3)}
+.dismiss-btn{cursor:pointer;font-size:11px;color:var(--text-3);padding:3px 5px;border-radius:4px;
+  transition:color var(--transition);background:none;border:none;font-family:inherit;line-height:1}
+.dismiss-btn:hover{color:#e57373}
+
+/* ── Projects page tabs (mobile hub) ── */
+.page-tabs{display:flex;gap:2px;background:var(--surface);padding:3px;border-radius:10px;margin-bottom:16px}
+.page-tab{flex:1;padding:7px 8px;text-align:center;font-size:12px;font-weight:500;color:var(--text-3);
+  border-radius:7px;cursor:pointer;transition:all var(--transition)}
+.page-tab:hover{color:var(--text-2)}
+.page-tab.active{background:var(--surface3);color:var(--text)}
+
 /* ── Responsive ── */
 @media(max-width:768px){
   :root{--sidebar:0px}
@@ -476,9 +518,9 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;heigh
         <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></span>
         <span class="nav-label">Projects</span>
       </div>
-      <div class="nav-item" data-page="jobs">
-        <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/><line x1="12" y1="12" x2="12" y2="12.01"/><path d="M2 12.5s4 2.5 10 2.5 10-2.5 10-2.5"/></svg></span>
-        <span class="nav-label">Job Tracker</span>
+      <div class="nav-item" data-page="jobs" onclick="navigate('projects');switchHub('opportunities')" style="cursor:pointer">
+        <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/><path d="M3.05 11a9 9 0 1 0 .5-2.5"/></svg></span>
+        <span class="nav-label">Opportunities</span>
       </div>
       <div class="nav-item" data-page="habits">
         <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg></span>
@@ -493,7 +535,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;heigh
         <span class="nav-label">Quick Capture</span>
         <span class="nav-badge" id="capture-badge" style="display:none">0</span>
       </div>
-      <div class="nav-item" data-page="review">
+      <div class="nav-item" data-page="review-link" onclick="navigate('projects');switchHub('review')" style="cursor:pointer">
         <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg></span>
         <span class="nav-label">Weekly Review</span>
       </div>
@@ -526,6 +568,26 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;heigh
 
       <!-- HOME -->
       <div class="page active" id="page-home">
+        <!-- Command Bar -->
+        <div class="command-bar">
+          <div class="command-bar-label">What needs to happen today?</div>
+          <div class="command-bar-input-row">
+            <input class="command-bar-input" id="command-input"
+              placeholder="e.g. Call dentist, pay rent, gym tomorrow…"
+              onkeydown="if(event.key==='Enter')submitCommand()"/>
+            <button class="voice-btn" id="home-voice-btn" onclick="toggleHomeVoice()" title="Voice input">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="9" y="2" width="6" height="11" rx="3"/>
+                <path d="M5 10a7 7 0 0 0 14 0"/>
+                <line x1="12" y1="19" x2="12" y2="22"/>
+                <line x1="8" y1="22" x2="16" y2="22"/>
+              </svg>
+            </button>
+            <button class="btn btn-primary btn-sm" onclick="submitCommand()">Go</button>
+          </div>
+          <div class="voice-status" id="home-voice-status"></div>
+          <div class="command-bar-hint">Speak or type naturally — <span>Kairo will sort it into tasks</span></div>
+        </div>
         <div class="stat-row" id="home-stats"></div>
         <div id="home-context-bar"></div>
         <div class="capture-nudge mb14" id="home-capture-nudge" style="display:none" onclick="navigate('capture')"></div>
@@ -578,19 +640,49 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;heigh
         </div>
       </div>
 
-      <!-- PROJECTS -->
+      <!-- PROJECTS HUB (Projects + Opportunities + Review — all accessible on mobile) -->
       <div class="page" id="page-projects">
-        <div id="projects-list-view"><div class="grid-2" id="projects-grid"></div></div>
-        <div id="project-detail-view" style="display:none"></div>
-      </div>
-
-      <!-- JOBS -->
-      <div class="page" id="page-jobs">
-        <div class="card mb20">
-          <div class="card-title">Pipeline Overview</div>
-          <div class="flex" id="jobs-pipeline"></div>
+        <div class="page-tabs" id="projects-hub-tabs">
+          <div class="page-tab active" data-hub="projects" onclick="switchHub('projects')">Projects</div>
+          <div class="page-tab" data-hub="opportunities" onclick="switchHub('opportunities')">Opportunities</div>
+          <div class="page-tab" data-hub="review" onclick="switchHub('review')">Review</div>
         </div>
-        <div id="jobs-list"></div>
+
+        <!-- Projects sub-view -->
+        <div id="hub-projects">
+          <div id="projects-list-view"><div class="grid-2" id="projects-grid"></div></div>
+          <div id="project-detail-view" style="display:none"></div>
+        </div>
+
+        <!-- Opportunities sub-view -->
+        <div id="hub-opportunities" style="display:none">
+          <div class="card mb20">
+            <div class="card-title">Pipeline Overview</div>
+            <div class="flex" id="jobs-pipeline"></div>
+          </div>
+          <div id="jobs-list"></div>
+        </div>
+
+        <!-- Review sub-view -->
+        <div id="hub-review" style="display:none">
+          <div class="grid-3 mb16" id="review-stats"></div>
+          <div class="card mb14">
+            <div class="card-title">Focus Area Distribution</div>
+            <div id="review-areas"></div>
+          </div>
+          <div class="card">
+            <div class="flex-between mb14">
+              <div>
+                <div class="card-title" style="margin:0">AI Weekly Review</div>
+                <div class="text-xs text-dim mt4" id="review-last-generated"></div>
+              </div>
+              <button class="btn btn-primary btn-sm" id="review-btn" onclick="generateReview()">Generate Review</button>
+            </div>
+            <div id="review-output">
+              <div class="empty"><div class="empty-icon">🤔</div>Click "Generate Review" for an AI-powered weekly reflection.</div>
+            </div>
+          </div>
+        </div>
       </div>
 
       <!-- HABITS -->
@@ -619,27 +711,6 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;heigh
         <div class="card">
           <div class="card-title" id="capture-inbox-title">Inbox</div>
           <div id="capture-list"></div>
-        </div>
-      </div>
-
-      <!-- REVIEW -->
-      <div class="page" id="page-review">
-        <div class="grid-3 mb16" id="review-stats"></div>
-        <div class="card mb14">
-          <div class="card-title">Focus Area Distribution</div>
-          <div id="review-areas"></div>
-        </div>
-        <div class="card">
-          <div class="flex-between mb14">
-            <div>
-              <div class="card-title" style="margin:0">AI Weekly Review</div>
-              <div class="text-xs text-dim mt4" id="review-last-generated"></div>
-            </div>
-            <button class="btn btn-primary btn-sm" id="review-btn" onclick="generateReview()">Generate Review</button>
-          </div>
-          <div id="review-output">
-            <div class="empty"><div class="empty-icon">🤔</div>Click "Generate Review" for an AI-powered weekly reflection.</div>
-          </div>
         </div>
       </div>
 
@@ -717,13 +788,15 @@ let DATA = {
 let currentPage='home', taskFilter='All', syncTimer=null, projectDetailId=null;
 
 // ─── Constants ────────────────────────────────────────────────────────────────
-const FOCUS_AREAS = ['Career','Health','Personal','Life Admin','Growth'];
-const JOB_STAGES  = ['Not Applied','Applied','Interview','Offer','Rejected'];
-const PROJ_STATUS = ['Active','Paused','Completed'];
+const FOCUS_AREAS  = ['Career','Health','Personal','Life Admin','Growth'];
+const OPP_STAGES   = ['Exploring','Contacted','In Progress','Won','Dropped'];
+const OPP_TYPES    = ['Job','Business','Personal','Other'];
+const JOB_STAGES   = OPP_STAGES; // backward compat alias
+const PROJ_STATUS  = ['Active','Paused','Completed'];
 
 const uid       = () => Math.random().toString(36).slice(2,9);
 const today     = () => new Date().toISOString().split('T')[0];
-const isOverdue = t  => !t.completed && t.dueDate && t.dueDate < today();
+const isOverdue = t  => !t.completed && !t.dismissed && t.dueDate && t.dueDate < today();
 
 // Migrate old category/lifeArea → focusArea
 function migrateFocusArea(t) {
@@ -754,8 +827,9 @@ function calcProjectProgress(pid) {
 }
 
 const focusAreaClass = a => ({'Career':'badge-career','Health':'badge-health','Personal':'badge-personal','Life Admin':'badge-life-admin','Growth':'badge-growth'}[a]||'badge-other');
-const stageClass = s => ({'Not Applied':'stage-not-applied',Applied:'stage-applied',Interview:'stage-interview',Offer:'stage-offer',Rejected:'stage-rejected'}[s]||'stage-not-applied');
-const statusClass = s => ({Active:'status-active',Paused:'status-paused',Completed:'status-completed'}[s]||'status-active');
+const oppStageClass  = s => ({'Exploring':'stage-exploring','Contacted':'stage-contacted','In Progress':'stage-in-progress','Won':'stage-won','Dropped':'stage-dropped'}[s]||'stage-exploring');
+const stageClass     = s => oppStageClass(s); // alias
+const statusClass    = s => ({Active:'status-active',Paused:'status-paused',Completed:'status-completed'}[s]||'status-active');
 
 function getGreeting() {
   const h=new Date().getHours();
@@ -833,33 +907,61 @@ function navigate(page) {
   document.querySelectorAll('.nav-item').forEach(el=>el.classList.toggle('active',el.dataset.page===page));
   document.querySelectorAll('.bottom-nav-item').forEach(el=>el.classList.toggle('active',el.dataset.page===page));
   document.querySelectorAll('.page').forEach(el=>el.classList.toggle('active',el.id==='page-'+page));
-  const meta={home:['Home',''],tasks:['Tasks','Manage your to-dos'],projects:['Projects','Track your initiatives'],
-    jobs:['Job Tracker','Manage opportunities'],habits:['Habits','Build consistency'],
-    capture:['Quick Capture','Dump ideas, sort later'],review:['Weekly Review','Reflect and reset']};
+  const meta={
+    home:    ['Home',''],
+    tasks:   ['Tasks','Manage your to-dos'],
+    projects:['Projects','Track your initiatives'],
+    habits:  ['Habits','Build consistency'],
+    capture: ['Quick Capture','Dump ideas, sort later'],
+  };
   const [title,sub]=meta[page]||['Kairo',''];
   document.getElementById('page-title').textContent=page==='home'?getGreeting():title;
   document.getElementById('page-sub').textContent=page==='home'?todayLong():sub;
   document.getElementById('bc-current').textContent=title;
   const ta=document.getElementById('topbar-actions'); ta.innerHTML='';
   if(page==='tasks')    ta.innerHTML=`<button class="btn btn-primary btn-sm" onclick="openAddTask()">+ New Task</button>`;
-  if(page==='projects') ta.innerHTML=`<button class="btn btn-primary btn-sm" onclick="openAddProject()">+ New Project</button>`;
-  if(page==='jobs')     ta.innerHTML=`<button class="btn btn-primary btn-sm" onclick="openAddJob()">+ Add Opportunity</button>`;
+  if(page==='projects') ta.innerHTML=`<button class="btn btn-primary btn-sm" onclick="openAddProjectOrOpp()">+ New</button>`;
   if(page==='habits')   ta.innerHTML=`<button class="btn btn-primary btn-sm" onclick="openAddHabit()">+ New Habit</button>`;
   if(page!=='projects'){projectDetailId=null;document.getElementById('projects-list-view').style.display='';document.getElementById('project-detail-view').style.display='none';}
   const fab=document.getElementById('fab');
   if(fab){
-    const showFab={home:true,tasks:true,projects:true,habits:false,capture:false,jobs:false,review:false};
+    const showFab={home:true,tasks:true,projects:true,habits:false,capture:false};
     fab.style.display=showFab[page]?'flex':'none';
-    fab.onclick=page==='projects'?()=>openAddProject():()=>openAddTask();
+    fab.onclick=page==='projects'?()=>openAddProjectOrOpp():()=>openAddTask();
   }
   renderPage(page);
 }
 
+let currentHub = 'projects'; // tracks which sub-view is active in the projects hub
+
+function switchHub(hub) {
+  currentHub = hub;
+  ['projects','opportunities','review'].forEach(h => {
+    const el = document.getElementById('hub-'+h);
+    if(el) el.style.display = h===hub ? '' : 'none';
+  });
+  document.querySelectorAll('.page-tab').forEach(t =>
+    t.classList.toggle('active', t.dataset.hub === hub));
+  // Update topbar action button
+  const ta = document.getElementById('topbar-actions');
+  if(ta) {
+    if(hub==='projects')      ta.innerHTML=`<button class="btn btn-primary btn-sm" onclick="openAddProject()">+ New Project</button>`;
+    else if(hub==='opportunities') ta.innerHTML=`<button class="btn btn-primary btn-sm" onclick="openAddJob()">+ Add Opportunity</button>`;
+    else                      ta.innerHTML='';
+  }
+  // Render the active sub-view
+  if(hub==='projects')      renderProjects();
+  if(hub==='opportunities') renderJobs();
+  if(hub==='review')        renderReview();
+}
+
 function renderAll(){renderPage(currentPage);updateBadges();requestAnimationFrame(attachSwipeHandlers);}
 function renderPage(p){
-  if(p==='home')renderHome();if(p==='tasks')renderTasks();if(p==='projects')renderProjects();
-  if(p==='jobs')renderJobs();if(p==='habits')renderHabits();if(p==='capture')renderCapture();
-  if(p==='review')renderReview();
+  if(p==='home')     renderHome();
+  if(p==='tasks')    renderTasks();
+  if(p==='projects') { renderProjects(); if(currentHub!=='projects') switchHub(currentHub); }
+  if(p==='habits')   renderHabits();
+  if(p==='capture')  renderCapture();
 }
 
 function updateBadges(){
@@ -888,7 +990,7 @@ function renderTasks(){
     if(pf&&t.projectId!==pf) return false;
     return true;
   });
-  const pending=filtered.filter(t=>!t.completed);
+  const pending=filtered.filter(t=>!t.completed&&!t.dismissed);
   const done=filtered.filter(t=>t.completed);
   pending.sort((a,b)=>{
     const ao=isOverdue(a)?0:1,bo=isOverdue(b)?0:1;
@@ -922,8 +1024,9 @@ function taskHTML(task,isFocus){
         <span class="task-title-text${task.completed?' done':''}" onclick="toggleExpand('${task.id}')">${escHtml(task.title)}</span>
         <div class="task-actions flex-gap-sm">
           <button class="focus-btn${isFocus?' active':''}" onclick="toggleFocus('${task.id}')" title="Toggle focus">★</button>
+          ${overdue?`<button class="dismiss-btn" onclick="dismissTask('${task.id}')" title="Dismiss">✕</button>`:''}
           <button class="btn-icon" onclick="openEditTask('${task.id}')" title="Edit">✎</button>
-          <button class="btn-icon" onclick="deleteTask('${task.id}')" title="Delete" style="color:var(--accent)">✕</button>
+          <button class="btn-icon" onclick="deleteTask('${task.id}')" title="Delete" style="color:var(--accent)">🗑</button>
         </div>
       </div>
       <div class="task-meta">
@@ -984,6 +1087,7 @@ function projectTaskHTML(task){
 function toggleExpand(id){const el=document.getElementById('expand-'+id);if(el)el.style.display=el.style.display==='none'?'':'none';}
 function toggleTask(id){const td=today();DATA.tasks=DATA.tasks.map(t=>t.id===id?{...t,completed:!t.completed,completedDate:!t.completed?td:null}:t);scheduleSave();renderAll();}
 function deleteTask(id){DATA.tasks=DATA.tasks.filter(t=>t.id!==id);DATA.focusTasks=DATA.focusTasks.filter(f=>f!==id);scheduleSave();renderAll();toast('Task deleted','info');}
+function dismissTask(id){DATA.tasks=DATA.tasks.map(t=>t.id===id?{...t,dismissed:true,dismissedDate:today()}:t);DATA.focusTasks=DATA.focusTasks.filter(f=>f!==id);scheduleSave();renderAll();toast('Task dismissed','info');}
 function toggleFocus(id){DATA.focusTasks=DATA.focusTasks.includes(id)?DATA.focusTasks.filter(f=>f!==id):[...DATA.focusTasks,id];scheduleSave();renderAll();}
 function addSubtask(taskId){
   const inp=document.getElementById('sti-'+taskId);
@@ -1087,32 +1191,54 @@ function updateProjectStatus(id,status){DATA.projects=DATA.projects.map(p=>p.id=
 function editProjectNotes(id){const p=DATA.projects.find(x=>x.id===id);if(!p) return;const notes=prompt('Project notes:',p.notes||'');if(notes===null) return;DATA.projects=DATA.projects.map(x=>x.id===id?{...x,notes,lastUpdated:today()}:x);scheduleSave();renderProjectDetail(id);}
 function deleteProject(id){if(!confirm('Delete this project?')) return;DATA.projects=DATA.projects.filter(p=>p.id!==id);scheduleSave();renderProjects();toast('Project deleted','info');}
 
-// ─── Jobs ─────────────────────────────────────────────────────────────────────
+// ─── Opportunities (formerly Job Tracker) ────────────────────────────────────
+// Migrate old job data: company→name, role→description, old stages→new stages
+function migrateJob(j) {
+  const stageMap={'Not Applied':'Exploring',Applied:'Contacted',Interview:'In Progress',Offer:'Won',Rejected:'Dropped'};
+  return {
+    ...j,
+    name:      j.name      || j.company || '',
+    description: j.description || j.role || '',
+    type:      j.type      || 'Job',
+    stage:     stageMap[j.stage] || j.stage || 'Exploring',
+  };
+}
+
 function renderJobs(){
-  const groups=JOB_STAGES.reduce((a,s)=>{a[s]=DATA.jobs.filter(j=>j.stage===s);return a},{});
-  document.getElementById('jobs-pipeline').innerHTML=JOB_STAGES.filter(s=>s!=='Rejected').map(s=>`
-    <div class="pipeline-stage">
-      <div class="pipeline-count" style="color:${groups[s].length?'var(--accent)':'var(--text-3)'}">${groups[s].length}</div>
-      <div class="pipeline-label">${s}</div>
-    </div>`).join('');
-  document.getElementById('jobs-list').innerHTML=JOB_STAGES.map(stage=>{
-    const jobs=groups[stage];if(!jobs.length) return '';
-    return `<div style="margin-bottom:18px">
-      <div class="text-xs text-dim mb8" style="letter-spacing:.09em;text-transform:uppercase;font-weight:600">${stage}</div>
-      ${jobs.map(j=>`<div class="card mb10">
-        <div class="flex-between">
-          <div><div style="font-weight:600;font-size:14px">${escHtml(j.company)}</div><div class="text-sm text-muted mt4">${escHtml(j.role)}</div></div>
-          <div class="flex-gap">
-            <span class="stage ${stageClass(j.stage)}">${j.stage}</span>
-            <button class="btn btn-ghost btn-sm" onclick="openEditJob('${j.id}')">Edit</button>
-            <button class="btn btn-danger btn-sm" onclick="deleteJob('${j.id}')">✕</button>
-          </div>
-        </div>
-        ${j.url?`<div class="mt8"><a href="${escHtml(j.url)}" target="_blank" rel="noreferrer" class="text-sm">🔗 Open Application</a></div>`:''}
-        ${j.deadline?`<div class="text-xs mt4" style="color:var(--gold)">⏰ Deadline: ${j.deadline}</div>`:''}
-        ${j.notes?`<div class="note-block">${escHtml(j.notes)}</div>`:''}
-      </div>`).join('')}
-    </div>`;
+  DATA.jobs = DATA.jobs.map(migrateJob);
+  const groups = OPP_STAGES.reduce((a,s)=>{a[s]=DATA.jobs.filter(j=>j.stage===s);return a},{});
+
+  document.getElementById('jobs-pipeline').innerHTML = OPP_STAGES
+    .filter(s=>s!=='Dropped').map(s=>`
+      <div class="pipeline-stage">
+        <div class="pipeline-count" style="color:${groups[s].length?'var(--accent)':'var(--text-3)'}">${groups[s].length}</div>
+        <div class="pipeline-label">${s}</div>
+      </div>`).join('');
+
+  document.getElementById('jobs-list').innerHTML = OPP_STAGES.map(stage=>{
+    const opps = groups[stage]; if(!opps.length) return '';
+    return `
+      <div style="margin-bottom:18px">
+        <div class="text-xs text-dim mb8" style="letter-spacing:.09em;text-transform:uppercase;font-weight:600">${stage}</div>
+        ${opps.map(j=>`
+          <div class="card mb10">
+            <div class="flex-between">
+              <div>
+                <div style="font-weight:600;font-size:14px">${escHtml(j.name||j.company||'')}</div>
+                <div class="text-sm text-muted mt4">${escHtml(j.description||j.role||'')}</div>
+              </div>
+              <div class="flex-gap">
+                <span class="stage ${oppStageClass(j.stage)}">${j.stage}</span>
+                <span class="badge badge-other" style="font-size:9px">${escHtml(j.type||'Job')}</span>
+                <button class="btn btn-ghost btn-sm" onclick="openEditJob('${j.id}')">Edit</button>
+                <button class="btn btn-danger btn-sm" onclick="deleteJob('${j.id}')">✕</button>
+              </div>
+            </div>
+            ${j.url?`<div class="mt8"><a href="${escHtml(j.url)}" target="_blank" rel="noreferrer" class="text-sm">🔗 Link</a></div>`:''}
+            ${j.deadline?`<div class="text-xs mt4" style="color:var(--gold)">⏰ Deadline: ${j.deadline}</div>`:''}
+            ${j.notes?`<div class="note-block">${escHtml(j.notes)}</div>`:''}
+          </div>`).join('')}
+      </div>`;
   }).join('');
 }
 function deleteJob(id){DATA.jobs=DATA.jobs.filter(j=>j.id!==id);scheduleSave();renderJobs();toast('Removed','info');}
@@ -1281,16 +1407,23 @@ function saveProject(){
   closeModal();scheduleSave();renderAll();toast('Project created','success');
 }
 
+function openAddProjectOrOpp(){
+  // Smart: open project or opportunity based on current hub
+  if(currentHub==='opportunities') openAddJob();
+  else openAddProject();
+}
+
 function openAddJob(editId=null){
-  const j=editId?DATA.jobs.find(x=>x.id===editId):{};
+  const j=editId?migrateJob(DATA.jobs.find(x=>x.id===editId)||{}):({});
   openModal(`<h3>${editId?'Edit':'New'} Opportunity</h3>
     <div class="form-grid">
-      <div class="form-row"><label>Company</label><input class="input" id="m-jco" value="${escHtml(j.company||'')}" autofocus/></div>
-      <div class="form-row"><label>Role</label><input class="input" id="m-jrole" value="${escHtml(j.role||'')}"/></div>
+      <div class="form-row"><label>Name</label><input class="input" id="m-jco" value="${escHtml(j.name||j.company||'')}" placeholder="Google, Bali Trip, Local Bar…" autofocus/></div>
+      <div class="form-row"><label>Type</label><select class="input" id="m-jtype">${OPP_TYPES.map(t=>`<option${t===(j.type||'Job')?' selected':''}>${t}</option>`).join('')}</select></div>
     </div>
-    <div class="form-row"><label>Application URL</label><input class="input" id="m-jurl" value="${escHtml(j.url||'')}" placeholder="https://…"/></div>
+    <div class="form-row"><label>Description</label><input class="input" id="m-jrole" value="${escHtml(j.description||j.role||'')}" placeholder="Role, deal type, goal…"/></div>
+    <div class="form-row"><label>Link</label><input class="input" id="m-jurl" value="${escHtml(j.url||'')}" placeholder="https://…"/></div>
     <div class="form-grid">
-      <div class="form-row"><label>Stage</label><select class="input" id="m-jstage">${JOB_STAGES.map(s=>`<option${s===(j.stage||'Not Applied')?' selected':''}>${s}</option>`).join('')}</select></div>
+      <div class="form-row"><label>Stage</label><select class="input" id="m-jstage">${OPP_STAGES.map(s=>`<option${s===(j.stage||'Exploring')?' selected':''}>${s}</option>`).join('')}</select></div>
       <div class="form-row"><label>Deadline</label><input type="date" class="input" id="m-jdead" value="${j.deadline||''}"/></div>
     </div>
     <div class="form-row"><label>Notes</label><textarea class="input" id="m-jnotes">${escHtml(j.notes||'')}</textarea></div>
@@ -1301,10 +1434,19 @@ function openAddJob(editId=null){
 }
 function openEditJob(id){openAddJob(id);}
 function saveJob(editId=''){
-  const co=document.getElementById('m-jco')?.value?.trim();if(!co) return;
-  const job={id:editId||uid(),company:co,role:document.getElementById('m-jrole').value,url:document.getElementById('m-jurl').value,
-    stage:document.getElementById('m-jstage').value,deadline:document.getElementById('m-jdead').value,
-    notes:document.getElementById('m-jnotes').value,createdAt:today()};
+  const name=document.getElementById('m-jco')?.value?.trim();if(!name) return;
+  const job={
+    id:editId||uid(),
+    name, company:name, // keep company for backward compat
+    description:document.getElementById('m-jrole').value,
+    role:document.getElementById('m-jrole').value, // backward compat
+    type:document.getElementById('m-jtype').value,
+    url:document.getElementById('m-jurl').value,
+    stage:document.getElementById('m-jstage').value,
+    deadline:document.getElementById('m-jdead').value,
+    notes:document.getElementById('m-jnotes').value,
+    createdAt:today()
+  };
   if(editId) DATA.jobs=DATA.jobs.map(j=>j.id===editId?job:j);
   else DATA.jobs.unshift(job);
   closeModal();scheduleSave();renderAll();toast('Saved','success');
@@ -1370,6 +1512,156 @@ function getContextBar(){
 function formatDueLabel(dateStr){
   if(!dateStr) return '';
   return new Date(dateStr+'T12:00:00').toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short'});
+}
+
+// ─── Command bar (Home) ───────────────────────────────────────────────────────
+function submitCommand(){
+  const inp=document.getElementById('command-input');
+  const text=inp?.value?.trim();
+  if(!text) return;
+  inp.value='';
+
+  // Route to voice-style AI parsing if API available, else add as capture
+  sendToVoiceAPI(text, null /* no audio, text-only mode */);
+}
+
+// Shared processing for both home command bar and voice capture
+async function sendToVoiceAPI(text, audioB64, mimeType){
+  const isTextMode = !audioB64;
+  const statusEl   = isTextMode
+    ? document.getElementById('home-voice-status')
+    : document.getElementById('voice-status');
+
+  function setStatus(msg, cls=''){
+    if(statusEl){ statusEl.textContent=msg; statusEl.className='voice-status'+(cls?' '+cls:''); }
+  }
+
+  setStatus('Thinking…','processing');
+
+  try{
+    const body = isTextMode
+      ? {text, projects:DATA.projects.map(p=>({id:p.id,title:p.title})), focusAreas:FOCUS_AREAS}
+      : {audio:audioB64, mimeType, projects:DATA.projects.map(p=>({id:p.id,title:p.title})), focusAreas:FOCUS_AREAS};
+
+    const res = await fetch('/api/voice',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify(body)
+    });
+    if(!res.ok) throw new Error(res.status);
+    const result = await res.json();
+
+    const transcript = result.transcript || text || '';
+    let tasks = result.tasks||(result.task?[result.task]:[]);
+
+    // Client-side sanitisation
+    const ISO_RE=/^\d{4}-\d{2}-\d{2}$/;
+    const validIds=new Set(DATA.projects.map(p=>p.id));
+    tasks = tasks
+      .map(t=>({...t,
+        title:(t.title||'').trim(),
+        focusArea:FOCUS_AREAS.includes(t.focusArea)?t.focusArea:'Personal',
+        dueDate:typeof t.dueDate==='string'&&ISO_RE.test(t.dueDate)?t.dueDate:'',
+        projectId:validIds.has(t.projectId)?t.projectId:null,
+        notes:typeof t.notes==='string'&&t.notes.trim()?t.notes.trim():'',
+      }))
+      .filter(t=>t.title.length>0);
+
+    if(tasks.length===0||result.fallback){
+      // Drop to capture
+      const inp=document.getElementById('capture-input');
+      if(inp) inp.value=transcript;
+      setStatus('Added to capture inbox','info');
+      DATA.captures.unshift({id:uid(),text:transcript,createdAt:today()});
+      scheduleSave(); renderAll();
+      setTimeout(()=>setStatus(''),3000);
+      return;
+    }
+
+    if(tasks.length===1){
+      setStatus(`1 task ready — review before saving`,'done');
+      openAddTask(tasks[0].projectId||'');
+      setTimeout(()=>{
+        const ti=document.getElementById('m-title'); if(ti) ti.value=tasks[0].title;
+        if(tasks[0].focusArea){const pill=document.querySelector(`.area-pill[data-area="${tasks[0].focusArea}"]`);if(pill)selectPill(pill,tasks[0].focusArea);}
+        if(tasks[0].dueDate){const dd=document.getElementById('m-due');if(dd)dd.value=tasks[0].dueDate;}
+        if(tasks[0].notes){const nn=document.getElementById('m-notes');if(nn)nn.value=tasks[0].notes;}
+      },100);
+    } else {
+      const td=today();
+      const newIds=[];
+      tasks.forEach(t=>{
+        const id=uid(); newIds.push(id);
+        DATA.tasks.unshift({id,title:t.title,focusArea:t.focusArea||'Personal',
+          dueDate:t.dueDate||'',dueTime:'',projectId:t.projectId||null,
+          notes:t.notes||'',completed:false,completedDate:null,subtasks:[],createdAt:td});
+      });
+      scheduleSave(); renderAll();
+      setStatus(`${tasks.length} tasks added`,'done');
+
+      // Undo toast
+      clearTimeout(toastTimer);
+      const toastEl=document.getElementById('toast');
+      document.getElementById('toast-dot').className='toast-dot info';
+      document.getElementById('toast-msg').innerHTML=
+        `${tasks.length} tasks created &nbsp;<button onclick="undoVoiceTasks(${JSON.stringify(newIds)})" style="background:none;border:none;color:var(--gold);font-size:12px;cursor:pointer;font-family:inherit;font-weight:600;padding:0">Undo</button>`;
+      toastEl.style.display='flex'; toastEl.className='toast';
+      toastTimer=setTimeout(()=>{toastEl.classList.add('hide');setTimeout(()=>toastEl.style.display='none',250);},5000);
+      setTimeout(()=>setStatus(''),3000);
+    }
+  } catch(e){
+    console.error('Command error:',e);
+    // Graceful fallback — add raw text as capture
+    const inp=document.getElementById('capture-input');
+    if(inp) inp.value=text;
+    DATA.captures.unshift({id:uid(),text,createdAt:today()});
+    scheduleSave(); renderAll();
+    setStatus('Added to capture (AI unavailable)','info');
+    setTimeout(()=>setStatus(''),3000);
+  }
+}
+
+// Home page voice button — reuses the same recording infrastructure
+async function toggleHomeVoice(){
+  if(isRecording){ stopHomeRecording(); return; }
+  if(!navigator.mediaDevices?.getUserMedia){
+    const s=document.getElementById('home-voice-status');
+    if(s){s.textContent='Microphone not supported';s.className='voice-status error';}
+    return;
+  }
+  try{
+    const stream=await navigator.mediaDevices.getUserMedia({audio:true});
+    audioChunks=[];
+    mediaRecorder=new MediaRecorder(stream,{mimeType:MediaRecorder.isTypeSupported('audio/webm')?'audio/webm':'audio/mp4'});
+    mediaRecorder.ondataavailable=e=>{if(e.data.size>0)audioChunks.push(e.data);};
+    mediaRecorder.onstop=processHomeVoice;
+    mediaRecorder.start();
+    isRecording=true;
+    document.getElementById('home-voice-btn').classList.add('recording');
+    const s=document.getElementById('home-voice-status');
+    if(s){s.textContent='Listening… tap again to stop';s.className='voice-status active';}
+  }catch(e){
+    const s=document.getElementById('home-voice-status');
+    if(s){s.textContent='Microphone access denied';s.className='voice-status error';}
+  }
+}
+
+function stopHomeRecording(){
+  if(mediaRecorder&&mediaRecorder.state!=='inactive'){
+    mediaRecorder.stop();
+    mediaRecorder.stream.getTracks().forEach(t=>t.stop());
+  }
+  isRecording=false;
+  document.getElementById('home-voice-btn').classList.remove('recording');
+  const s=document.getElementById('home-voice-status');
+  if(s){s.textContent='Processing…';s.className='voice-status processing';}
+}
+
+async function processHomeVoice(){
+  const blob=new Blob(audioChunks,{type:audioChunks[0]?.type||'audio/webm'});
+  const reader=new FileReader();
+  reader.readAsDataURL(blob);
+  reader.onload=async()=>{ await sendToVoiceAPI(null, reader.result.split(',')[1], blob.type); };
 }
 
 // ─── Home ─────────────────────────────────────────────────────────────────────
@@ -1535,55 +1827,21 @@ function stopRecording(){
 
 async function processVoice(){
   const blob=new Blob(audioChunks,{type:audioChunks[0]?.type||'audio/webm'});
-  // Convert to base64
   const reader=new FileReader();
   reader.readAsDataURL(blob);
-  reader.onload=async()=>{
-    const b64=reader.result.split(',')[1];
-    try{
-      // Send to /api/voice for Whisper transcription + Claude interpretation
-      const res=await fetch('/api/voice',{
-        method:'POST',
-        headers:{'Content-Type':'application/json'},
-        body:JSON.stringify({audio:b64,mimeType:blob.type,
-          projects:DATA.projects.map(p=>({id:p.id,title:p.title})),
-          focusAreas:FOCUS_AREAS})
-      });
-      if(!res.ok) throw new Error(res.status);
-      const result=await res.json();
-      if(result.transcript){
-        // If Claude returned structured task data, show pre-filled
-        if(result.task){
-          const t=result.task;
-          setVoiceStatus(`"${result.transcript}" → interpreted as task`,'done');
-          // Pre-fill the add task modal
-          openAddTask(t.projectId||'');
-          setTimeout(()=>{
-            const ti=document.getElementById('m-title');
-            if(ti) ti.value=t.title||result.transcript;
-            if(t.focusArea){
-              const pill=document.querySelector(`.area-pill[data-area="${t.focusArea}"]`);
-              if(pill) selectPill(pill,t.focusArea);
-            }
-            if(t.dueDate){const dd=document.getElementById('m-due');if(dd)dd.value=t.dueDate;}
-            if(t.notes){const nn=document.getElementById('m-notes');if(nn)nn.value=t.notes;}
-          },100);
-        } else {
-          // Fallback: drop transcript into capture input
-          const inp=document.getElementById('capture-input');
-          if(inp) inp.value=result.transcript;
-          setVoiceStatus(`"${result.transcript}"`, 'done');
-        }
-      } else {
-        setVoiceStatus('Could not understand audio — try again.','error');
-      }
-    }catch(e){
-      // Offline fallback: just use browser SpeechRecognition if available
-      setVoiceStatus('Voice API unavailable — try text capture.','error');
-      console.error('Voice error:',e);
-    }
-    setTimeout(()=>setVoiceStatus(''),3000);
-  };
+  reader.onload=async()=>{ await sendToVoiceAPI(null, reader.result.split(',')[1], blob.type); };
+}
+
+function undoVoiceTasks(ids){
+  const idSet=new Set(ids);
+  DATA.tasks=DATA.tasks.filter(t=>!idSet.has(t.id));
+  scheduleSave();
+  renderAll();
+  // Dismiss toast
+  const toastEl=document.getElementById('toast');
+  toastEl.classList.add('hide');
+  setTimeout(()=>toastEl.style.display='none',250);
+  toast('Voice tasks removed','info');
 }
 
 // ─── Review (with cache) ──────────────────────────────────────────────────────

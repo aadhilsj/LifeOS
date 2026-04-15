@@ -23,7 +23,8 @@
   --green:#4a9e6e;--green-soft:#4a9e6e18;
   --blue:#4a7ec8;--blue-soft:#4a7ec818;
   --border:#ffffff0d;--border-active:#ffffff20;
-  --radius:14px;--radius-sm:8px;--sidebar:58px;
+  --radius:14px;--radius-sm:8px;
+  --sidebar:200px;
   --shadow:0 4px 24px rgba(0,0,0,.4);--shadow-sm:0 2px 12px rgba(0,0,0,.3);
   --font-serif:'Instrument Serif',Georgia,serif;
   --font-sans:'Geist',system-ui,sans-serif;
@@ -50,35 +51,36 @@ body{font-family:var(--font-sans);font-size:13.5px;color:var(--text);background:
   display:flex;flex-direction:column;height:100vh;overflow-y:auto;
   backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
 }
-.sidebar-brand{padding:16px 0;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:center}
+.sidebar-brand{padding:16px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
 .brand-icon{width:30px;height:30px;border-radius:8px;background:#0d1117;
   display:flex;align-items:center;justify-content:center;
   flex-shrink:0;overflow:hidden;border:1px solid #ffffff10}
 .brand-icon svg{width:30px;height:30px}
-.brand-text{display:none}
-.nav-section{padding:8px 6px 2px}
-.nav-section-label{display:none}
-.nav-item{display:flex;align-items:center;justify-content:center;padding:10px 6px;border-radius:var(--radius-sm);
+.brand-name{font-family:var(--font-serif);font-size:17px;color:var(--text);letter-spacing:-.2px}
+.nav-section{padding:10px 8px 2px}
+.nav-section-label{font-size:9.5px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--text-3);padding:4px 8px 6px}
+.nav-item{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:var(--radius-sm);
   cursor:pointer;color:var(--text-2);transition:all var(--transition);user-select:none;position:relative}
 .nav-item:hover{color:var(--text);background:var(--glass-hover)}
 .nav-item.active{color:var(--accent);background:var(--surface2)}
 .nav-item.active::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);
   width:2px;height:55%;background:var(--accent);border-radius:0 2px 2px 0}
-.nav-item span:not(.nav-icon):not(.nav-badge){display:none}
-.nav-icon{width:18px;height:18px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;opacity:.7}
+.nav-icon{width:16px;height:16px;flex-shrink:0;display:flex;align-items:center;justify-content:center;opacity:.65}
 .nav-item.active .nav-icon{opacity:1}
-.nav-badge{position:absolute;top:4px;right:4px;background:var(--accent);color:#fff;font-size:8px;font-weight:700;
-  padding:1px 4px;border-radius:20px;min-width:14px;text-align:center}
-.sidebar-bottom{margin-top:auto;padding:12px 6px;border-top:1px solid var(--border)}
-.sync-status{display:flex;align-items:center;justify-content:center;padding:6px}
+.nav-label{font-size:12.5px;font-weight:500;flex:1}
+.nav-badge{background:var(--accent);color:#fff;font-size:8px;font-weight:700;
+  padding:1px 5px;border-radius:20px;min-width:16px;text-align:center}
+.sidebar-bottom{margin-top:auto;padding:14px 10px;border-top:1px solid var(--border)}
+.sync-row{display:flex;align-items:center;gap:8px;padding:4px 8px}
 .sync-dot{width:6px;height:6px;border-radius:50%;background:var(--green);flex-shrink:0}
-.sync-dot.syncing{background:var(--gold);animation:spin 1s linear infinite}
+.sync-dot.syncing{background:var(--gold);animation:pulse 1s ease infinite}
 .sync-dot.error{background:var(--accent)}
+.sync-label{font-size:11px;color:var(--text-3)}
 @keyframes spin{to{transform:rotate(360deg)}}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
 
 /* ── Main ── */
-.main{flex:1;display:flex;flex-direction:column;overflow:hidden}
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0}
 .topbar{display:flex;align-items:center;justify-content:space-between;padding:14px 26px;
   border-bottom:1px solid var(--border);background:linear-gradient(180deg,#ffffff04 0%,transparent 100%);flex-shrink:0}
 .breadcrumb{display:flex;align-items:center;gap:5px;font-size:11.5px;color:var(--text-3)}
@@ -105,11 +107,9 @@ body{font-family:var(--font-sans);font-size:13.5px;color:var(--text);background:
 
 /* ── Stat cards ── */
 .stat-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px}
-.stat-card{
-  background:var(--glass);border:1px solid var(--glass-border);border-radius:var(--radius);
+.stat-card{background:var(--glass);border:1px solid var(--glass-border);border-radius:var(--radius);
   padding:12px 14px;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
-  display:flex;flex-direction:column;justify-content:space-between;min-height:72px;
-}
+  display:flex;flex-direction:column;justify-content:space-between;min-height:72px}
 .stat-value{font-family:var(--font-serif);font-size:28px;color:var(--text);line-height:1}
 .stat-label{font-size:10px;color:var(--text-3);margin-top:5px;letter-spacing:.02em}
 
@@ -127,6 +127,7 @@ select.input{cursor:pointer;appearance:none;
   background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23555'/%3E%3C/svg%3E");
   background-repeat:no-repeat;background-position:right 10px center}
 textarea.input{resize:vertical;min-height:70px;line-height:1.5}
+input[type="date"].input,input[type="time"].input{color-scheme:dark}
 
 /* ── Buttons ── */
 .btn{font-family:var(--font-sans);font-size:12.5px;font-weight:500;border:none;border-radius:var(--radius-sm);
@@ -153,7 +154,7 @@ textarea.input{resize:vertical;min-height:70px;line-height:1.5}
   display:flex;align-items:center;justify-content:center;padding:20px;
   backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
 .modal{background:linear-gradient(135deg,#13151e,#0f1118);border:1px solid var(--glass-border);
-  border-radius:18px;padding:24px;width:100%;max-width:460px;max-height:88vh;overflow-y:auto;
+  border-radius:18px;padding:24px;width:100%;max-width:480px;max-height:88vh;overflow-y:auto;
   box-shadow:0 24px 80px rgba(0,0,0,.65);animation:slideUp .2s ease}
 @keyframes slideUp{from{transform:translateY(10px);opacity:0}to{transform:none;opacity:1}}
 .modal h3{font-family:var(--font-serif);font-size:19px;margin-bottom:16px;color:var(--text)}
@@ -162,10 +163,11 @@ textarea.input{resize:vertical;min-height:70px;line-height:1.5}
 
 /* ── Badges ── */
 .badge{font-size:10px;font-weight:600;padding:2px 8px;border-radius:20px;letter-spacing:.03em;display:inline-flex;align-items:center;gap:3px}
-.badge-work{background:#1e3a5f28;color:#7cb9e8;border:1px solid #7cb9e818}
-.badge-personal{background:#1a2e2a28;color:#7dd3a8;border:1px solid #7dd3a818}
-.badge-chores{background:#2e241228;color:#e8c57c;border:1px solid #e8c57c18}
-.badge-finance{background:#2a1a2e28;color:#c084fc;border:1px solid #c084fc18}
+.badge-career{background:#1e3a5f28;color:#7cb9e8;border:1px solid #7cb9e820}
+.badge-health{background:#1a2e2a28;color:#7dd3a8;border:1px solid #7dd3a820}
+.badge-personal{background:#2e241828;color:#e8c57c;border:1px solid #e8c57c20}
+.badge-life-admin{background:#2a1a2e28;color:#c084fc;border:1px solid #c084fc20}
+.badge-growth{background:#1e2e1a28;color:#a3e635;border:1px solid #a3e63520}
 .badge-other{background:var(--surface2);color:var(--text-3);border:1px solid var(--border)}
 .badge-overdue{background:#c8392b1e;color:#e57373;border:1px solid #c8392b28}
 .badge-focus{background:var(--gold-soft);color:var(--gold);border:1px solid #c9a84c18}
@@ -182,6 +184,24 @@ textarea.input{resize:vertical;min-height:70px;line-height:1.5}
 /* ── Progress ── */
 .progress-track{height:4px;background:#ffffff08;border-radius:4px;overflow:hidden;margin-top:8px}
 .progress-fill{height:100%;border-radius:4px;transition:width .5s ease;background:linear-gradient(90deg,var(--green),#6dc49a)}
+
+/* ── Task due chip ── */
+.task-due{display:inline-flex;align-items:center;gap:3px;font-size:10.5px;font-weight:500;
+  color:var(--text-3);background:var(--surface);border:1px solid var(--border);border-radius:5px;padding:1px 6px}
+.task-due.is-today{color:var(--gold);background:var(--gold-soft);border-color:#c9a84c20}
+.task-due.is-overdue{color:#e57373;background:#c8392b0d;border-color:#c8392b20}
+
+/* ── Focus Area pill selector ── */
+.area-pills{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}
+.area-pill{padding:5px 12px;border-radius:20px;font-size:11.5px;font-weight:600;cursor:pointer;
+  border:1px solid var(--border);color:var(--text-3);background:var(--surface);
+  transition:all var(--transition);user-select:none}
+.area-pill:hover{border-color:var(--border-active);color:var(--text-2)}
+.area-pill.selected[data-area="Career"]{background:#1e3a5f40;color:#7cb9e8;border-color:#7cb9e835}
+.area-pill.selected[data-area="Health"]{background:#1a2e2a40;color:#7dd3a8;border-color:#7dd3a835}
+.area-pill.selected[data-area="Personal"]{background:#2e241840;color:#e8c57c;border-color:#e8c57c35}
+.area-pill.selected[data-area="Life Admin"]{background:#2a1a2e40;color:#c084fc;border-color:#c084fc35}
+.area-pill.selected[data-area="Growth"]{background:#1e2e1a40;color:#a3e635;border-color:#a3e63535}
 
 /* ── Tasks ── */
 .task-item{display:flex;align-items:flex-start;gap:9px;padding:9px 0;border-bottom:1px solid var(--border)}
@@ -224,8 +244,7 @@ textarea.input{resize:vertical;min-height:70px;line-height:1.5}
   padding:16px 18px;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);margin-bottom:12px}
 .habit-grid{display:flex;gap:5px;flex-wrap:wrap;margin-top:12px}
 .habit-dot{width:26px;height:26px;border-radius:6px;border:1px solid var(--border-active);cursor:pointer;
-  display:flex;align-items:center;justify-content:center;font-size:9px;color:var(--text-3);
-  transition:all var(--transition)}
+  display:flex;align-items:center;justify-content:center;font-size:9px;color:var(--text-3);transition:all var(--transition)}
 .habit-dot.done{background:var(--green);border-color:var(--green);color:#fff;font-size:11px}
 .habit-dot.today-ring{border-color:#ffffff28}
 .habit-dot:hover:not(.done){background:var(--green-soft);border-color:var(--green)}
@@ -254,9 +273,9 @@ textarea.input{resize:vertical;min-height:70px;line-height:1.5}
 .capture-item:last-child{border-bottom:none}
 
 /* Tabs */
-.tabs{display:flex;gap:2px;background:var(--surface);padding:3px;border-radius:10px;margin-bottom:14px}
+.tabs{display:flex;gap:2px;background:var(--surface);padding:3px;border-radius:10px;margin-bottom:14px;overflow-x:auto}
 .tab{flex:1;padding:6px 6px;text-align:center;font-size:11.5px;font-weight:500;color:var(--text-3);
-  border-radius:7px;cursor:pointer;transition:all var(--transition)}
+  border-radius:7px;cursor:pointer;transition:all var(--transition);white-space:nowrap;min-width:fit-content}
 .tab:hover{color:var(--text-2)}
 .tab.active{background:var(--surface3);color:var(--text)}
 
@@ -272,6 +291,49 @@ textarea.input{resize:vertical;min-height:70px;line-height:1.5}
 .toast-dot.success{background:var(--green)}
 .toast-dot.error{background:var(--accent)}
 .toast-dot.info{background:var(--gold)}
+
+/* ── Home habit strip ── */
+.habit-strip{display:flex;gap:5px;margin-top:10px;flex-wrap:nowrap;overflow-x:auto}
+.habit-strip-row{margin-bottom:10px;padding-bottom:10px;border-bottom:1px solid var(--border)}
+.habit-strip-row:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0}
+.habit-strip-dot{width:22px;height:22px;border-radius:5px;border:1px solid var(--border-active);
+  flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:8px;
+  color:var(--text-3);transition:all var(--transition);cursor:pointer}
+.habit-strip-dot.done{background:var(--green);border-color:var(--green);color:#fff}
+.habit-strip-dot.today{border-color:#ffffff28}
+.habit-strip-dot.today.done{border-color:var(--green)}
+
+/* ── Capture nudge ── */
+.capture-nudge{display:flex;align-items:center;justify-content:space-between;
+  padding:9px 12px;background:var(--gold-soft);border:1px solid #c9a84c22;
+  border-radius:var(--radius-sm);cursor:pointer;transition:all var(--transition)}
+.capture-nudge:hover{background:#c9a84c25;border-color:#c9a84c35}
+
+/* ── Project next action ── */
+.project-next{font-size:11px;color:var(--text-3);margin-top:3px;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.project-next span{color:var(--text-2)}
+
+/* ── Mobile bottom nav ── */
+.bottom-nav{
+  display:none;position:fixed;bottom:0;left:0;right:0;z-index:100;
+  background:linear-gradient(180deg,#0d1117ee,#0d1117);
+  border-top:1px solid var(--glass-border);
+  backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  padding:6px 0 max(8px,env(safe-area-inset-bottom));
+}
+.bottom-nav-inner{display:flex;justify-content:space-around}
+.bottom-nav-item{
+  flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;
+  padding:6px 4px;cursor:pointer;color:var(--text-3);transition:color var(--transition);
+  position:relative;border:none;background:none;font-family:var(--font-sans);
+}
+.bottom-nav-item.active{color:var(--accent)}
+.bottom-nav-item svg{width:20px;height:20px}
+.bottom-nav-item span{font-size:9.5px;font-weight:500}
+.bottom-nav-badge{position:absolute;top:4px;right:calc(50% - 18px);
+  background:var(--accent);color:#fff;font-size:7px;font-weight:700;
+  padding:1px 4px;border-radius:20px;min-width:13px;text-align:center;line-height:1.4}
 
 /* Utils */
 .flex{display:flex}.flex-col{flex-direction:column}
@@ -291,12 +353,72 @@ a{color:#7cb9e8;text-decoration:none}a:hover{text-decoration:underline}
 input[type=range]{-webkit-appearance:none;width:100%;height:3px;border-radius:2px;background:var(--surface3);outline:none}
 input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;height:13px;border-radius:50%;background:var(--accent);cursor:pointer}
 
+/* ── Floating Action Button (mobile) ── */
+.fab{
+  display:none;
+  position:fixed;bottom:76px;right:18px;z-index:200;
+  width:52px;height:52px;border-radius:50%;
+  background:var(--accent);color:#fff;border:none;cursor:pointer;
+  font-size:26px;line-height:1;
+  box-shadow:0 4px 20px rgba(200,57,43,.45);
+  align-items:center;justify-content:center;
+  transition:transform var(--transition),box-shadow var(--transition);
+  font-family:var(--font-sans);
+}
+.fab:active{transform:scale(.92);box-shadow:0 2px 10px rgba(200,57,43,.35)}
+
+/* ── Bottom sheet modal (mobile) ── */
 @media(max-width:768px){
-  .content{padding:14px}
+  .modal-overlay{align-items:flex-end;padding:0}
+  .modal{
+    border-radius:20px 20px 0 0;
+    max-width:100%;width:100%;
+    max-height:92vh;
+    padding:20px 20px max(20px,env(safe-area-inset-bottom));
+    animation:slideUpSheet .25s cubic-bezier(.32,0,.67,0);
+  }
+  @keyframes slideUpSheet{from{transform:translateY(100%)}to{transform:none}}
+  /* Pull handle */
+  .modal::before{
+    content:'';display:block;width:36px;height:4px;
+    background:#ffffff20;border-radius:4px;
+    margin:0 auto 16px;
+  }
+}
+
+/* ── Responsive ── */
+@media(max-width:768px){
+  :root{--sidebar:0px}
+  .sidebar{display:none}
+  .bottom-nav{display:block}
+  .fab{display:flex}
+  .content{padding:14px;padding-bottom:84px}
   .grid-2,.grid-3{grid-template-columns:1fr}
   .stat-row{grid-template-columns:repeat(3,1fr)}
   .form-grid{grid-template-columns:1fr}
-  .topbar{padding:11px 14px}
+  .topbar{padding:10px 14px}
+  /* Tighter topbar on mobile */
+  .page-title{font-size:18px}
+  .page-sub{display:none}
+  .breadcrumb{display:none}
+  .topbar-actions .btn{padding:5px 11px;font-size:11.5px}
+  /* Task actions always visible on mobile */
+  .task-actions{opacity:1}
+  /* Bigger tap targets for task checkboxes */
+  .task-check{width:20px;height:20px;margin-top:1px}
+  /* Bigger habit dots on mobile */
+  .habit-dot{width:32px;height:32px;font-size:11px}
+  .habit-strip-dot{width:26px;height:26px}
+  /* Card padding tighter */
+  .card{padding:14px 16px}
+  /* Stat cards slightly shorter */
+  .stat-card{min-height:60px;padding:10px 12px}
+  .stat-value{font-size:24px}
+  /* Tabs scroll naturally */
+  .tabs{-webkit-overflow-scrolling:touch}
+}
+@media(min-width:769px) and (max-width:1024px){
+  :root{--sidebar:160px}
 }
 </style>
 </head>
@@ -305,7 +427,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;heigh
 <div class="bg-grain"></div>
 
 <div class="app">
-  <!-- ── Sidebar ── -->
+  <!-- ── Sidebar (desktop) ── -->
   <nav class="sidebar">
     <div class="sidebar-brand">
       <div class="brand-icon">
@@ -320,51 +442,55 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;heigh
           <line x1="12.5" y1="15" x2="19" y2="20.5" stroke="#f0efe8" stroke-width="2" stroke-linecap="square"/>
         </svg>
       </div>
-      <div class="brand-text">
-        <h1>Kairo</h1>
-        <p>Personal OS</p>
-      </div>
+      <span class="brand-name">Kairo</span>
     </div>
 
     <div class="nav-section">
       <div class="nav-section-label">Overview</div>
       <div class="nav-item active" data-page="home">
-        <span class="nav-icon">⌂</span><span>Home</span>
+        <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9.5z"/><path d="M9 21V12h6v9"/></svg></span>
+        <span class="nav-label">Home</span>
       </div>
     </div>
 
     <div class="nav-section">
       <div class="nav-section-label">Manage</div>
       <div class="nav-item" data-page="tasks">
-        <span class="nav-icon">✓</span><span>Tasks</span>
+        <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></span>
+        <span class="nav-label">Tasks</span>
         <span class="nav-badge" id="tasks-badge" style="display:none">0</span>
       </div>
       <div class="nav-item" data-page="projects">
-        <span class="nav-icon">◈</span><span>Projects</span>
+        <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></span>
+        <span class="nav-label">Projects</span>
       </div>
       <div class="nav-item" data-page="jobs">
-        <span class="nav-icon">💼</span><span>Job Tracker</span>
+        <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/><line x1="12" y1="12" x2="12" y2="12.01"/><path d="M2 12.5s4 2.5 10 2.5 10-2.5 10-2.5"/></svg></span>
+        <span class="nav-label">Job Tracker</span>
       </div>
       <div class="nav-item" data-page="habits">
-        <span class="nav-icon">◎</span><span>Habits</span>
+        <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg></span>
+        <span class="nav-label">Habits</span>
       </div>
     </div>
 
     <div class="nav-section">
       <div class="nav-section-label">Tools</div>
       <div class="nav-item" data-page="capture">
-        <span class="nav-icon">⚡</span><span>Quick Capture</span>
+        <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><polyline points="13 2 13 9 20 9"/><line x1="12" y1="13" x2="12" y2="17"/><line x1="10" y1="15" x2="14" y2="15"/></svg></span>
+        <span class="nav-label">Quick Capture</span>
         <span class="nav-badge" id="capture-badge" style="display:none">0</span>
       </div>
       <div class="nav-item" data-page="review">
-        <span class="nav-icon">↺</span><span>Weekly Review</span>
+        <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg></span>
+        <span class="nav-label">Weekly Review</span>
       </div>
     </div>
 
     <div class="sidebar-bottom">
-      <div class="sync-status">
+      <div class="sync-row">
         <div class="sync-dot" id="sync-dot"></div>
-        <span id="sync-label">Connecting…</span>
+        <span class="sync-label" id="sync-label">Connecting…</span>
       </div>
     </div>
   </nav>
@@ -389,11 +515,15 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;heigh
       <!-- HOME -->
       <div class="page active" id="page-home">
         <div class="stat-row" id="home-stats"></div>
+        <div class="capture-nudge mb14" id="home-capture-nudge" style="display:none" onclick="navigate('capture')"></div>
         <div class="grid-2" style="gap:14px">
           <div>
             <div class="card mb14">
               <div class="flex-between mb12">
-                <div class="card-title" style="margin:0">Today's Focus</div>
+                <div>
+                  <div class="card-title" style="margin:0">Today's Focus</div>
+                  <div style="font-size:10.5px;color:var(--text-3);margin-top:2px">What matters most right now</div>
+                </div>
                 <button class="btn btn-primary btn-sm" onclick="openAddTask()">+ Task</button>
               </div>
               <div id="home-focus-list"></div>
@@ -479,7 +609,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;heigh
       <div class="page" id="page-review">
         <div class="grid-3 mb16" id="review-stats"></div>
         <div class="card mb14">
-          <div class="card-title">Life Area Distribution</div>
+          <div class="card-title">Focus Area Distribution</div>
           <div id="review-areas"></div>
         </div>
         <div class="card">
@@ -493,9 +623,40 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;heigh
         </div>
       </div>
 
-    </div><!-- /content -->
-  </div><!-- /main -->
-</div><!-- /app -->
+    </div>
+  </div>
+</div>
+
+<!-- ── Floating Action Button (mobile only) ── -->
+<button class="fab" id="fab" onclick="openAddTask()" aria-label="Add task">+</button>
+
+<!-- ── Mobile Bottom Nav ── -->
+<nav class="bottom-nav" id="bottom-nav">
+  <div class="bottom-nav-inner">
+    <button class="bottom-nav-item active" data-page="home" onclick="navigate('home')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9.5z"/><path d="M9 21V12h6v9"/></svg>
+      <span>Home</span>
+    </button>
+    <button class="bottom-nav-item" data-page="tasks" onclick="navigate('tasks')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+      <span>Tasks</span>
+      <span class="bottom-nav-badge" id="tasks-badge-mob" style="display:none">0</span>
+    </button>
+    <button class="bottom-nav-item" data-page="capture" onclick="navigate('capture')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+      <span>Capture</span>
+      <span class="bottom-nav-badge" id="capture-badge-mob" style="display:none">0</span>
+    </button>
+    <button class="bottom-nav-item" data-page="habits" onclick="navigate('habits')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
+      <span>Habits</span>
+    </button>
+    <button class="bottom-nav-item" data-page="projects" onclick="navigate('projects')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+      <span>Projects</span>
+    </button>
+  </div>
+</nav>
 
 <!-- Modal -->
 <div class="modal-overlay" id="modal-overlay" style="display:none" onclick="if(event.target===this)closeModal()">
@@ -509,479 +670,464 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;heigh
 </div>
 
 <script>
-// ─── Supabase (CDN) ───────────────────────────────────────────────────────────
+// ─── Supabase ─────────────────────────────────────────────────────────────────
 const SUPA_URL = 'https://oulbhauthynnqumormte.supabase.co';
 const SUPA_KEY = 'sb_publishable_Sdzm9TR3gKYwRbZ960xDdg_l3GALVBQ';
-
 let sb = null;
 
 async function initSupabase() {
   if (typeof supabase === 'undefined') {
-    setSyncStatus('error', 'Offline mode');
-    console.warn('Supabase CDN not loaded, using localStorage only');
-    return false;
+    setSyncStatus('error','Offline mode'); return false;
   }
-  try {
-    sb = supabase.createClient(SUPA_URL, SUPA_KEY);
-    return true;
-  } catch(e) {
-    console.error('Supabase init error:', e);
-    setSyncStatus('error', 'Offline mode');
-    return false;
-  }
+  try { sb = supabase.createClient(SUPA_URL, SUPA_KEY); return true; }
+  catch(e) { setSyncStatus('error','Offline mode'); return false; }
 }
 
 // ─── State ────────────────────────────────────────────────────────────────────
 let DATA = {
-  tasks: [],
-  projects: [],
-  jobs: [],
-  habits: {},
-  habitDefs: [
-    { id: 'gym',        label: 'Gym',        icon: '🏋️' },
-    { id: 'reading',    label: 'Reading',     icon: '📚' },
-    { id: 'journaling', label: 'Journaling',  icon: '✍️' },
+  tasks:[], projects:[], jobs:[],
+  habits:{},
+  habitDefs:[
+    {id:'gym',label:'Gym',icon:'🏋️'},
+    {id:'reading',label:'Reading',icon:'📚'},
+    {id:'journaling',label:'Journaling',icon:'✍️'},
   ],
-  captures: [],
-  focusTasks: [],
+  captures:[], focusTasks:[],
 };
-
-let currentPage = 'home';
-let taskFilter = 'All';
-let syncTimer = null;
-let projectDetailId = null;
+let currentPage='home', taskFilter='All', syncTimer=null, projectDetailId=null;
 
 // ─── Constants ────────────────────────────────────────────────────────────────
-const LIFE_AREAS   = ['Career','Health','Growth','Personal'];
-const CATEGORIES   = ['Work','Personal','Chores','Finance','Other'];
-const JOB_STAGES   = ['Not Applied','Applied','Interview','Offer','Rejected'];
-const PROJ_STATUS  = ['Active','Paused','Completed'];
+const FOCUS_AREAS = ['Career','Health','Personal','Life Admin','Growth'];
+const JOB_STAGES  = ['Not Applied','Applied','Interview','Offer','Rejected'];
+const PROJ_STATUS = ['Active','Paused','Completed'];
 
-const uid      = () => Math.random().toString(36).slice(2,9);
-const today    = () => new Date().toISOString().split('T')[0];
-const isOverdue= t => !t.completed && (t.dueDate || today()) < today();
+const uid       = () => Math.random().toString(36).slice(2,9);
+const today     = () => new Date().toISOString().split('T')[0];
+const isOverdue = t  => !t.completed && t.dueDate && t.dueDate < today();
 
-const calcStreak = hid => {
-  let s = 0, d = new Date();
-  while(true){
-    const k = d.toISOString().split('T')[0];
-    if(DATA.habits[k]?.[hid]){ s++; d.setDate(d.getDate()-1); } else break;
-  }
-  return s;
-};
-
-const catClass = c => ({
-  Work:'badge-work', Personal:'badge-personal', Chores:'badge-chores',
-  Finance:'badge-finance', Other:'badge-other'
-}[c] || 'badge-other');
-
-const stageClass = s => ({
-  'Not Applied':'stage-not-applied', Applied:'stage-applied',
-  Interview:'stage-interview', Offer:'stage-offer', Rejected:'stage-rejected'
-}[s] || 'stage-not-applied');
-
-const statusClass = s => ({
-  Active:'status-active', Paused:'status-paused', Completed:'status-completed'
-}[s] || 'status-active');
-
-function getGreeting() {
-  const h = new Date().getHours();
-  const g = h < 12 ? 'Good morning' : h < 17 ? 'Good afternoon' : 'Good evening';
-  return g + ', Aadhil.';
+// Migrate old category/lifeArea → focusArea
+function migrateFocusArea(t) {
+  if (t.focusArea) return t.focusArea;
+  const aMap={Career:'Career',Health:'Health',Growth:'Growth',Personal:'Personal'};
+  const cMap={Work:'Career',Personal:'Personal',Chores:'Life Admin',Finance:'Life Admin',Other:'Personal'};
+  if (t.lifeArea && aMap[t.lifeArea]) return aMap[t.lifeArea];
+  if (t.category && cMap[t.category]) return cMap[t.category];
+  return 'Personal';
 }
 
+// Subtask-weighted project progress
+function calcProjectProgress(pid) {
+  const tasks = DATA.tasks.filter(t => t.projectId===pid);
+  if (!tasks.length) return 0;
+  let total=0, done=0;
+  tasks.forEach(t => {
+    const subs = t.subtasks||[];
+    if (subs.length) {
+      total += 1+subs.length;
+      done  += (t.completed?1:0) + subs.filter(s=>s.done).length;
+    } else {
+      total += 1;
+      done  += t.completed?1:0;
+    }
+  });
+  return Math.round(done/total*100);
+}
+
+const focusAreaClass = a => ({'Career':'badge-career','Health':'badge-health','Personal':'badge-personal','Life Admin':'badge-life-admin','Growth':'badge-growth'}[a]||'badge-other');
+const stageClass = s => ({'Not Applied':'stage-not-applied',Applied:'stage-applied',Interview:'stage-interview',Offer:'stage-offer',Rejected:'stage-rejected'}[s]||'stage-not-applied');
+const statusClass = s => ({Active:'status-active',Paused:'status-paused',Completed:'status-completed'}[s]||'status-active');
+
+function getGreeting() {
+  const h=new Date().getHours();
+  return (h<12?'Good morning':h<17?'Good afternoon':'Good evening')+', Aadhil.';
+}
 function todayLong() {
   return new Date().toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'});
 }
 
+// Format due date+time chip for task cards
+function formatDue(task) {
+  if (!task.dueDate) return '';
+  const td=today(), isToday=task.dueDate===td, over=isOverdue(task);
+  let label = isToday ? 'Today' : new Date(task.dueDate+'T12:00:00').toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short'});
+  if (task.dueTime) {
+    const [h,m]=task.dueTime.split(':').map(Number);
+    label += ' · '+(h%12||12)+':'+String(m).padStart(2,'0')+(h>=12?' PM':' AM');
+  }
+  const cls = over?'is-overdue':isToday?'is-today':'';
+  return `<span class="task-due ${cls}">🗓 ${label}</span>`;
+}
+
 // ─── Supabase sync ────────────────────────────────────────────────────────────
 async function loadData() {
-  const local = localStorage.getItem('kairo_v1');
-  if(local){ try{ DATA = {...DATA, ...JSON.parse(local)}; }catch{} }
+  const local=localStorage.getItem('kairo_v1');
+  if (local){try{DATA={...DATA,...JSON.parse(local)};}catch{}}
+  DATA.tasks=DATA.tasks.map(t=>({...t,focusArea:migrateFocusArea(t)}));
 
-  const ok = await initSupabase();
-  if(!ok){ renderAll(); return; }
-
+  const ok=await initSupabase();
+  if (!ok){renderAll();return;}
   setSyncStatus('syncing','Syncing…');
   try {
-    const { data, error } = await sb
-      .from('lifeos_data')
-      .select('data')
-      .eq('id','main')
-      .maybeSingle();
-
-    if(error) throw error;
-
-    if(data?.data && Object.keys(data.data).length > 0){
-      DATA = { ...DATA, ...data.data };
-      if(!DATA.habitDefs || DATA.habitDefs.length === 0){
-        DATA.habitDefs = [
-          {id:'gym',label:'Gym',icon:'🏋️'},
-          {id:'reading',label:'Reading',icon:'📚'},
-          {id:'journaling',label:'Journaling',icon:'✍️'},
-        ];
-      }
-      if(!DATA.focusTasks) DATA.focusTasks = [];
-      localStorage.setItem('kairo_v1', JSON.stringify(DATA));
-    } else {
-      await saveNow();
-    }
+    const {data,error}=await sb.from('lifeos_data').select('data').eq('id','main').maybeSingle();
+    if (error) throw error;
+    if (data?.data && Object.keys(data.data).length>0) {
+      DATA={...DATA,...data.data};
+      if (!DATA.habitDefs?.length) DATA.habitDefs=[{id:'gym',label:'Gym',icon:'🏋️'},{id:'reading',label:'Reading',icon:'📚'},{id:'journaling',label:'Journaling',icon:'✍️'}];
+      if (!DATA.focusTasks) DATA.focusTasks=[];
+      DATA.tasks=DATA.tasks.map(t=>({...t,focusArea:migrateFocusArea(t)}));
+      // Backfill completedDate for old tasks that were completed before this field existed
+      DATA.tasks=DATA.tasks.map(t=>t.completed&&!t.completedDate?{...t,completedDate:t.dueDate||t.createdAt||today()}:t);
+      localStorage.setItem('kairo_v1',JSON.stringify(DATA));
+    } else { await saveNow(); }
     setSyncStatus('ok','Synced');
-  } catch(e) {
-    console.error('Load error:', e);
-    setSyncStatus('error','Offline');
-  }
+  } catch(e){ console.error('Load error:',e); setSyncStatus('error','Offline'); }
   renderAll();
 }
 
 async function saveNow() {
-  localStorage.setItem('kairo_v1', JSON.stringify(DATA));
-  if(!sb){ return; }
+  localStorage.setItem('kairo_v1',JSON.stringify(DATA));
+  if (!sb) return;
   setSyncStatus('syncing','Saving…');
   try {
-    const { error } = await sb.from('lifeos_data').upsert({
-      id: 'main',
-      data: DATA,
-      updated_at: new Date().toISOString()
-    });
-    if(error) throw error;
+    const {error}=await sb.from('lifeos_data').upsert({id:'main',data:DATA,updated_at:new Date().toISOString()});
+    if (error) throw error;
     setSyncStatus('ok','Synced');
-  } catch(e) {
-    console.error('Save error:', e);
-    setSyncStatus('error','Save failed');
-  }
+  } catch(e){ console.error('Save error:',e); setSyncStatus('error','Save failed'); }
 }
 
 function scheduleSave() {
-  localStorage.setItem('kairo_v1', JSON.stringify(DATA));
-  clearTimeout(syncTimer);
-  syncTimer = setTimeout(saveNow, 1000);
+  localStorage.setItem('kairo_v1',JSON.stringify(DATA));
+  clearTimeout(syncTimer); syncTimer=setTimeout(saveNow,1000);
 }
 
-function setSyncStatus(state, label){
-  const dot = document.getElementById('sync-dot');
-  const lbl = document.getElementById('sync-label');
-  dot.className = 'sync-dot' + (state==='syncing' ? ' syncing' : state==='error' ? ' error' : '');
-  lbl.textContent = label;
+function setSyncStatus(state,label) {
+  const dot=document.getElementById('sync-dot');
+  const lbl=document.getElementById('sync-label');
+  dot.className='sync-dot'+(state==='syncing'?' syncing':state==='error'?' error':'');
+  if (lbl) lbl.textContent=label||'';
 }
 
 // ─── Navigation ───────────────────────────────────────────────────────────────
-function navigate(page){
-  currentPage = page;
-
-  document.querySelectorAll('.nav-item').forEach(el =>
-    el.classList.toggle('active', el.dataset.page === page));
-  document.querySelectorAll('.page').forEach(el =>
-    el.classList.toggle('active', el.id === 'page-'+page));
-
-  const meta = {
-    home:     ['Home',         ''],
-    tasks:    ['Tasks',        'Manage your to-dos'],
-    projects: ['Projects',     'Track your initiatives'],
-    jobs:     ['Job Tracker',  'Manage opportunities'],
-    habits:   ['Habits',       'Build consistency'],
-    capture:  ['Quick Capture','Dump ideas, sort later'],
-    review:   ['Weekly Review','Reflect and reset'],
-  };
-  const [title, sub] = meta[page] || ['Kairo',''];
-  document.getElementById('page-title').textContent  = page==='home' ? getGreeting() : title;
-  document.getElementById('page-sub').textContent    = page==='home' ? todayLong()  : sub;
-  document.getElementById('bc-current').textContent  = title;
-
-  const ta = document.getElementById('topbar-actions');
-  ta.innerHTML = '';
-  if(page==='tasks')    ta.innerHTML = `<button class="btn btn-primary btn-sm" onclick="openAddTask()">+ New Task</button>`;
-  if(page==='projects') ta.innerHTML = `<button class="btn btn-primary btn-sm" onclick="openAddProject()">+ New Project</button>`;
-  if(page==='jobs')     ta.innerHTML = `<button class="btn btn-primary btn-sm" onclick="openAddJob()">+ Add Opportunity</button>`;
-  if(page==='habits')   ta.innerHTML = `<button class="btn btn-primary btn-sm" onclick="openAddHabit()">+ New Habit</button>`;
-
-  if(page !== 'projects'){
-    projectDetailId = null;
-    document.getElementById('projects-list-view').style.display = '';
-    document.getElementById('project-detail-view').style.display = 'none';
+function navigate(page) {
+  currentPage=page;
+  document.querySelectorAll('.nav-item').forEach(el=>el.classList.toggle('active',el.dataset.page===page));
+  document.querySelectorAll('.bottom-nav-item').forEach(el=>el.classList.toggle('active',el.dataset.page===page));
+  document.querySelectorAll('.page').forEach(el=>el.classList.toggle('active',el.id==='page-'+page));
+  const meta={home:['Home',''],tasks:['Tasks','Manage your to-dos'],projects:['Projects','Track your initiatives'],
+    jobs:['Job Tracker','Manage opportunities'],habits:['Habits','Build consistency'],
+    capture:['Quick Capture','Dump ideas, sort later'],review:['Weekly Review','Reflect and reset']};
+  const [title,sub]=meta[page]||['Kairo',''];
+  document.getElementById('page-title').textContent=page==='home'?getGreeting():title;
+  document.getElementById('page-sub').textContent=page==='home'?todayLong():sub;
+  document.getElementById('bc-current').textContent=title;
+  const ta=document.getElementById('topbar-actions'); ta.innerHTML='';
+  if(page==='tasks')    ta.innerHTML=`<button class="btn btn-primary btn-sm" onclick="openAddTask()">+ New Task</button>`;
+  if(page==='projects') ta.innerHTML=`<button class="btn btn-primary btn-sm" onclick="openAddProject()">+ New Project</button>`;
+  if(page==='jobs')     ta.innerHTML=`<button class="btn btn-primary btn-sm" onclick="openAddJob()">+ Add Opportunity</button>`;
+  if(page==='habits')   ta.innerHTML=`<button class="btn btn-primary btn-sm" onclick="openAddHabit()">+ New Habit</button>`;
+  if(page!=='projects'){projectDetailId=null;document.getElementById('projects-list-view').style.display='';document.getElementById('project-detail-view').style.display='none';}
+  // FAB — show on task-friendly pages, hide on review/jobs
+  const fab=document.getElementById('fab');
+  if(fab){
+    const fabPages={home:true,tasks:true,projects:true,habits:false,capture:false,jobs:false,review:false};
+    fab.style.display=fabPages[page]?'flex':'none';
+    if(page==='projects') { fab.onclick=()=>openAddProject(); }
+    else { fab.onclick=()=>openAddTask(); }
   }
-
   renderPage(page);
 }
 
-function renderAll(){ renderPage(currentPage); updateBadges(); }
-
+function renderAll(){renderPage(currentPage);updateBadges();requestAnimationFrame(attachSwipeHandlers);}
 function renderPage(p){
-  if(p==='home')     renderHome();
-  if(p==='tasks')    renderTasks();
-  if(p==='projects') renderProjects();
-  if(p==='jobs')     renderJobs();
-  if(p==='habits')   renderHabits();
-  if(p==='capture')  renderCapture();
-  if(p==='review')   renderReview();
+  if(p==='home')renderHome();if(p==='tasks')renderTasks();if(p==='projects')renderProjects();
+  if(p==='jobs')renderJobs();if(p==='habits')renderHabits();if(p==='capture')renderCapture();
+  if(p==='review')renderReview();
 }
 
 function updateBadges(){
-  const ov = DATA.tasks.filter(t=>isOverdue(t)).length;
-  const tb = document.getElementById('tasks-badge');
-  if(ov>0){tb.style.display=''; tb.textContent=ov;} else tb.style.display='none';
-
-  const cap = DATA.captures.length;
-  const cb = document.getElementById('capture-badge');
-  if(cap>0){cb.style.display=''; cb.textContent=cap;} else cb.style.display='none';
+  const ov=DATA.tasks.filter(t=>isOverdue(t)).length;
+  const cap=DATA.captures.length;
+  const tb=document.getElementById('tasks-badge');
+  if(ov>0){tb.style.display='';tb.textContent=ov;}else tb.style.display='none';
+  const cb=document.getElementById('capture-badge');
+  if(cap>0){cb.style.display='';cb.textContent=cap;}else cb.style.display='none';
+  const tbm=document.getElementById('tasks-badge-mob');
+  if(tbm){if(ov>0){tbm.style.display='';tbm.textContent=ov;}else tbm.style.display='none';}
+  const cbm=document.getElementById('capture-badge-mob');
+  if(cbm){if(cap>0){cbm.style.display='';cbm.textContent=cap;}else cbm.style.display='none';}
 }
 
 // ─── Home ─────────────────────────────────────────────────────────────────────
 function renderHome(){
-  const td = today();
-  const todayTasks   = DATA.tasks.filter(t=>!t.completed&&(t.dueDate===td||!t.dueDate));
-  const overdueTasks = DATA.tasks.filter(t=>isOverdue(t)&&t.dueDate&&t.dueDate!==td);
-  const focusTasks   = DATA.tasks.filter(t=>DATA.focusTasks.includes(t.id)&&!t.completed);
-  const doneToday    = DATA.tasks.filter(t=>t.completed&&(t.dueDate===td||!t.dueDate)).length;
+  const td=today();
+  const todayTasks=DATA.tasks.filter(t=>!t.completed&&t.dueDate===td);
+  const overdueTasks=DATA.tasks.filter(t=>isOverdue(t));
+  const focusTasks=DATA.tasks.filter(t=>DATA.focusTasks.includes(t.id)&&!t.completed);
+  const wStart=new Date(); wStart.setDate(wStart.getDate()-wStart.getDay());
+  const wStr=wStart.toISOString().split('T')[0];
+  const doneToday=DATA.tasks.filter(t=>t.completed&&t.completedDate===td).length;
+  // Count days this week where at least 1 task was completed
+  const daysActive=Array.from({length:7},(_,i)=>{const d=new Date(wStart);d.setDate(d.getDate()+i);return d.toISOString().split('T')[0];})
+    .filter(d=>DATA.tasks.some(t=>t.completed&&t.completedDate===d)).length;
 
-  document.getElementById('home-stats').innerHTML = [
-    { val: todayTasks.length + overdueTasks.length, label: 'Remaining',  color: 'var(--text)' },
-    { val: doneToday,                                label: 'Done Today', color: 'var(--green)' },
-    { val: overdueTasks.length,                      label: 'Overdue',   color: overdueTasks.length>0?'var(--accent)':'var(--text-3)' },
-  ].map(s=>`
-    <div class="stat-card">
-      <div class="stat-value" style="color:${s.color}">${s.val}</div>
-      <div class="stat-label">${s.label}</div>
-    </div>`).join('');
+  // Stats row — coherent daily story: what's left / what's done today / weekly momentum
+  document.getElementById('home-stats').innerHTML=[
+    {val:todayTasks.length+overdueTasks.length,label:'Remaining Today',color:'var(--text)'},
+    {val:doneToday,label:'Done Today',color:doneToday>0?'var(--green)':'var(--text-3)'},
+    {val:`${daysActive}/7`,label:'Active Days This Week',color:daysActive>=5?'var(--gold)':daysActive>0?'var(--text-2)':'var(--text-3)'},
+  ].map(s=>`<div class="stat-card"><div class="stat-value" style="color:${s.color}">${s.val}</div><div class="stat-label">${s.label}</div></div>`).join('');
 
-  const fl = document.getElementById('home-focus-list');
-  fl.innerHTML = focusTasks.length===0
-    ? `<div class="text-dim text-sm" style="padding:6px 0">Star any task to pin it here as your focus.</div>`
-    : focusTasks.map(t=>taskHTML(t,true)).join('');
-
-  const nonFocus = [...overdueTasks,...todayTasks.filter(t=>!DATA.focusTasks.includes(t.id))].slice(0,6);
-  document.getElementById('home-tasks-list').innerHTML = nonFocus.length===0
-    ? `<div class="empty" style="padding:10px 0"><div class="empty-icon">✅</div>All clear!</div>`
-    : nonFocus.map(t=>taskHTML(t,false)).join('');
-
-  document.getElementById('home-habits-list').innerHTML = DATA.habitDefs.map(h=>{
-    const done   = DATA.habits[td]?.[h.id];
-    const streak = calcStreak(h.id);
-    return `
-      <div class="flex-between" style="padding:7px 0;border-bottom:1px solid var(--border)">
+  // Capture nudge — shown if inbox has items
+  const captureNudge=document.getElementById('home-capture-nudge');
+  if(captureNudge){
+    if(DATA.captures.length>0){
+      captureNudge.style.display='flex';
+      captureNudge.innerHTML=`
         <div class="flex-gap">
-          <div class="habit-dot${done?' done':' today-ring'}" style="width:28px;height:28px"
-            onclick="toggleHabit('${h.id}','${td}')">${done?'✓':h.icon}</div>
-          <span style="font-size:13px">${h.label}</span>
+          <span style="font-size:14px">💡</span>
+          <span style="font-size:12.5px;color:var(--gold);font-weight:500">${DATA.captures.length} item${DATA.captures.length>1?'s':''} in capture inbox</span>
+        </div>
+        <span class="text-xs text-dim">Process →</span>`;
+    } else {
+      captureNudge.style.display='none';
+    }
+  }
+
+  // Focus list — auto-suggest when no pinned tasks
+  if (focusTasks.length === 0) {
+    // Find best candidate: first overdue, then due today, then any pending
+    const candidate = overdueTasks[0] || DATA.tasks.find(t=>!t.completed&&t.dueDate===td) || DATA.tasks.find(t=>!t.completed);
+    const reason = !candidate ? null : overdueTasks.includes(candidate) ? `overdue since ${candidate.dueDate}` : candidate.dueDate===td ? 'due today' : 'next up';
+    document.getElementById('home-focus-list').innerHTML = candidate
+      ? `<div style="padding:6px 0">
+          <div style="font-size:10px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:var(--text-3);margin-bottom:8px">Suggested focus</div>
+          ${taskHTML(candidate, false)}
+          <div style="font-size:11px;color:var(--text-3);margin-top:6px;padding:5px 8px;background:var(--surface);border-radius:6px;display:inline-flex;align-items:center;gap:5px">
+            <span style="opacity:.5">↑</span> Star to pin · <span style="color:var(--gold)">${reason}</span>
+          </div>
+        </div>`
+      : `<div class="text-dim text-sm" style="padding:6px 0">No tasks yet — add something to get started.</div>`;
+  } else {
+    document.getElementById('home-focus-list').innerHTML = focusTasks.map(t=>taskHTML(t,true)).join('');
+  }
+
+  // Today's tasks
+  const nonFocus=[...overdueTasks,...todayTasks.filter(t=>!DATA.focusTasks.includes(t.id))].slice(0,6);
+  document.getElementById('home-tasks-list').innerHTML=nonFocus.length===0
+    ?`<div class="empty" style="padding:10px 0"><div class="empty-icon">✅</div>All clear!</div>`
+    :nonFocus.map(t=>taskHTML(t,false)).join('');
+
+  // Habits — collapsed (today only) with expand toggle
+  const days7=Array.from({length:7},(_,i)=>{
+    const d=new Date(); d.setDate(d.getDate()-(6-i));
+    return d.toISOString().split('T')[0];
+  });
+  const habitsDueToday=DATA.habitDefs.length;
+  const habitsDoneToday=DATA.habitDefs.filter(h=>DATA.habits[td]?.[h.id]).length;
+  const allDone = habitsDoneToday === habitsDueToday;
+  const habitsSummary = `<div style="font-size:11.5px;font-weight:${allDone?'600':'500'};margin-bottom:10px;padding:5px 10px;background:${allDone?'var(--green-soft)':'var(--gold-soft)'};border-radius:6px;display:inline-flex;align-items:center;gap:5px;color:${allDone?'var(--green)':'var(--gold)'}">
+    ${allDone?'✓ All habits done today':`${habitsDoneToday}/${habitsDueToday} habits done today`}
+  </div>`;
+
+  const habitRows = DATA.habitDefs.map(h=>{
+    const done=DATA.habits[td]?.[h.id], streak=calcStreak(h.id);
+    const weekDots=days7.map(d=>{
+      const isDone=DATA.habits[d]?.[h.id], isToday=d===td;
+      const dayLetter=new Date(d+'T12:00:00').toLocaleDateString('en-US',{weekday:'short'}).slice(0,1);
+      return `<div style="text-align:center;flex:1">
+        <div class="text-xs" style="margin-bottom:3px;font-size:9px;${isToday?'color:var(--text-2);font-weight:700':'color:var(--text-3)'}">
+          ${isToday?'▾':dayLetter}
+        </div>
+        <div class="habit-strip-dot${isDone?' done':''}${isToday?' today':''}"
+          style="${isToday&&!isDone?'border-color:#ffffff35;box-shadow:0 0 8px rgba(255,255,255,0.08)':''}"
+          onclick="event.stopPropagation();toggleHabit('${h.id}','${d}')">${isDone?'✓':''}</div>
+      </div>`;
+    }).join('');
+    return `<div class="habit-strip-row" onclick="toggleHabit('${h.id}','${td}')" style="cursor:pointer;border-radius:8px;margin:-4px;padding:4px;transition:background var(--transition)" onmouseenter="this.style.background='var(--glass-hover)'" onmouseleave="this.style.background=''">
+      <div class="flex-between">
+        <div class="flex-gap">
+          <div class="habit-dot${done?' done':' today-ring'}" style="width:26px;height:26px;flex-shrink:0;pointer-events:none">${done?'✓':h.icon}</div>
+          <span style="font-size:13px;font-weight:500">${h.label}</span>
         </div>
         <span style="font-size:11px;color:var(--gold);font-weight:600">${streak>0?streak+'d 🔥':'—'}</span>
-      </div>`;
+      </div>
+      <div class="habit-week-strip" id="habit-week-${h.id}" style="display:none;margin-top:8px" onclick="event.stopPropagation()">
+        <div class="habit-strip">${weekDots}</div>
+      </div>
+    </div>`;
   }).join('');
 
-  const active = DATA.projects.filter(p=>p.status==='Active').slice(0,3);
-  document.getElementById('home-projects-list').innerHTML = active.length===0
-    ? `<div class="text-dim text-sm">No active projects.</div>`
-    : active.map(p=>{
-        const pct = calcProjectProgress(p.id);
-        return `
-          <div style="margin-bottom:11px;cursor:pointer" onclick="openProjectDetail('${p.id}')">
-            <div class="flex-between">
-              <span style="font-size:13px;font-weight:500">${p.title}</span>
-              <span class="text-xs text-dim">${pct}%</span>
-            </div>
-            <div class="progress-track"><div class="progress-fill" style="width:${pct}%"></div></div>
-          </div>`;
-      }).join('');
+  const expandBtn = `<div id="habits-expand-btn" onclick="toggleHabitsExpand()" style="text-align:center;margin-top:8px;padding:4px;cursor:pointer;font-size:11px;color:var(--text-3);transition:color var(--transition)" onmouseenter="this.style.color='var(--text-2)'" onmouseleave="this.style.color='var(--text-3)'">
+    Show week view ▾
+  </div>`;
+
+  document.getElementById('home-habits-list').innerHTML = habitsSummary + habitRows + expandBtn;
+
+  // Active projects with next action
+  const active=DATA.projects.filter(p=>p.status==='Active').slice(0,3);
+  document.getElementById('home-projects-list').innerHTML=active.length===0
+    ?`<div class="text-dim text-sm">No active projects.</div>`
+    :active.map(p=>{
+      const pct=calcProjectProgress(p.id);
+      const nextTask=DATA.tasks.find(t=>t.projectId===p.id&&!t.completed);
+      return `<div style="margin-bottom:13px;cursor:pointer" onclick="openProjectDetail('${p.id}')">
+        <div class="flex-between">
+          <span style="font-size:13px;font-weight:500">${escHtml(p.title)}</span>
+          <span class="text-xs text-dim">${pct}%</span>
+        </div>
+        ${nextTask?`<div class="project-next">↳ <span>${escHtml(nextTask.title)}</span></div>`:'<div class="project-next" style="color:var(--green)">↳ All tasks done</div>'}
+        <div class="progress-track"><div class="progress-fill" style="width:${pct}%"></div></div>
+      </div>`;
+    }).join('');
 }
 
 // ─── Tasks ────────────────────────────────────────────────────────────────────
 function renderTasks(){
-  const cats = ['All',...CATEGORIES];
-  document.getElementById('tasks-tabs').innerHTML = cats.map(c=>
-    `<div class="tab${taskFilter===c?' active':''}" onclick="setTaskFilter('${c}')">${c}</div>`
-  ).join('');
-
-  const sel = document.getElementById('tasks-project-filter');
-  const cur = sel.value;
-  sel.innerHTML = `<option value="">All Tasks</option>` +
-    DATA.projects.map(p=>`<option value="${p.id}"${p.id===cur?' selected':''}>${escHtml(p.title)}</option>`).join('');
-
-  const pf = sel.value;
-  const filtered = DATA.tasks.filter(t=>{
-    if(taskFilter!=='All' && t.category!==taskFilter) return false;
-    if(pf && t.projectId!==pf) return false;
+  document.getElementById('tasks-tabs').innerHTML=['All',...FOCUS_AREAS].map(a=>
+    `<div class="tab${taskFilter===a?' active':''}" onclick="setTaskFilter('${a}')">${a}</div>`).join('');
+  const sel=document.getElementById('tasks-project-filter'), cur=sel.value;
+  sel.innerHTML=`<option value="">All Tasks</option>`+DATA.projects.map(p=>`<option value="${p.id}"${p.id===cur?' selected':''}>${escHtml(p.title)}</option>`).join('');
+  const pf=sel.value;
+  const filtered=DATA.tasks.filter(t=>{
+    if(taskFilter!=='All'&&t.focusArea!==taskFilter) return false;
+    if(pf&&t.projectId!==pf) return false;
     return true;
   });
-
-  const pending = filtered.filter(t=>!t.completed);
-  const done    = filtered.filter(t=>t.completed);
-
-  document.getElementById('tasks-pending-title').textContent = `Pending (${pending.length})`;
-  document.getElementById('tasks-pending-list').innerHTML = pending.length===0
-    ? `<div class="empty"><div class="empty-icon">🎉</div>Nothing pending here.</div>`
-    : pending.map(t=>taskHTML(t, DATA.focusTasks.includes(t.id))).join('');
-
-  const dc = document.getElementById('tasks-done-card');
-  if(done.length>0){
-    dc.style.display='';
-    document.getElementById('tasks-done-title').textContent = `Completed (${done.length})`;
-    document.getElementById('tasks-done-list').innerHTML = done.map(t=>taskHTML(t,false)).join('');
-  } else dc.style.display='none';
+  const pending=filtered.filter(t=>!t.completed);
+  const done=filtered.filter(t=>t.completed);
+  pending.sort((a,b)=>{
+    const ao=isOverdue(a)?0:1,bo=isOverdue(b)?0:1;
+    if(ao!==bo) return ao-bo;
+    if(!a.dueDate&&!b.dueDate) return 0;
+    if(!a.dueDate) return 1; if(!b.dueDate) return -1;
+    const dc=a.dueDate.localeCompare(b.dueDate); if(dc!==0) return dc;
+    if(!a.dueTime&&!b.dueTime) return 0;
+    if(!a.dueTime) return 1; if(!b.dueTime) return -1;
+    return a.dueTime.localeCompare(b.dueTime);
+  });
+  document.getElementById('tasks-pending-title').textContent=`Pending (${pending.length})`;
+  document.getElementById('tasks-pending-list').innerHTML=pending.length===0
+    ?`<div class="empty"><div class="empty-icon">🎉</div>Nothing pending here.</div>`
+    :pending.map(t=>taskHTML(t,DATA.focusTasks.includes(t.id))).join('');
+  const dc=document.getElementById('tasks-done-card');
+  if(done.length>0){dc.style.display='';document.getElementById('tasks-done-title').textContent=`Completed (${done.length})`;document.getElementById('tasks-done-list').innerHTML=done.map(t=>taskHTML(t,false)).join('');}
+  else dc.style.display='none';
 }
 
-function setTaskFilter(f){ taskFilter=f; renderTasks(); }
+function setTaskFilter(f){taskFilter=f;renderTasks();}
 
-function taskHTML(task, isFocus){
-  const overdue  = isOverdue(task);
-  const proj     = DATA.projects.find(p=>p.id===task.projectId);
-  const subtasks = task.subtasks || [];
-  const sdone    = subtasks.filter(s=>s.done).length;
-
-  return `
-    <div class="task-item" id="task-${task.id}">
-      <div class="task-check${task.completed?' done':''}" onclick="toggleTask('${task.id}')"></div>
-      <div class="task-body">
-        <div class="flex-between">
-          <span class="task-title-text${task.completed?' done':''}"
-            onclick="toggleExpand('${task.id}')">${escHtml(task.title)}</span>
-          <div class="task-actions flex-gap-sm">
-            <button class="focus-btn${isFocus?' active':''}" onclick="toggleFocus('${task.id}')" title="Toggle focus">★</button>
-            <button class="btn-icon" onclick="openEditTask('${task.id}')" title="Edit">✎</button>
-            <button class="btn-icon" onclick="deleteTask('${task.id}')" title="Delete" style="color:var(--accent)">✕</button>
-          </div>
-        </div>
-        <div class="task-meta">
-          <span class="badge ${catClass(task.category)}">${task.category}</span>
-          ${isFocus   ? '<span class="badge badge-focus">★ Focus</span>'    : ''}
-          ${overdue   ? '<span class="badge badge-overdue">Overdue</span>'  : ''}
-          ${proj      ? `<span class="badge badge-other">${escHtml(proj.title)}</span>` : ''}
-          ${subtasks.length ? `<span class="text-xs text-dim">${sdone}/${subtasks.length} subtasks</span>` : ''}
-        </div>
-        <div id="expand-${task.id}" style="display:none">
-          ${task.notes ? `<div class="note-block">${escHtml(task.notes)}</div>` : ''}
-          ${subtasks.length ? `
-            <div class="subtask-list mt8">
-              ${subtasks.map(s=>`
-                <div class="subtask-item">
-                  <div class="subtask-check${s.done?' done':''}" onclick="toggleSubtask('${task.id}','${s.id}')"></div>
-                  <span class="subtask-title${s.done?' done':''}">${escHtml(s.title)}</span>
-                  <button class="btn-icon" onclick="deleteSubtask('${task.id}','${s.id}')" style="color:var(--accent);font-size:10px">✕</button>
-                </div>`).join('')}
-            </div>` : ''}
-          <div class="add-subtask-row mt8">
-            <input class="input" id="sti-${task.id}" placeholder="Add subtask… (Enter)" style="font-size:12px;flex:1"
-              onkeydown="if(event.key==='Enter')addSubtask('${task.id}')"/>
-            <button class="btn btn-ghost btn-xs" onclick="addSubtask('${task.id}')">Add</button>
-          </div>
+function taskHTML(task,isFocus){
+  const overdue=isOverdue(task),proj=DATA.projects.find(p=>p.id===task.projectId);
+  const subtasks=task.subtasks||[],sdone=subtasks.filter(s=>s.done).length;
+  const dueChip=formatDue(task),fa=task.focusArea||migrateFocusArea(task);
+  return `<div class="task-item" id="task-${task.id}">
+    <div class="task-check${task.completed?' done':''}" onclick="toggleTask('${task.id}')"></div>
+    <div class="task-body">
+      <div class="flex-between">
+        <span class="task-title-text${task.completed?' done':''}" onclick="toggleExpand('${task.id}')">${escHtml(task.title)}</span>
+        <div class="task-actions flex-gap-sm">
+          <button class="focus-btn${isFocus?' active':''}" onclick="toggleFocus('${task.id}')" title="Toggle focus">★</button>
+          <button class="btn-icon" onclick="openEditTask('${task.id}')" title="Edit">✎</button>
+          <button class="btn-icon" onclick="deleteTask('${task.id}')" title="Delete" style="color:var(--accent)">✕</button>
         </div>
       </div>
-    </div>`;
+      <div class="task-meta">
+        <span class="badge ${focusAreaClass(fa)}">${fa}</span>
+        ${isFocus?'<span class="badge badge-focus">★ Focus</span>':''}
+        ${dueChip}
+        ${proj?`<span class="badge badge-other">${escHtml(proj.title)}</span>`:''}
+        ${subtasks.length?`<span class="text-xs text-dim">${sdone}/${subtasks.length} subtasks</span>`:''}
+      </div>
+      <div id="expand-${task.id}" style="display:none">
+        ${task.notes?`<div class="note-block">${escHtml(task.notes)}</div>`:''}
+        ${subtasks.length?`<div class="subtask-list mt8">${subtasks.map(s=>`
+          <div class="subtask-item">
+            <div class="subtask-check${s.done?' done':''}" onclick="toggleSubtask('${task.id}','${s.id}')"></div>
+            <span class="subtask-title${s.done?' done':''}">${escHtml(s.title)}</span>
+            <button class="btn-icon" onclick="deleteSubtask('${task.id}','${s.id}')" style="color:var(--accent);font-size:10px">✕</button>
+          </div>`).join('')}</div>`:''}
+        <div class="add-subtask-row mt8">
+          <input class="input" id="sti-${task.id}" placeholder="Add subtask… (Enter)" style="font-size:12px;flex:1"
+            onkeydown="if(event.key==='Enter')addSubtask('${task.id}')"/>
+          <button class="btn btn-ghost btn-xs" onclick="addSubtask('${task.id}')">Add</button>
+        </div>
+      </div>
+    </div>
+  </div>`;
 }
 
 function projectTaskHTML(task){
-  const subtasks = task.subtasks || [];
-  const sdone = subtasks.filter(s=>s.done).length;
-  return `
-    <div class="task-item" id="task-${task.id}">
-      <div class="task-check${task.completed?' done':''}" onclick="toggleTask('${task.id}')"></div>
-      <div class="task-body">
-        <div class="flex-between">
-          <span class="task-title-text${task.completed?' done':''}">${escHtml(task.title)}</span>
-          <div class="task-actions flex-gap-sm">
-            <button class="btn-icon" onclick="openEditTask('${task.id}')" title="Edit">✎</button>
-            <button class="btn-icon" onclick="deleteTask('${task.id}')" title="Delete" style="color:var(--accent)">✕</button>
-          </div>
-        </div>
-        ${task.notes?`<div class="note-block" style="margin-top:5px">${escHtml(task.notes)}</div>`:''}
-        ${subtasks.length?`
-          <div class="subtask-list mt8">
-            <div class="text-xs text-dim mb4" style="padding-left:0;margin-bottom:6px">${sdone}/${subtasks.length} subtasks done</div>
-            ${subtasks.map(s=>`
-              <div class="subtask-item">
-                <div class="subtask-check${s.done?' done':''}" onclick="toggleSubtask('${task.id}','${s.id}')"></div>
-                <span class="subtask-title${s.done?' done':''}">${escHtml(s.title)}</span>
-                <button class="btn-icon" onclick="deleteSubtask('${task.id}','${s.id}')" style="color:var(--accent);font-size:10px">✕</button>
-              </div>`).join('')}
-          </div>`:''}
-        <div class="add-subtask-row mt8">
-          <input class="input" id="sti-${task.id}" placeholder="+ Add subtask… (Enter)"
-            style="font-size:12px;flex:1;background:#ffffff05;border-color:transparent"
-            onkeydown="if(event.key==='Enter')addSubtask('${task.id}')"/>
+  const subtasks=task.subtasks||[],sdone=subtasks.filter(s=>s.done).length,dueChip=formatDue(task);
+  return `<div class="task-item" id="task-${task.id}">
+    <div class="task-check${task.completed?' done':''}" onclick="toggleTask('${task.id}')"></div>
+    <div class="task-body">
+      <div class="flex-between">
+        <span class="task-title-text${task.completed?' done':''}">${escHtml(task.title)}</span>
+        <div class="task-actions flex-gap-sm">
+          <button class="btn-icon" onclick="openEditTask('${task.id}')" title="Edit">✎</button>
+          <button class="btn-icon" onclick="deleteTask('${task.id}')" title="Delete" style="color:var(--accent)">✕</button>
         </div>
       </div>
-    </div>`;
+      <div class="task-meta">${dueChip}</div>
+      ${task.notes?`<div class="note-block" style="margin-top:5px">${escHtml(task.notes)}</div>`:''}
+      ${subtasks.length?`<div class="subtask-list mt8">
+        <div class="text-xs text-dim" style="margin-bottom:6px">${sdone}/${subtasks.length} subtasks done</div>
+        ${subtasks.map(s=>`<div class="subtask-item">
+          <div class="subtask-check${s.done?' done':''}" onclick="toggleSubtask('${task.id}','${s.id}')"></div>
+          <span class="subtask-title${s.done?' done':''}">${escHtml(s.title)}</span>
+          <button class="btn-icon" onclick="deleteSubtask('${task.id}','${s.id}')" style="color:var(--accent);font-size:10px">✕</button>
+        </div>`).join('')}</div>`:''}
+      <div class="add-subtask-row mt8">
+        <input class="input" id="sti-${task.id}" placeholder="+ Add subtask… (Enter)"
+          style="font-size:12px;flex:1;background:#ffffff05;border-color:transparent"
+          onkeydown="if(event.key==='Enter')addSubtask('${task.id}')"/>
+      </div>
+    </div>
+  </div>`;
 }
 
-function toggleExpand(id){
-  const el=document.getElementById('expand-'+id);
-  if(el) el.style.display=el.style.display==='none'?'':'none';
-}
-function toggleTask(id){
-  DATA.tasks=DATA.tasks.map(t=>t.id===id?{...t,completed:!t.completed}:t);
-  scheduleSave(); renderAll();
-}
-function deleteTask(id){
-  DATA.tasks=DATA.tasks.filter(t=>t.id!==id);
-  DATA.focusTasks=DATA.focusTasks.filter(f=>f!==id);
-  scheduleSave(); renderAll(); toast('Task deleted','info');
-}
-function toggleFocus(id){
-  DATA.focusTasks=DATA.focusTasks.includes(id)
-    ?DATA.focusTasks.filter(f=>f!==id):[...DATA.focusTasks,id];
-  scheduleSave(); renderAll();
-}
+function toggleExpand(id){const el=document.getElementById('expand-'+id);if(el)el.style.display=el.style.display==='none'?'':'none';}
+function toggleTask(id){const td=today();DATA.tasks=DATA.tasks.map(t=>t.id===id?{...t,completed:!t.completed,completedDate:!t.completed?td:null}:t);scheduleSave();renderAll();}
+function deleteTask(id){DATA.tasks=DATA.tasks.filter(t=>t.id!==id);DATA.focusTasks=DATA.focusTasks.filter(f=>f!==id);scheduleSave();renderAll();toast('Task deleted','info');}
+function toggleFocus(id){DATA.focusTasks=DATA.focusTasks.includes(id)?DATA.focusTasks.filter(f=>f!==id):[...DATA.focusTasks,id];scheduleSave();renderAll();}
 function addSubtask(taskId){
   const inp=document.getElementById('sti-'+taskId);
   if(!inp||!inp.value.trim()) return;
-  DATA.tasks=DATA.tasks.map(t=>t.id===taskId
-    ?{...t,subtasks:[...(t.subtasks||[]),{id:uid(),title:inp.value.trim(),done:false}]}:t);
-  inp.value='';
-  scheduleSave(); renderAll();
+  DATA.tasks=DATA.tasks.map(t=>t.id===taskId?{...t,subtasks:[...(t.subtasks||[]),{id:uid(),title:inp.value.trim(),done:false}]}:t);
+  inp.value='';scheduleSave();renderAll();
   setTimeout(()=>{const e=document.getElementById('expand-'+taskId);if(e)e.style.display='';},30);
 }
-function toggleSubtask(tid,sid){
-  DATA.tasks=DATA.tasks.map(t=>t.id===tid
-    ?{...t,subtasks:(t.subtasks||[]).map(s=>s.id===sid?{...s,done:!s.done}:s)}:t);
-  scheduleSave(); renderAll();
-}
-function deleteSubtask(tid,sid){
-  DATA.tasks=DATA.tasks.map(t=>t.id===tid
-    ?{...t,subtasks:(t.subtasks||[]).filter(s=>s.id!==sid)}:t);
-  scheduleSave(); renderAll();
-}
+function toggleSubtask(tid,sid){DATA.tasks=DATA.tasks.map(t=>t.id===tid?{...t,subtasks:(t.subtasks||[]).map(s=>s.id===sid?{...s,done:!s.done}:s)}:t);scheduleSave();renderAll();}
+function deleteSubtask(tid,sid){DATA.tasks=DATA.tasks.map(t=>t.id===tid?{...t,subtasks:(t.subtasks||[]).filter(s=>s.id!==sid)}:t);scheduleSave();renderAll();}
 
 // ─── Projects ─────────────────────────────────────────────────────────────────
-function calcProjectProgress(pid){
-  const tasks=DATA.tasks.filter(t=>t.projectId===pid);
-  if(!tasks.length) return 0;
-  return Math.round(tasks.filter(t=>t.completed).length/tasks.length*100);
-}
-
 function renderProjects(){
-  if(projectDetailId){ renderProjectDetail(projectDetailId); return; }
+  if(projectDetailId){renderProjectDetail(projectDetailId);return;}
   const grid=document.getElementById('projects-grid');
-  if(!DATA.projects.length){
-    grid.innerHTML=`<div class="empty" style="grid-column:1/-1"><div class="empty-icon">◈</div>No projects yet.</div>`;
-    return;
-  }
-  grid.innerHTML = PROJ_STATUS.flatMap(status=>{
+  if(!DATA.projects.length){grid.innerHTML=`<div class="empty" style="grid-column:1/-1"><div class="empty-icon">◈</div>No projects yet.</div>`;return;}
+  grid.innerHTML=PROJ_STATUS.flatMap(status=>{
     const projs=DATA.projects.filter(p=>p.status===status);
     if(!projs.length) return [];
-    return [
-      `<div style="grid-column:1/-1;margin-top:4px">
-         <div class="text-xs text-dim mb8" style="letter-spacing:.09em;text-transform:uppercase;font-weight:600">${status}</div>
-       </div>`,
+    return [`<div style="grid-column:1/-1;margin-top:4px"><div class="text-xs text-dim mb8" style="letter-spacing:.09em;text-transform:uppercase;font-weight:600">${status}</div></div>`,
       ...projs.map(p=>{
-        const pct=calcProjectProgress(p.id);
-        const pending=DATA.tasks.filter(t=>t.projectId===p.id&&!t.completed).length;
+        const pct=calcProjectProgress(p.id),pending=DATA.tasks.filter(t=>t.projectId===p.id&&!t.completed).length;
         const daysAgo=Math.floor((Date.now()-new Date(p.lastUpdated))/86400000);
-        return `
-          <div class="project-card" onclick="openProjectDetail('${p.id}')">
-            <div class="flex-between mb8">
-              <div class="project-card-title">${escHtml(p.title)}</div>
-              <div class="flex-gap" onclick="event.stopPropagation()">
-                <span class="badge ${statusClass(p.status)}">${p.status}</span>
-                <button class="btn-icon" onclick="deleteProject('${p.id}')" style="color:var(--accent)">✕</button>
-              </div>
+        return `<div class="project-card" onclick="openProjectDetail('${p.id}')">
+          <div class="flex-between mb8">
+            <div class="project-card-title">${escHtml(p.title)}</div>
+            <div class="flex-gap" onclick="event.stopPropagation()">
+              <span class="badge ${statusClass(p.status)}">${p.status}</span>
+              <button class="btn-icon" onclick="deleteProject('${p.id}')" style="color:var(--accent)">✕</button>
             </div>
-            <div class="project-card-desc">${escHtml(p.description||'')}</div>
-            <div class="flex-between text-xs text-dim">
-              <span>${pending} pending tasks</span>
-              <span style="color:${daysAgo>7?'var(--accent)':'var(--text-3)'}">${daysAgo===0?'Today':`${daysAgo}d ago`}</span>
-            </div>
-            <div class="progress-track mt8"><div class="progress-fill" style="width:${pct}%"></div></div>
-            <div class="text-xs text-dim mt4">${pct}% complete · auto-calculated</div>
-          </div>`;
+          </div>
+          <div class="project-card-desc">${escHtml(p.description||'')}</div>
+          <div class="flex-between text-xs text-dim">
+            <span>${pending} pending tasks</span>
+            <span style="color:${daysAgo>7?'var(--accent)':'var(--text-3)'}">${daysAgo===0?'Today':`${daysAgo}d ago`}</span>
+          </div>
+          <div class="progress-track mt8"><div class="progress-fill" style="width:${pct}%"></div></div>
+          <div class="text-xs text-dim mt4">${pct}% complete</div>
+        </div>`;
       })
     ];
   }).join('');
@@ -995,13 +1141,10 @@ function openProjectDetail(id){
 }
 
 function renderProjectDetail(id){
-  const p=DATA.projects.find(x=>x.id===id); if(!p) return;
-  const pct=calcProjectProgress(id);
-  const projTasks=DATA.tasks.filter(t=>t.projectId===id);
-  const pending=projTasks.filter(t=>!t.completed);
-  const done=projTasks.filter(t=>t.completed);
+  const p=DATA.projects.find(x=>x.id===id);if(!p) return;
+  const pct=calcProjectProgress(id),projTasks=DATA.tasks.filter(t=>t.projectId===id);
+  const pending=projTasks.filter(t=>!t.completed),done=projTasks.filter(t=>t.completed);
   const daysAgo=Math.floor((Date.now()-new Date(p.lastUpdated))/86400000);
-
   document.getElementById('project-detail-view').innerHTML=`
     <button class="btn btn-ghost btn-sm mb16" onclick="backToProjects()">← Back to Projects</button>
     <div class="flex-between mb20">
@@ -1009,10 +1152,8 @@ function renderProjectDetail(id){
         <h2 class="font-serif" style="font-size:23px;margin-bottom:6px">${escHtml(p.title)}</h2>
         <div class="flex-gap">
           <span class="badge ${statusClass(p.status)}">${p.status}</span>
-          <span class="text-xs text-dim">${p.lifeArea}</span>
-          <span class="text-xs" style="color:${daysAgo>7?'var(--accent)':'var(--text-3)'}">
-            ${daysAgo===0?'Updated today':`Last updated ${daysAgo}d ago`}
-          </span>
+          <span class="text-xs text-dim">${escHtml(p.focusArea||p.lifeArea||'')}</span>
+          <span class="text-xs" style="color:${daysAgo>7?'var(--accent)':'var(--text-3)'}">${daysAgo===0?'Updated today':`Last updated ${daysAgo}d ago`}</span>
         </div>
       </div>
       <div class="flex-gap">
@@ -1024,19 +1165,17 @@ function renderProjectDetail(id){
     </div>
     <div class="grid-2 mb14">
       <div class="card">
-        <div class="card-title">Progress (auto-calculated)</div>
+        <div class="card-title">Progress (tasks + subtasks)</div>
         <div class="flex-between">
           <span class="font-serif" style="font-size:26px;color:var(--green)">${pct}%</span>
           <span class="text-sm text-dim">${projTasks.filter(t=>t.completed).length}/${projTasks.length} tasks done</span>
         </div>
-        <div class="progress-track" style="height:6px;margin-top:10px">
-          <div class="progress-fill" style="width:${pct}%"></div>
-        </div>
+        <div class="progress-track" style="height:6px;margin-top:10px"><div class="progress-fill" style="width:${pct}%"></div></div>
       </div>
       <div class="card">
         <div class="card-title">Notes</div>
         <div class="note-block" onclick="editProjectNotes('${id}')" style="cursor:pointer;min-height:36px">
-          ${p.notes ? escHtml(p.notes) : '<span class="text-dim">Click to add notes…</span>'}
+          ${p.notes?escHtml(p.notes):'<span class="text-dim">Click to add notes…</span>'}
         </div>
       </div>
     </div>
@@ -1048,150 +1187,93 @@ function renderProjectDetail(id){
     </div>`;
 }
 
-function backToProjects(){
-  projectDetailId=null;
-  document.getElementById('projects-list-view').style.display='';
-  document.getElementById('project-detail-view').style.display='none';
-  renderProjects();
-}
-
-function updateProjectStatus(id,status){
-  DATA.projects=DATA.projects.map(p=>p.id===id?{...p,status,lastUpdated:today()}:p);
-  scheduleSave(); renderProjectDetail(id);
-}
-
-function editProjectNotes(id){
-  const p=DATA.projects.find(x=>x.id===id); if(!p) return;
-  const notes=prompt('Project notes:',p.notes||'');
-  if(notes===null) return;
-  DATA.projects=DATA.projects.map(x=>x.id===id?{...x,notes,lastUpdated:today()}:x);
-  scheduleSave(); renderProjectDetail(id);
-}
-
-function deleteProject(id){
-  if(!confirm('Delete this project?')) return;
-  DATA.projects=DATA.projects.filter(p=>p.id!==id);
-  scheduleSave(); renderProjects(); toast('Project deleted','info');
-}
+function backToProjects(){projectDetailId=null;document.getElementById('projects-list-view').style.display='';document.getElementById('project-detail-view').style.display='none';renderProjects();}
+function updateProjectStatus(id,status){DATA.projects=DATA.projects.map(p=>p.id===id?{...p,status,lastUpdated:today()}:p);scheduleSave();renderProjectDetail(id);}
+function editProjectNotes(id){const p=DATA.projects.find(x=>x.id===id);if(!p) return;const notes=prompt('Project notes:',p.notes||'');if(notes===null) return;DATA.projects=DATA.projects.map(x=>x.id===id?{...x,notes,lastUpdated:today()}:x);scheduleSave();renderProjectDetail(id);}
+function deleteProject(id){if(!confirm('Delete this project?')) return;DATA.projects=DATA.projects.filter(p=>p.id!==id);scheduleSave();renderProjects();toast('Project deleted','info');}
 
 // ─── Jobs ─────────────────────────────────────────────────────────────────────
 function renderJobs(){
   const groups=JOB_STAGES.reduce((a,s)=>{a[s]=DATA.jobs.filter(j=>j.stage===s);return a},{});
-
-  document.getElementById('jobs-pipeline').innerHTML=JOB_STAGES
-    .filter(s=>s!=='Rejected').map(s=>`
-      <div class="pipeline-stage">
-        <div class="pipeline-count" style="color:${groups[s].length?'var(--accent)':'var(--text-3)'}">
-          ${groups[s].length}
-        </div>
-        <div class="pipeline-label">${s}</div>
-      </div>`).join('');
-
+  document.getElementById('jobs-pipeline').innerHTML=JOB_STAGES.filter(s=>s!=='Rejected').map(s=>`
+    <div class="pipeline-stage">
+      <div class="pipeline-count" style="color:${groups[s].length?'var(--accent)':'var(--text-3)'}">${groups[s].length}</div>
+      <div class="pipeline-label">${s}</div>
+    </div>`).join('');
   document.getElementById('jobs-list').innerHTML=JOB_STAGES.map(stage=>{
-    const jobs=groups[stage]; if(!jobs.length) return '';
-    return `
-      <div style="margin-bottom:18px">
-        <div class="text-xs text-dim mb8" style="letter-spacing:.09em;text-transform:uppercase;font-weight:600">${stage}</div>
-        ${jobs.map(j=>`
-          <div class="card mb10">
-            <div class="flex-between">
-              <div>
-                <div style="font-weight:600;font-size:14px">${escHtml(j.company)}</div>
-                <div class="text-sm text-muted mt4">${escHtml(j.role)}</div>
-              </div>
-              <div class="flex-gap">
-                <span class="stage ${stageClass(j.stage)}">${j.stage}</span>
-                <button class="btn btn-ghost btn-sm" onclick="openEditJob('${j.id}')">Edit</button>
-                <button class="btn btn-danger btn-sm" onclick="deleteJob('${j.id}')">✕</button>
-              </div>
-            </div>
-            ${j.url?`<div class="mt8"><a href="${escHtml(j.url)}" target="_blank" rel="noreferrer" class="text-sm">🔗 Open Application</a></div>`:''}
-            ${j.deadline?`<div class="text-xs mt4" style="color:var(--gold)">⏰ Deadline: ${j.deadline}</div>`:''}
-            ${j.notes?`<div class="note-block">${escHtml(j.notes)}</div>`:''}
-          </div>`).join('')}
-      </div>`;
+    const jobs=groups[stage];if(!jobs.length) return '';
+    return `<div style="margin-bottom:18px">
+      <div class="text-xs text-dim mb8" style="letter-spacing:.09em;text-transform:uppercase;font-weight:600">${stage}</div>
+      ${jobs.map(j=>`<div class="card mb10">
+        <div class="flex-between">
+          <div><div style="font-weight:600;font-size:14px">${escHtml(j.company)}</div><div class="text-sm text-muted mt4">${escHtml(j.role)}</div></div>
+          <div class="flex-gap">
+            <span class="stage ${stageClass(j.stage)}">${j.stage}</span>
+            <button class="btn btn-ghost btn-sm" onclick="openEditJob('${j.id}')">Edit</button>
+            <button class="btn btn-danger btn-sm" onclick="deleteJob('${j.id}')">✕</button>
+          </div>
+        </div>
+        ${j.url?`<div class="mt8"><a href="${escHtml(j.url)}" target="_blank" rel="noreferrer" class="text-sm">🔗 Open Application</a></div>`:''}
+        ${j.deadline?`<div class="text-xs mt4" style="color:var(--gold)">⏰ Deadline: ${j.deadline}</div>`:''}
+        ${j.notes?`<div class="note-block">${escHtml(j.notes)}</div>`:''}
+      </div>`).join('')}
+    </div>`;
   }).join('');
 }
-
-function deleteJob(id){
-  DATA.jobs=DATA.jobs.filter(j=>j.id!==id);
-  scheduleSave(); renderJobs(); toast('Removed','info');
-}
+function deleteJob(id){DATA.jobs=DATA.jobs.filter(j=>j.id!==id);scheduleSave();renderJobs();toast('Removed','info');}
 
 // ─── Habits ───────────────────────────────────────────────────────────────────
+const calcStreak=hid=>{let s=0,d=new Date();while(true){const k=d.toISOString().split('T')[0];if(DATA.habits[k]?.[hid]){s++;d.setDate(d.getDate()-1);}else break;}return s;};
+
 function renderHabits(){
-  const days14=Array.from({length:14},(_,i)=>{
-    const d=new Date(); d.setDate(d.getDate()-(13-i));
-    return d.toISOString().split('T')[0];
-  });
+  const days14=Array.from({length:14},(_,i)=>{const d=new Date();d.setDate(d.getDate()-(13-i));return d.toISOString().split('T')[0];});
   document.getElementById('habits-grid').innerHTML=DATA.habitDefs.map(h=>{
-    const streak=calcStreak(h.id);
-    const total=Object.values(DATA.habits).filter(d=>d?.[h.id]).length;
-    return `
-      <div class="habit-card">
-        <div class="flex-between">
-          <div class="flex-gap">
-            <span style="font-size:20px">${h.icon}</span>
-            <div>
-              <div style="font-weight:500;font-size:14px">${escHtml(h.label)}</div>
-              <div class="text-xs text-dim">${total} total completions</div>
-            </div>
-          </div>
-          <div class="flex-gap">
-            <span style="font-size:11px;color:var(--gold);font-weight:600">
-              ${streak>0?`${streak} day streak 🔥`:'No streak'}
-            </span>
-            <button class="btn btn-ghost btn-xs" onclick="openEditHabit('${h.id}')">Edit</button>
-            <button class="btn btn-danger btn-xs" onclick="deleteHabit('${h.id}')">✕</button>
-          </div>
+    const streak=calcStreak(h.id),total=Object.values(DATA.habits).filter(d=>d?.[h.id]).length;
+    return `<div class="habit-card">
+      <div class="flex-between">
+        <div class="flex-gap">
+          <span style="font-size:20px">${h.icon}</span>
+          <div><div style="font-weight:500;font-size:14px">${escHtml(h.label)}</div><div class="text-xs text-dim">${total} total completions</div></div>
         </div>
-        <div class="habit-grid">
-          ${days14.map(d=>{
-            const done=DATA.habits[d]?.[h.id];
-            const isT=d===today();
-            return `
-              <div style="text-align:center">
-                <div class="text-xs text-dim" style="margin-bottom:3px">
-                  ${new Date(d+'T12:00:00').toLocaleDateString('en-US',{weekday:'short'}).slice(0,1)}
-                </div>
-                <div class="habit-dot${done?' done':''}${isT?' today-ring':''}"
-                  onclick="toggleHabit('${h.id}','${d}')" title="${d}">${done?'✓':''}</div>
-              </div>`;
-          }).join('')}
+        <div class="flex-gap">
+          <span style="font-size:11px;color:var(--gold);font-weight:600">${streak>0?`${streak} day streak 🔥`:'No streak'}</span>
+          <button class="btn btn-ghost btn-xs" onclick="openEditHabit('${h.id}')">Edit</button>
+          <button class="btn btn-danger btn-xs" onclick="deleteHabit('${h.id}')">✕</button>
         </div>
-      </div>`;
+      </div>
+      <div class="habit-grid">
+        ${days14.map(d=>{
+          const done=DATA.habits[d]?.[h.id],isT=d===today();
+          return `<div style="text-align:center">
+            <div class="text-xs text-dim" style="margin-bottom:3px">${new Date(d+'T12:00:00').toLocaleDateString('en-US',{weekday:'short'}).slice(0,1)}</div>
+            <div class="habit-dot${done?' done':''}${isT?' today-ring':''}" onclick="toggleHabit('${h.id}','${d}')" title="${d}">${done?'✓':''}</div>
+          </div>`;
+        }).join('')}
+      </div>
+    </div>`;
   }).join('');
 }
 
-function toggleHabit(hid,dateStr){
-  if(!DATA.habits[dateStr]) DATA.habits[dateStr]={};
-  DATA.habits[dateStr][hid]=!DATA.habits[dateStr][hid];
-  scheduleSave(); renderAll();
+function toggleHabit(hid,dateStr){if(!DATA.habits[dateStr])DATA.habits[dateStr]={};DATA.habits[dateStr][hid]=!DATA.habits[dateStr][hid];scheduleSave();renderAll();}
+function toggleHabitsExpand(){
+  const strips=document.querySelectorAll('.habit-week-strip');
+  const btn=document.getElementById('habits-expand-btn');
+  const isExpanded=strips[0]?.style.display!=='none';
+  strips.forEach(el=>el.style.display=isExpanded?'none':'');
+  if(btn) btn.innerHTML=isExpanded?'Show week view ▾':'Hide week view ▴';
 }
-
-function deleteHabit(id){
-  if(!confirm('Delete this habit?')) return;
-  DATA.habitDefs=DATA.habitDefs.filter(h=>h.id!==id);
-  scheduleSave(); renderAll(); toast('Habit deleted','info');
-}
+function deleteHabit(id){if(!confirm('Delete this habit?')) return;DATA.habitDefs=DATA.habitDefs.filter(h=>h.id!==id);scheduleSave();renderAll();toast('Habit deleted','info');}
 
 // ─── Capture ──────────────────────────────────────────────────────────────────
 function renderCapture(){
   document.getElementById('capture-inbox-title').textContent=`Inbox (${DATA.captures.length})`;
   const list=document.getElementById('capture-list');
-  if(!DATA.captures.length){
-    list.innerHTML=`<div class="empty"><div class="empty-icon">💡</div>Nothing captured yet. Brain dump here, sort later.</div>`;
-    return;
-  }
+  if(!DATA.captures.length){list.innerHTML=`<div class="empty"><div class="empty-icon">💡</div>Nothing captured yet. Brain dump here, sort later.</div>`;return;}
   list.innerHTML=DATA.captures.map(c=>`
     <div class="capture-item">
-      <div style="flex:1">
-        <div style="font-size:13px">${escHtml(c.text)}</div>
-        <div class="text-xs text-dim mt4">${c.createdAt}</div>
-      </div>
+      <div style="flex:1"><div style="font-size:13px">${escHtml(c.text)}</div><div class="text-xs text-dim mt4">${c.createdAt}</div></div>
       <div class="flex-gap">
-        <select class="input" style="width:150px;font-size:12px;padding:4px 8px"
-          onchange="if(this.value)assignCapture('${c.id}',this.value);this.value=''">
+        <select class="input" style="width:150px;font-size:12px;padding:4px 8px" onchange="if(this.value)assignCapture('${c.id}',this.value);this.value=''">
           <option value="">→ Assign to project</option>
           ${DATA.projects.map(p=>`<option value="${p.id}">${escHtml(p.title)}</option>`).join('')}
         </select>
@@ -1199,171 +1281,86 @@ function renderCapture(){
       </div>
     </div>`).join('');
 }
-
-function addCapture(){
-  const inp=document.getElementById('capture-input');
-  if(!inp.value.trim()) return;
-  DATA.captures.unshift({id:uid(),text:inp.value.trim(),createdAt:today()});
-  inp.value='';
-  scheduleSave(); renderAll(); toast('Captured!','success');
-}
-
-function deleteCapture(id){
-  DATA.captures=DATA.captures.filter(c=>c.id!==id);
-  scheduleSave(); renderAll();
-}
-
+function addCapture(){const inp=document.getElementById('capture-input');if(!inp.value.trim()) return;DATA.captures.unshift({id:uid(),text:inp.value.trim(),createdAt:today()});inp.value='';scheduleSave();renderAll();toast('Captured!','success');}
+function deleteCapture(id){DATA.captures=DATA.captures.filter(c=>c.id!==id);scheduleSave();renderAll();}
 function assignCapture(id,projectId){
-  const c=DATA.captures.find(x=>x.id===id); if(!c) return;
-  DATA.tasks.unshift({id:uid(),title:c.text,category:'Work',lifeArea:'Career',
-    projectId,dueDate:today(),completed:false,notes:'',subtasks:[],createdAt:today()});
+  const c=DATA.captures.find(x=>x.id===id);if(!c) return;
+  DATA.tasks.unshift({id:uid(),title:c.text,focusArea:'Career',projectId,dueDate:today(),completed:false,notes:'',subtasks:[],createdAt:today()});
   DATA.captures=DATA.captures.filter(x=>x.id!==id);
-  scheduleSave(); renderAll(); toast('Added as task','success');
+  scheduleSave();renderAll();toast('Added as task','success');
 }
 
 // ─── Review ───────────────────────────────────────────────────────────────────
 function renderReview(){
-  const completed=DATA.tasks.filter(t=>t.completed).length;
-  const overdue=DATA.tasks.filter(t=>isOverdue(t)).length;
+  const completed=DATA.tasks.filter(t=>t.completed).length,overdue=DATA.tasks.filter(t=>isOverdue(t)).length;
   const streaks=DATA.habitDefs.filter(h=>calcStreak(h.id)>0).length;
-
   document.getElementById('review-stats').innerHTML=[
-    {val:completed, label:'Tasks Completed', color:'var(--green)'},
-    {val:overdue,   label:'Still Overdue',   color:overdue>0?'var(--accent)':'var(--text-3)'},
-    {val:`${streaks}/${DATA.habitDefs.length}`, label:'Active Streaks', color:'var(--gold)'},
-  ].map(s=>`
-    <div class="stat-card">
-      <div class="stat-value" style="color:${s.color}">${s.val}</div>
-      <div class="stat-label">${s.label}</div>
-    </div>`).join('');
-
+    {val:completed,label:'Tasks Completed',color:'var(--green)'},
+    {val:overdue,label:'Still Overdue',color:overdue>0?'var(--accent)':'var(--text-3)'},
+    {val:`${streaks}/${DATA.habitDefs.length}`,label:'Active Streaks',color:'var(--gold)'},
+  ].map(s=>`<div class="stat-card"><div class="stat-value" style="color:${s.color}">${s.val}</div><div class="stat-label">${s.label}</div></div>`).join('');
   const total=completed||1;
-  const areaColors={Career:'var(--blue)',Health:'var(--green)',Growth:'var(--gold)',Personal:'#c084fc'};
-  document.getElementById('review-areas').innerHTML=LIFE_AREAS.map(area=>{
-    const count=DATA.tasks.filter(t=>t.completed&&t.lifeArea===area).length;
-    const pct=Math.round(count/total*100);
-    return `
-      <div style="margin-bottom:10px">
-        <div class="flex-between text-sm">
-          <span>${area}</span>
-          <span class="text-dim">${count} tasks · ${pct}%</span>
-        </div>
-        <div class="progress-track">
-          <div class="progress-fill" style="width:${pct}%;background:${areaColors[area]}"></div>
-        </div>
-      </div>`;
+  const areaColors={Career:'var(--blue)',Health:'var(--green)',Growth:'#a3e635',Personal:'var(--gold)','Life Admin':'#c084fc'};
+  document.getElementById('review-areas').innerHTML=FOCUS_AREAS.map(area=>{
+    const count=DATA.tasks.filter(t=>t.completed&&t.focusArea===area).length,pct=Math.round(count/total*100);
+    return `<div style="margin-bottom:10px">
+      <div class="flex-between text-sm"><span>${area}</span><span class="text-dim">${count} tasks · ${pct}%</span></div>
+      <div class="progress-track"><div class="progress-fill" style="width:${pct}%;background:${areaColors[area]||'var(--green)'}"></div></div>
+    </div>`;
   }).join('');
 }
 
 async function generateReview(){
   const btn=document.getElementById('review-btn');
-  btn.disabled=true;
-  btn.innerHTML='<span style="display:inline-block;animation:spin 1s linear infinite">◌</span> Generating…';
+  btn.disabled=true;btn.innerHTML='<span style="display:inline-block;animation:spin 1s linear infinite">◌</span> Generating…';
   document.getElementById('review-output').innerHTML=`<div class="empty"><div class="empty-icon" style="animation:spin 1.5s linear infinite">◌</div>Analysing your week…</div>`;
-
-  const td=today(), wa=new Date();
-  wa.setDate(wa.getDate()-7);
-  const waStr=wa.toISOString().split('T')[0];
-  const cw=DATA.tasks.filter(t=>t.completed&&t.dueDate>=waStr);
-  const ov=DATA.tasks.filter(t=>isOverdue(t));
-  const hs=DATA.habitDefs.map(h=>({habit:h.label,streak:calcStreak(h.id),
-    done:Object.entries(DATA.habits).filter(([d,v])=>d>=waStr&&v[h.id]).length}));
+  const td=today(),wa=new Date();wa.setDate(wa.getDate()-7);const waStr=wa.toISOString().split('T')[0];
+  const cw=DATA.tasks.filter(t=>t.completed&&t.dueDate>=waStr),ov=DATA.tasks.filter(t=>isOverdue(t));
+  const hs=DATA.habitDefs.map(h=>({habit:h.label,streak:calcStreak(h.id),done:Object.entries(DATA.habits).filter(([d,v])=>d>=waStr&&v[h.id]).length}));
   const ap=DATA.projects.filter(p=>p.status==='Active');
-  const lb=LIFE_AREAS.reduce((a,la)=>{a[la]=cw.filter(t=>t.lifeArea===la).length;return a},{});
-
-  const prompt=`You are a direct, honest personal productivity coach. Weekly review for Aadhil.
-
-TODAY: ${td}
-COMPLETED THIS WEEK (${cw.length}): ${cw.slice(0,20).map(t=>`[${t.lifeArea}] ${t.title}`).join(', ')||'None'}
-OVERDUE (${ov.length}): ${ov.slice(0,8).map(t=>t.title).join(', ')||'None'}
-HABITS: ${hs.map(h=>`${h.habit}: ${h.done}/7 days, ${h.streak}d streak`).join(' | ')}
-ACTIVE PROJECTS: ${ap.map(p=>`${p.title} (${calcProjectProgress(p.id)}%)`).join(', ')||'None'}
-LIFE AREAS: ${Object.entries(lb).map(([a,c])=>`${a}:${c}`).join(', ')}
-JOB SEARCH: ${DATA.jobs.filter(j=>j.stage==='Interview').length} interviewing, ${DATA.jobs.filter(j=>j.stage==='Applied').length} applied
-
-Write a weekly review with EXACTLY these section headers (all caps, no numbers):
-WEEK IN REVIEW
-WINS
-GAPS & MISSES
-LIFE AREA BALANCE
-FOCUS FOR NEXT WEEK
-
-Be direct, specific, honest. Max 3 sentences per section. No filler.`;
-
+  const lb=FOCUS_AREAS.reduce((a,fa)=>{a[fa]=cw.filter(t=>t.focusArea===fa).length;return a},{});
+  const prompt=`You are a direct, honest personal productivity coach. Weekly review for Aadhil.\n\nTODAY: ${td}\nCOMPLETED THIS WEEK (${cw.length}): ${cw.slice(0,20).map(t=>`[${t.focusArea}] ${t.title}`).join(', ')||'None'}\nOVERDUE (${ov.length}): ${ov.slice(0,8).map(t=>t.title).join(', ')||'None'}\nHABITS: ${hs.map(h=>`${h.habit}: ${h.done}/7 days, ${h.streak}d streak`).join(' | ')}\nACTIVE PROJECTS: ${ap.map(p=>`${p.title} (${calcProjectProgress(p.id)}%)`).join(', ')||'None'}\nFOCUS AREAS: ${Object.entries(lb).map(([a,c])=>`${a}:${c}`).join(', ')}\nJOB SEARCH: ${DATA.jobs.filter(j=>j.stage==='Interview').length} interviewing, ${DATA.jobs.filter(j=>j.stage==='Applied').length} applied\n\nWrite a weekly review with EXACTLY these section headers (all caps, no numbers):\nWEEK IN REVIEW\nWINS\nGAPS & MISSES\nFOCUS AREA BALANCE\nFOCUS FOR NEXT WEEK\n\nBe direct, specific, honest. Max 3 sentences per section. No filler.`;
   try {
-    const res=await fetch('/api/review',{
-      method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:900,
-        messages:[{role:'user',content:prompt}]})
-    });
+    const res=await fetch('/api/review',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:900,messages:[{role:'user',content:prompt}]})});
     if(!res.ok) throw new Error(`${res.status}`);
     const result=await res.json();
-    const text=result.content?.map(c=>c.text||'').join('')||'';
-    renderReviewOutput(text);
-  } catch(e) {
-    document.getElementById('review-output').innerHTML=`
-      <div style="color:var(--gold);font-size:13px;padding:12px 14px;background:var(--gold-soft);border-radius:8px;line-height:1.6">
-        ℹ The AI review works once deployed to Vercel (requires the <code>/api/review</code> serverless function).<br>
-        All other features work fully in this HTML file.
-      </div>`;
+    renderReviewOutput(result.content?.map(c=>c.text||'').join('')||'');
+  } catch(e){
+    document.getElementById('review-output').innerHTML=`<div style="color:var(--gold);font-size:13px;padding:12px 14px;background:var(--gold-soft);border-radius:8px;line-height:1.6">ℹ The AI review works once deployed to Vercel (requires the <code>/api/review</code> serverless function).<br>All other features work fully in this HTML file.</div>`;
   }
-  btn.disabled=false; btn.innerHTML='Regenerate';
+  btn.disabled=false;btn.innerHTML='Regenerate';
 }
 
 function renderReviewOutput(text){
-  const sections=['WEEK IN REVIEW','WINS','GAPS & MISSES','LIFE AREA BALANCE','FOCUS FOR NEXT WEEK'];
+  const sections=['WEEK IN REVIEW','WINS','GAPS & MISSES','FOCUS AREA BALANCE','FOCUS FOR NEXT WEEK'];
   const parsed=[];
   sections.forEach((s,i)=>{
-    const re=new RegExp(s.replace(/[&]/g,'\\&')+'[:\\s\\n]+([\\s\\S]*?)(?='+
-      ((sections[i+1]||'').replace(/[&]/g,'\\&')||'$')+'|$)','i');
-    const m=text.match(re);
-    if(m) parsed.push({title:s,content:m[1].trim()});
+    const re=new RegExp(s.replace(/[&]/g,'\\&')+'[:\\s\\n]+([\\s\\S]*?)(?='+((sections[i+1]||'').replace(/[&]/g,'\\&')||'$')+'|$)','i');
+    const m=text.match(re);if(m)parsed.push({title:s,content:m[1].trim()});
   });
   const blocks=parsed.length?parsed:[{title:'WEEKLY REVIEW',content:text}];
-  document.getElementById('review-output').innerHTML=blocks.map(b=>`
-    <div class="review-block">
-      <h4>${b.title}</h4>
-      <div class="review-text">${escHtml(b.content)}</div>
-    </div>`).join('');
+  document.getElementById('review-output').innerHTML=blocks.map(b=>`<div class="review-block"><h4>${b.title}</h4><div class="review-text">${escHtml(b.content)}</div></div>`).join('');
 }
 
 // ─── Modals ───────────────────────────────────────────────────────────────────
-function openModal(html){
-  document.getElementById('modal-content').innerHTML=html;
-  document.getElementById('modal-overlay').style.display='flex';
+function openModal(html){document.getElementById('modal-content').innerHTML=html;document.getElementById('modal-overlay').style.display='flex';}
+function closeModal(){document.getElementById('modal-overlay').style.display='none';}
+
+function renderAreaPills(selected){
+  return `<div class="area-pills" id="area-pills">${FOCUS_AREAS.map(a=>`<div class="area-pill${a===selected?' selected':''}" data-area="${a}" onclick="selectPill(this,'${a}')">${a}</div>`).join('')}</div><input type="hidden" id="m-area" value="${selected||'Career'}"/>`;
 }
-function closeModal(){
-  document.getElementById('modal-overlay').style.display='none';
-}
+function selectPill(el,area){document.querySelectorAll('.area-pill').forEach(p=>p.classList.remove('selected'));el.classList.add('selected');document.getElementById('m-area').value=area;}
 
 function openAddTask(projectId=''){
-  openModal(`
-    <h3>New Task</h3>
-    <div class="form-row">
-      <label>Title</label>
-      <input class="input" id="m-title" placeholder="What needs to be done?" autofocus
-        onkeydown="if(event.key==='Enter')saveTask()"/>
-    </div>
+  openModal(`<h3>New Task</h3>
+    <div class="form-row"><label>Title</label><input class="input" id="m-title" placeholder="What needs to be done?" autofocus onkeydown="if(event.key==='Enter')saveTask()"/></div>
+    <div class="form-row"><label>Focus Area</label>${renderAreaPills('Career')}</div>
     <div class="form-grid">
-      <div class="form-row"><label>Category</label>
-        <select class="input" id="m-cat">${CATEGORIES.map(c=>`<option>${c}</option>`).join('')}</select>
-      </div>
-      <div class="form-row"><label>Life Area</label>
-        <select class="input" id="m-area">${LIFE_AREAS.map(a=>`<option>${a}</option>`).join('')}</select>
-      </div>
-      <div class="form-row"><label>Due Date</label>
-        <input type="date" class="input" id="m-due" value="${today()}"/>
-      </div>
-      <div class="form-row"><label>Project</label>
-        <select class="input" id="m-proj">
-          <option value="">None</option>
-          ${DATA.projects.map(p=>`<option value="${p.id}"${p.id===projectId?' selected':''}>${escHtml(p.title)}</option>`).join('')}
-        </select>
-      </div>
+      <div class="form-row"><label>Due Date <span class="text-dim" style="text-transform:none;letter-spacing:0;font-size:10px">(optional)</span></label><input type="date" class="input" id="m-due" value="${today()}"/></div>
+      <div class="form-row"><label>Due Time <span class="text-dim" style="text-transform:none;letter-spacing:0;font-size:10px">(optional)</span></label><input type="time" class="input" id="m-time"/></div>
     </div>
-    <div class="form-row"><label>Notes</label>
-      <textarea class="input" id="m-notes" placeholder="Optional…"></textarea>
-    </div>
+    <div class="form-row"><label>Project</label><select class="input" id="m-proj"><option value="">None</option>${DATA.projects.map(p=>`<option value="${p.id}"${p.id===projectId?' selected':''}>${escHtml(p.title)}</option>`).join('')}</select></div>
+    <div class="form-row"><label>Notes</label><textarea class="input" id="m-notes" placeholder="Optional…"></textarea></div>
     <div class="flex-gap" style="justify-content:flex-end;margin-top:6px">
       <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
       <button class="btn btn-primary" onclick="saveTask()">Add Task</button>
@@ -1371,87 +1368,47 @@ function openAddTask(projectId=''){
 }
 
 function openAddProjectTask(projectId){
-  openModal(`
-    <h3>New Task</h3>
-    <div class="form-row">
-      <label>Title</label>
-      <input class="input" id="m-title" placeholder="What needs to be done?" autofocus
-        onkeydown="if(event.key==='Enter')saveProjectTask('${projectId}')"/>
+  openModal(`<h3>New Task</h3>
+    <div class="form-row"><label>Title</label><input class="input" id="m-title" placeholder="What needs to be done?" autofocus onkeydown="if(event.key==='Enter')saveTask(null,'${projectId}')"/></div>
+    <div class="form-row"><label>Focus Area</label>${renderAreaPills('Career')}</div>
+    <div class="form-grid">
+      <div class="form-row"><label>Due Date</label><input type="date" class="input" id="m-due" value="${today()}"/></div>
+      <div class="form-row"><label>Due Time</label><input type="time" class="input" id="m-time"/></div>
     </div>
-    <div class="form-row">
-      <label>Due Date <span class="text-dim" style="font-size:10px;text-transform:none;letter-spacing:0">(optional)</span></label>
-      <input type="date" class="input" id="m-due" value="${today()}"/>
-    </div>
-    <div class="form-row">
-      <label>Notes <span class="text-dim" style="font-size:10px;text-transform:none;letter-spacing:0">(optional)</span></label>
-      <textarea class="input" id="m-notes" placeholder="Optional…" style="min-height:56px"></textarea>
-    </div>
+    <div class="form-row"><label>Notes</label><textarea class="input" id="m-notes" placeholder="Optional…" style="min-height:56px"></textarea></div>
+    <input type="hidden" id="m-proj" value="${projectId}"/>
     <div class="flex-gap" style="justify-content:flex-end;margin-top:6px">
       <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
-      <button class="btn btn-primary" onclick="saveProjectTask('${projectId}')">Add Task</button>
+      <button class="btn btn-primary" onclick="saveTask(null,'${projectId}')">Add Task</button>
     </div>`);
 }
 
-function saveProjectTask(projectId){
-  const title=document.getElementById('m-title')?.value?.trim(); if(!title) return;
-  DATA.tasks.unshift({
-    id:uid(), title,
-    category:'Work', lifeArea:'Career',
-    dueDate:document.getElementById('m-due').value||today(),
-    projectId: projectId||null,
-    notes:document.getElementById('m-notes').value,
-    completed:false, subtasks:[], createdAt:today()
-  });
-  DATA.projects=DATA.projects.map(p=>p.id===projectId?{...p,lastUpdated:today()}:p);
-  closeModal(); scheduleSave(); renderAll();
-  toast('Task added','success');
-}
-
-function saveTask(editId=null){
-  const title=document.getElementById('m-title')?.value?.trim();
-  if(!title) return;
-  const task={
-    id:editId||uid(), title,
-    category:document.getElementById('m-cat').value,
-    lifeArea:document.getElementById('m-area').value,
-    dueDate:document.getElementById('m-due').value||today(),
-    projectId:document.getElementById('m-proj').value||null,
-    notes:document.getElementById('m-notes').value,
-    completed:false, subtasks:[], createdAt:today()
-  };
-  if(editId) DATA.tasks=DATA.tasks.map(t=>t.id===editId?{...t,...task}:t);
+function saveTask(editId=null,forceProjectId=null){
+  const title=document.getElementById('m-title')?.value?.trim();if(!title) return;
+  const focusArea=document.getElementById('m-area')?.value||'Personal';
+  const projectId=forceProjectId||document.getElementById('m-proj')?.value||null;
+  const existing=editId?DATA.tasks.find(t=>t.id===editId):null;
+  const task={id:editId||uid(),title,focusArea,dueDate:document.getElementById('m-due')?.value||'',dueTime:document.getElementById('m-time')?.value||'',
+    projectId:projectId||null,notes:document.getElementById('m-notes')?.value||'',completed:existing?.completed||false,
+    completedDate:existing?.completedDate||null,subtasks:existing?.subtasks||[],createdAt:existing?.createdAt||today()};
+  if(editId) DATA.tasks=DATA.tasks.map(t=>t.id===editId?task:t);
   else DATA.tasks.unshift(task);
-  closeModal(); scheduleSave(); renderAll();
-  toast(editId?'Task updated':'Task added','success');
+  if(projectId) DATA.projects=DATA.projects.map(p=>p.id===projectId?{...p,lastUpdated:today()}:p);
+  closeModal();scheduleSave();renderAll();toast(editId?'Task updated':'Task added','success');
 }
 
 function openEditTask(id){
-  const t=DATA.tasks.find(x=>x.id===id); if(!t) return;
-  openModal(`
-    <h3>Edit Task</h3>
-    <div class="form-row"><label>Title</label>
-      <input class="input" id="m-title" value="${escHtml(t.title)}"/>
-    </div>
+  const t=DATA.tasks.find(x=>x.id===id);if(!t) return;
+  const fa=t.focusArea||migrateFocusArea(t);
+  openModal(`<h3>Edit Task</h3>
+    <div class="form-row"><label>Title</label><input class="input" id="m-title" value="${escHtml(t.title)}"/></div>
+    <div class="form-row"><label>Focus Area</label>${renderAreaPills(fa)}</div>
     <div class="form-grid">
-      <div class="form-row"><label>Category</label>
-        <select class="input" id="m-cat">${CATEGORIES.map(c=>`<option${c===t.category?' selected':''}>${c}</option>`).join('')}</select>
-      </div>
-      <div class="form-row"><label>Life Area</label>
-        <select class="input" id="m-area">${LIFE_AREAS.map(a=>`<option${a===t.lifeArea?' selected':''}>${a}</option>`).join('')}</select>
-      </div>
-      <div class="form-row"><label>Due Date</label>
-        <input type="date" class="input" id="m-due" value="${t.dueDate||today()}"/>
-      </div>
-      <div class="form-row"><label>Project</label>
-        <select class="input" id="m-proj">
-          <option value="">None</option>
-          ${DATA.projects.map(p=>`<option value="${p.id}"${p.id===t.projectId?' selected':''}>${escHtml(p.title)}</option>`).join('')}
-        </select>
-      </div>
+      <div class="form-row"><label>Due Date</label><input type="date" class="input" id="m-due" value="${t.dueDate||today()}"/></div>
+      <div class="form-row"><label>Due Time</label><input type="time" class="input" id="m-time" value="${t.dueTime||''}"/></div>
     </div>
-    <div class="form-row"><label>Notes</label>
-      <textarea class="input" id="m-notes">${escHtml(t.notes||'')}</textarea>
-    </div>
+    <div class="form-row"><label>Project</label><select class="input" id="m-proj"><option value="">None</option>${DATA.projects.map(p=>`<option value="${p.id}"${p.id===t.projectId?' selected':''}>${escHtml(p.title)}</option>`).join('')}</select></div>
+    <div class="form-row"><label>Notes</label><textarea class="input" id="m-notes">${escHtml(t.notes||'')}</textarea></div>
     <div class="flex-gap" style="justify-content:flex-end;margin-top:6px">
       <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
       <button class="btn btn-primary" onclick="saveTask('${id}')">Save</button>
@@ -1459,17 +1416,12 @@ function openEditTask(id){
 }
 
 function openAddProject(){
-  openModal(`
-    <h3>New Project</h3>
+  openModal(`<h3>New Project</h3>
     <div class="form-row"><label>Title</label><input class="input" id="m-ptitle" autofocus/></div>
     <div class="form-row"><label>Description</label><input class="input" id="m-pdesc"/></div>
     <div class="form-grid">
-      <div class="form-row"><label>Life Area</label>
-        <select class="input" id="m-parea">${LIFE_AREAS.map(a=>`<option>${a}</option>`).join('')}</select>
-      </div>
-      <div class="form-row"><label>Status</label>
-        <select class="input" id="m-pstatus">${PROJ_STATUS.map(s=>`<option>${s}</option>`).join('')}</select>
-      </div>
+      <div class="form-row"><label>Focus Area</label><select class="input" id="m-parea">${FOCUS_AREAS.map(a=>`<option>${a}</option>`).join('')}</select></div>
+      <div class="form-row"><label>Status</label><select class="input" id="m-pstatus">${PROJ_STATUS.map(s=>`<option>${s}</option>`).join('')}</select></div>
     </div>
     <div class="form-row"><label>Notes</label><textarea class="input" id="m-pnotes"></textarea></div>
     <div class="flex-gap" style="justify-content:flex-end;margin-top:6px">
@@ -1477,137 +1429,131 @@ function openAddProject(){
       <button class="btn btn-primary" onclick="saveProject()">Create</button>
     </div>`);
 }
-
 function saveProject(){
-  const title=document.getElementById('m-ptitle')?.value?.trim(); if(!title) return;
-  DATA.projects.unshift({id:uid(),title,
-    description:document.getElementById('m-pdesc').value,
-    lifeArea:document.getElementById('m-parea').value,
-    status:document.getElementById('m-pstatus').value,
-    notes:document.getElementById('m-pnotes').value,
-    lastUpdated:today(),createdAt:today()});
-  closeModal(); scheduleSave(); renderAll(); toast('Project created','success');
+  const title=document.getElementById('m-ptitle')?.value?.trim();if(!title) return;
+  DATA.projects.unshift({id:uid(),title,description:document.getElementById('m-pdesc').value,
+    focusArea:document.getElementById('m-parea').value,status:document.getElementById('m-pstatus').value,
+    notes:document.getElementById('m-pnotes').value,lastUpdated:today(),createdAt:today()});
+  closeModal();scheduleSave();renderAll();toast('Project created','success');
 }
 
 function openAddJob(editId=null){
   const j=editId?DATA.jobs.find(x=>x.id===editId):{};
-  openModal(`
-    <h3>${editId?'Edit':'New'} Opportunity</h3>
+  openModal(`<h3>${editId?'Edit':'New'} Opportunity</h3>
     <div class="form-grid">
-      <div class="form-row"><label>Company</label>
-        <input class="input" id="m-jco" value="${escHtml(j.company||'')}" autofocus/>
-      </div>
-      <div class="form-row"><label>Role</label>
-        <input class="input" id="m-jrole" value="${escHtml(j.role||'')}"/>
-      </div>
+      <div class="form-row"><label>Company</label><input class="input" id="m-jco" value="${escHtml(j.company||'')}" autofocus/></div>
+      <div class="form-row"><label>Role</label><input class="input" id="m-jrole" value="${escHtml(j.role||'')}"/></div>
     </div>
-    <div class="form-row"><label>Application URL</label>
-      <input class="input" id="m-jurl" value="${escHtml(j.url||'')}" placeholder="https://…"/>
-    </div>
+    <div class="form-row"><label>Application URL</label><input class="input" id="m-jurl" value="${escHtml(j.url||'')}" placeholder="https://…"/></div>
     <div class="form-grid">
-      <div class="form-row"><label>Stage</label>
-        <select class="input" id="m-jstage">
-          ${JOB_STAGES.map(s=>`<option${s===(j.stage||'Not Applied')?' selected':''}>${s}</option>`).join('')}
-        </select>
-      </div>
-      <div class="form-row"><label>Deadline</label>
-        <input type="date" class="input" id="m-jdead" value="${j.deadline||''}"/>
-      </div>
+      <div class="form-row"><label>Stage</label><select class="input" id="m-jstage">${JOB_STAGES.map(s=>`<option${s===(j.stage||'Not Applied')?' selected':''}>${s}</option>`).join('')}</select></div>
+      <div class="form-row"><label>Deadline</label><input type="date" class="input" id="m-jdead" value="${j.deadline||''}"/></div>
     </div>
-    <div class="form-row"><label>Notes</label>
-      <textarea class="input" id="m-jnotes">${escHtml(j.notes||'')}</textarea>
-    </div>
+    <div class="form-row"><label>Notes</label><textarea class="input" id="m-jnotes">${escHtml(j.notes||'')}</textarea></div>
     <div class="flex-gap" style="justify-content:flex-end;margin-top:6px">
       <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
       <button class="btn btn-primary" onclick="saveJob('${editId||''}')">Save</button>
     </div>`);
 }
-function openEditJob(id){ openAddJob(id); }
-
+function openEditJob(id){openAddJob(id);}
 function saveJob(editId=''){
-  const co=document.getElementById('m-jco')?.value?.trim(); if(!co) return;
-  const job={id:editId||uid(),company:co,
-    role:document.getElementById('m-jrole').value,
-    url:document.getElementById('m-jurl').value,
-    stage:document.getElementById('m-jstage').value,
-    deadline:document.getElementById('m-jdead').value,
-    notes:document.getElementById('m-jnotes').value,
-    createdAt:today()};
+  const co=document.getElementById('m-jco')?.value?.trim();if(!co) return;
+  const job={id:editId||uid(),company:co,role:document.getElementById('m-jrole').value,url:document.getElementById('m-jurl').value,
+    stage:document.getElementById('m-jstage').value,deadline:document.getElementById('m-jdead').value,
+    notes:document.getElementById('m-jnotes').value,createdAt:today()};
   if(editId) DATA.jobs=DATA.jobs.map(j=>j.id===editId?job:j);
   else DATA.jobs.unshift(job);
-  closeModal(); scheduleSave(); renderAll(); toast('Saved','success');
+  closeModal();scheduleSave();renderAll();toast('Saved','success');
 }
 
 function openAddHabit(editId=null){
   const h=editId?DATA.habitDefs.find(x=>x.id===editId):{};
-  openModal(`
-    <h3>${editId?'Edit':'New'} Habit</h3>
-    <div class="form-row"><label>Name</label>
-      <input class="input" id="m-hname" value="${escHtml(h.label||'')}" autofocus/>
-    </div>
-    <div class="form-row"><label>Icon (emoji)</label>
-      <input class="input" id="m-hicon" value="${h.icon||''}" placeholder="e.g. 🏃 🧘 💊"/>
-    </div>
+  openModal(`<h3>${editId?'Edit':'New'} Habit</h3>
+    <div class="form-row"><label>Name</label><input class="input" id="m-hname" value="${escHtml(h.label||'')}" autofocus/></div>
+    <div class="form-row"><label>Icon (emoji)</label><input class="input" id="m-hicon" value="${h.icon||''}" placeholder="e.g. 🏃 🧘 💊"/></div>
     <div class="flex-gap" style="justify-content:flex-end;margin-top:6px">
       <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
       <button class="btn btn-primary" onclick="saveHabit('${editId||''}')">Save</button>
     </div>`);
 }
-function openEditHabit(id){ openAddHabit(id); }
-
+function openEditHabit(id){openAddHabit(id);}
 function saveHabit(editId=''){
-  const label=document.getElementById('m-hname')?.value?.trim(); if(!label) return;
+  const label=document.getElementById('m-hname')?.value?.trim();if(!label) return;
   const icon=document.getElementById('m-hicon').value||'●';
   if(editId) DATA.habitDefs=DATA.habitDefs.map(h=>h.id===editId?{...h,label,icon}:h);
   else DATA.habitDefs.push({id:uid(),label,icon});
-  closeModal(); scheduleSave(); renderAll(); toast('Habit saved','success');
+  closeModal();scheduleSave();renderAll();toast('Habit saved','success');
 }
 
 // ─── Toast ────────────────────────────────────────────────────────────────────
 let toastTimer;
 function toast(msg,type='success'){
-  const el=document.getElementById('toast');
-  clearTimeout(toastTimer);
+  const el=document.getElementById('toast');clearTimeout(toastTimer);
   document.getElementById('toast-dot').className='toast-dot '+type;
   document.getElementById('toast-msg').textContent=msg;
-  el.style.display='flex'; el.className='toast';
-  toastTimer=setTimeout(()=>{
-    el.classList.add('hide');
-    setTimeout(()=>el.style.display='none',250);
-  },2200);
+  el.style.display='flex';el.className='toast';
+  toastTimer=setTimeout(()=>{el.classList.add('hide');setTimeout(()=>el.style.display='none',250);},2200);
 }
 
 // ─── Util ─────────────────────────────────────────────────────────────────────
-function escHtml(s){
-  return String(s||'')
-    .replace(/&/g,'&amp;')
-    .replace(/</g,'&lt;')
-    .replace(/>/g,'&gt;')
-    .replace(/"/g,'&quot;');
+function escHtml(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+
+// ─── Swipe to complete (mobile) ───────────────────────────────────────────────
+function attachSwipeHandlers() {
+  if (window.innerWidth > 768) return;
+  document.querySelectorAll('.task-item').forEach(el => {
+    if (el.dataset.swipe) return;
+    el.dataset.swipe = '1';
+    let startX=0, startY=0, dx=0;
+    const id = el.id.replace('task-','');
+
+    el.addEventListener('touchstart', e => {
+      startX = e.touches[0].clientX;
+      startY = e.touches[0].clientY;
+      dx = 0;
+    }, {passive:true});
+
+    el.addEventListener('touchmove', e => {
+      dx = e.touches[0].clientX - startX;
+      const dy = Math.abs(e.touches[0].clientY - startY);
+      if (Math.abs(dx) < dy) { dx=0; return; } // vertical scroll wins
+      if (dx > 0 && dx < 80) {
+        el.style.transform = `translateX(${dx}px)`;
+        el.style.background = `rgba(74,158,110,${dx/160})`;
+      }
+    }, {passive:true});
+
+    el.addEventListener('touchend', () => {
+      if (dx > 60) {
+        el.style.transform = 'translateX(100%)';
+        el.style.opacity = '0';
+        el.style.transition = 'transform .25s ease, opacity .25s ease';
+        setTimeout(() => toggleTask(id), 220);
+      } else {
+        el.style.transform = '';
+        el.style.background = '';
+      }
+      dx = 0;
+    }, {passive:true});
+  });
 }
 
 // ─── Boot ─────────────────────────────────────────────────────────────────────
-document.querySelectorAll('.nav-item').forEach(el=>{
-  el.addEventListener('click',()=>navigate(el.dataset.page));
-});
-document.addEventListener('keydown',e=>{ if(e.key==='Escape') closeModal(); });
-
+document.querySelectorAll('.nav-item').forEach(el=>{el.addEventListener('click',()=>navigate(el.dataset.page));});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal();});
 document.getElementById('page-title').textContent=getGreeting();
 document.getElementById('page-sub').textContent=todayLong();
-
 const _script=document.createElement('script');
 _script.src='https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js';
 _script.onload=()=>loadData();
-_script.onerror=()=>{ setSyncStatus('error','Offline'); loadData(); };
+_script.onerror=()=>{setSyncStatus('error','Offline');loadData();};
 document.head.appendChild(_script);
 </script>
 
 <!-- PWA Service Worker -->
 <script>
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-      navigator.serviceWorker.register('/sw.js');
-    });
+  if('serviceWorker' in navigator){
+    window.addEventListener('load',()=>{navigator.serviceWorker.register('/sw.js');});
   }
 </script>
 </body>

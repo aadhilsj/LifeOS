@@ -2,9 +2,10 @@
 // Vercel serverless function — receives base64 audio, transcribes with Whisper,
 // interprets intent with Claude, returns structured task data.
 
-export const config = { api: { bodyParser: { sizeLimit: '10mb' } } };
+// NOTE: config must be set BEFORE reassigning module.exports
+const config = { api: { bodyParser: { sizeLimit: '10mb' } } };
 
-module.exports = async function handler(req, res) {
+async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
@@ -17,22 +18,16 @@ module.exports = async function handler(req, res) {
   const ANTHROPIC_KEY = process.env.ANTHROPIC_API_KEY;
   const OPENAI_KEY = process.env.OPENAI_API_KEY;
 
-  if (!ANTHROPIC_KEY) {
-    return res.status(500).json({ error: 'ANTHROPIC_API_KEY not set' });
-  }
+  if (!ANTHROPIC_KEY) return res.status(500).json({ error: 'ANTHROPIC_API_KEY not set' });
+  if (!OPENAI_KEY)    return res.status(500).json({ error: 'OPENAI_API_KEY not set' });
 
-  if (!OPENAI_KEY) {
-    return res.status(500).json({ error: 'OPENAI_API_KEY not set' });
-  }
-
-  // ── Step 1: Transcribe with Whisper ─────────────────────────────
+  // ── Step 1: Transcribe with Whisper ──────────────────────────────────────────
   let transcript = '';
 
   try {
     const buffer = Buffer.from(audio, 'base64');
     const ext = mimeType?.includes('mp4') ? 'mp4' : 'webm';
     const filename = `audio.${ext}`;
-
     const boundary = '----KairoVoiceBoundary' + Date.now();
 
     const body = Buffer.concat([
@@ -69,12 +64,11 @@ module.exports = async function handler(req, res) {
     return res.json({ transcript: '', task: null });
   }
 
-  // ── Step 2: Interpret with Claude ─────────────────────────────
-  const today = new Date().toISOString().split('T')[0];
+  // ── Step 2: Interpret with Claude ────────────────────────────────────────────
+  const today    = new Date().toISOString().split('T')[0];
   const tomorrow = new Date(Date.now() + 86400000).toISOString().split('T')[0];
-
   const projectList = projects.map(p => `- "${p.title}" (id: ${p.id})`).join('\n') || 'None';
-  const areaList = focusAreas.join(', ') || 'Career, Health, Personal, Life Admin, Growth';
+  const areaList    = focusAreas.join(', ') || 'Career, Health, Personal, Life Admin, Growth';
 
   const prompt = `You are a task parser for a personal productivity app called Kairo.
 
@@ -86,7 +80,7 @@ Available focus areas: ${areaList}
 Available projects:
 ${projectList}
 
-Respond ONLY with a valid JSON object:
+Respond ONLY with a valid JSON object — no markdown, no explanation:
 {
   "title": "clean task title",
   "focusArea": "one of the focus areas above",
@@ -96,10 +90,11 @@ Respond ONLY with a valid JSON object:
 }
 
 Rules:
+- title should be concise and action-oriented
 - If user says "today", dueDate = ${today}
-- If "tomorrow", dueDate = ${tomorrow}
-- Default focusArea = "Personal"
-`;
+- If user says "tomorrow", dueDate = ${tomorrow}
+- Match project by name similarity
+- Default focusArea = "Personal" if unclear`;
 
   try {
     const claudeRes = await fetch('https://api.anthropic.com/v1/messages', {
@@ -126,7 +121,6 @@ Rules:
     const raw = claudeData.content?.[0]?.text?.trim() || '';
 
     let task = null;
-
     try {
       const clean = raw.replace(/```json|```/g, '').trim();
       task = JSON.parse(clean);
@@ -135,9 +129,11 @@ Rules:
     }
 
     return res.json({ transcript, task });
-
   } catch (e) {
     console.error('Claude exception:', e);
     return res.json({ transcript, task: null });
   }
-};
+}
+
+handler.config = config;
+module.exports = handler;

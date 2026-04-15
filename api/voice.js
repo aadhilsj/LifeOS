@@ -1,37 +1,158 @@
 // api/voice.js
-// Vercel serverless function — receives base64 audio, transcribes with Whisper,
-// interprets intent with Claude, returns structured task data.
+// Handles two modes:
+// 1. Audio mode: receives base64 audio → Whisper transcription → Claude interpretation
+// 2. Text mode:  receives plain text directly → Claude interpretation only (no Whisper)
 
-// NOTE: config must be set BEFORE reassigning module.exports
+const VALID_FOCUS_AREAS = ['Career', 'Health', 'Personal', 'Life Admin', 'Growth'];
+const ISO_DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
+
+function sanitiseTask(t, validProjectIds) {
+  if (!t || typeof t !== 'object') return null;
+  const title = (t.title || '').trim();
+  if (!title) return null;
+  return {
+    title,
+    focusArea: VALID_FOCUS_AREAS.includes(t.focusArea) ? t.focusArea : 'Personal',
+    dueDate:   typeof t.dueDate === 'string' && ISO_DATE_RE.test(t.dueDate) ? t.dueDate : null,
+    projectId: validProjectIds.includes(t.projectId) ? t.projectId : null,
+    notes:     typeof t.notes === 'string' && t.notes.trim() ? t.notes.trim() : null,
+  };
+}
+
+function salvageTasks(raw, validProjectIds) {
+  const tasks = [];
+  const objectMatches = raw.match(/\{[^{}]+\}/g) || [];
+  for (const chunk of objectMatches) {
+    try {
+      const sanitised = sanitiseTask(JSON.parse(chunk), validProjectIds);
+      if (sanitised) tasks.push(sanitised);
+    } catch {}
+  }
+  return tasks;
+}
+
+async function interpretWithClaude(transcript, projects, focusAreas, ANTHROPIC_KEY) {
+  const now      = new Date();
+  const today    = now.toISOString().split('T')[0];
+  const tomorrow = new Date(now.getTime() + 86400000).toISOString().split('T')[0];
+  const dayNames = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+
+  const relativeDates = Array.from({ length: 7 }, (_, i) => {
+    const d = new Date(now.getTime() + (i + 1) * 86400000);
+    return `"next ${dayNames[d.getDay()]}" or "this ${dayNames[d.getDay()]}" = ${d.toISOString().split('T')[0]}`;
+  }).join('\n');
+
+  const weekend = Array.from({length:7},(_,i)=>{
+    const d=new Date(now.getTime()+(i+1)*86400000);
+    return d.getDay()===6?d.toISOString().split('T')[0]:null;
+  }).filter(Boolean)[0] || tomorrow;
+
+  const projectList = projects.map(p => `- "${p.title}" (id: ${p.id})`).join('\n') || 'None';
+  const areaList    = (focusAreas.length ? focusAreas : VALID_FOCUS_AREAS).join(', ');
+
+  const prompt = `You are a task parser for a personal productivity app called Kairo.
+
+The user said: "${transcript}"
+
+Today: ${today} (${dayNames[now.getDay()]})
+
+Focus areas: ${areaList}
+Projects:
+${projectList}
+
+DATES:
+"today" = ${today}
+"tomorrow" = ${tomorrow}
+${relativeDates}
+"this weekend" = ${weekend}
+"next week" = ${new Date(now.getTime() + 7 * 86400000).toISOString().split('T')[0]}
+Unknown date reference = null
+
+RULES:
+- One action = one task. Multiple actions = multiple tasks.
+- "pay phone bill, buy dates, buy toilet paper" → 3 tasks
+- "do the grocery shopping" → 1 task (don't invent sub-items)
+- title: concise, starts with action verb
+- focusArea: shopping/bills → "Life Admin", work → "Career", health/gym → "Health", learning → "Growth", else → "Personal"
+- dueDate: YYYY-MM-DD only, or null
+- projectId: exact id from list above, or null
+
+Respond ONLY with a JSON array, no markdown:
+[{"title":"...","focusArea":"...","dueDate":null,"projectId":null,"notes":null}]`;
+
+  const claudeRes = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'x-api-key': ANTHROPIC_KEY,
+      'anthropic-version': '2023-06-01',
+    },
+    body: JSON.stringify({
+      model: 'claude-haiku-4-5-20251001',
+      max_tokens: 1024,
+      messages: [{ role: 'user', content: prompt }],
+    }),
+  });
+
+  if (!claudeRes.ok) {
+    console.error('Claude error:', await claudeRes.text());
+    return [];
+  }
+
+  const claudeData = await claudeRes.json();
+  const raw = claudeData.content?.[0]?.text?.trim() || '';
+  const validIds = projects.map(p => p.id);
+
+  try {
+    const clean  = raw.replace(/```json|```/g, '').trim();
+    const parsed = JSON.parse(clean);
+    const arr    = Array.isArray(parsed) ? parsed : [parsed];
+    return arr.map(t => sanitiseTask(t, validIds)).filter(Boolean);
+  } catch {
+    console.warn('Primary parse failed, attempting salvage. Raw:', raw);
+    const salvaged = salvageTasks(raw, validIds);
+    return salvaged;
+  }
+}
+
 const config = { api: { bodyParser: { sizeLimit: '10mb' } } };
 
 async function handler(req, res) {
-  if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method not allowed' });
-  }
+  if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
-  const { audio, mimeType, projects = [], focusAreas = [] } = req.body;
-  if (!audio) {
-    return res.status(400).json({ error: 'No audio provided' });
-  }
+  const { audio, text, mimeType, projects = [], focusAreas = [] } = req.body;
 
   const ANTHROPIC_KEY = process.env.ANTHROPIC_API_KEY;
-  const OPENAI_KEY = process.env.OPENAI_API_KEY;
+  const OPENAI_KEY    = process.env.OPENAI_API_KEY;
 
   if (!ANTHROPIC_KEY) return res.status(500).json({ error: 'ANTHROPIC_API_KEY not set' });
-  if (!OPENAI_KEY)    return res.status(500).json({ error: 'OPENAI_API_KEY not set' });
 
-  // ── Step 1: Transcribe with Whisper ──────────────────────────────────────────
+  // ── TEXT MODE (command bar — no audio) ───────────────────────────────────────
+  if (text && !audio) {
+    const transcript = text.trim();
+    if (!transcript) return res.json({ transcript: '', tasks: [], fallback: false });
+
+    try {
+      const tasks = await interpretWithClaude(transcript, projects, focusAreas, ANTHROPIC_KEY);
+      return res.json({ transcript, tasks, fallback: tasks.length === 0 });
+    } catch (e) {
+      console.error('Text mode Claude exception:', e);
+      return res.json({ transcript, tasks: [], fallback: true });
+    }
+  }
+
+  // ── AUDIO MODE (voice recording) ─────────────────────────────────────────────
+  if (!audio) return res.status(400).json({ error: 'No audio or text provided' });
+  if (!OPENAI_KEY) return res.status(500).json({ error: 'OPENAI_API_KEY not set' });
+
   let transcript = '';
-
   try {
-    const buffer = Buffer.from(audio, 'base64');
-    const ext = mimeType?.includes('mp4') ? 'mp4' : 'webm';
-    const filename = `audio.${ext}`;
+    const buffer   = Buffer.from(audio, 'base64');
+    const ext      = mimeType?.includes('mp4') ? 'mp4' : 'webm';
     const boundary = '----KairoVoiceBoundary' + Date.now();
 
     const body = Buffer.concat([
-      Buffer.from(`--${boundary}\r\nContent-Disposition: form-data; name="file"; filename="${filename}"\r\nContent-Type: ${mimeType || 'audio/webm'}\r\n\r\n`),
+      Buffer.from(`--${boundary}\r\nContent-Disposition: form-data; name="file"; filename="audio.${ext}"\r\nContent-Type: ${mimeType || 'audio/webm'}\r\n\r\n`),
       buffer,
       Buffer.from(`\r\n--${boundary}\r\nContent-Disposition: form-data; name="model"\r\n\r\nwhisper-1\r\n`),
       Buffer.from(`--${boundary}\r\nContent-Disposition: form-data; name="language"\r\n\r\nen\r\n`),
@@ -40,10 +161,7 @@ async function handler(req, res) {
 
     const whisperRes = await fetch('https://api.openai.com/v1/audio/transcriptions', {
       method: 'POST',
-      headers: {
-        Authorization: `Bearer ${OPENAI_KEY}`,
-        'Content-Type': `multipart/form-data; boundary=${boundary}`,
-      },
+      headers: { Authorization: `Bearer ${OPENAI_KEY}`, 'Content-Type': `multipart/form-data; boundary=${boundary}` },
       body,
     });
 
@@ -53,85 +171,20 @@ async function handler(req, res) {
       return res.status(500).json({ error: 'Transcription failed', detail: err });
     }
 
-    const whisperData = await whisperRes.json();
-    transcript = whisperData.text?.trim() || '';
+    transcript = (await whisperRes.json()).text?.trim() || '';
   } catch (e) {
     console.error('Whisper exception:', e);
     return res.status(500).json({ error: 'Transcription exception', detail: e.message });
   }
 
-  if (!transcript) {
-    return res.json({ transcript: '', task: null });
-  }
-
-  // ── Step 2: Interpret with Claude ────────────────────────────────────────────
-  const today    = new Date().toISOString().split('T')[0];
-  const tomorrow = new Date(Date.now() + 86400000).toISOString().split('T')[0];
-  const projectList = projects.map(p => `- "${p.title}" (id: ${p.id})`).join('\n') || 'None';
-  const areaList    = focusAreas.join(', ') || 'Career, Health, Personal, Life Admin, Growth';
-
-  const prompt = `You are a task parser for a personal productivity app called Kairo.
-
-The user just said: "${transcript}"
-
-Today's date: ${today}
-
-Available focus areas: ${areaList}
-Available projects:
-${projectList}
-
-Respond ONLY with a valid JSON object — no markdown, no explanation:
-{
-  "title": "clean task title",
-  "focusArea": "one of the focus areas above",
-  "dueDate": "YYYY-MM-DD or null",
-  "projectId": "matching project id or null",
-  "notes": "any extra context or null"
-}
-
-Rules:
-- title should be concise and action-oriented
-- If user says "today", dueDate = ${today}
-- If user says "tomorrow", dueDate = ${tomorrow}
-- Match project by name similarity
-- Default focusArea = "Personal" if unclear`;
+  if (!transcript) return res.json({ transcript: '', tasks: [], fallback: false });
 
   try {
-    const claudeRes = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': ANTHROPIC_KEY,
-        'anthropic-version': '2023-06-01',
-      },
-      body: JSON.stringify({
-        model: 'claude-haiku-4-5-20251001',
-        max_tokens: 256,
-        messages: [{ role: 'user', content: prompt }],
-      }),
-    });
-
-    if (!claudeRes.ok) {
-      const err = await claudeRes.text();
-      console.error('Claude error:', err);
-      return res.json({ transcript, task: null });
-    }
-
-    const claudeData = await claudeRes.json();
-    const raw = claudeData.content?.[0]?.text?.trim() || '';
-
-    let task = null;
-    try {
-      const clean = raw.replace(/```json|```/g, '').trim();
-      task = JSON.parse(clean);
-    } catch {
-      console.error('JSON parse failed:', raw);
-    }
-
-    return res.json({ transcript, task });
+    const tasks = await interpretWithClaude(transcript, projects, focusAreas, ANTHROPIC_KEY);
+    return res.json({ transcript, tasks, fallback: tasks.length === 0 });
   } catch (e) {
     console.error('Claude exception:', e);
-    return res.json({ transcript, task: null });
+    return res.json({ transcript, tasks: [], fallback: true });
   }
 }
 

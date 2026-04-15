@@ -1667,7 +1667,7 @@ async function processHomeVoice(){
 // ─── Home ─────────────────────────────────────────────────────────────────────
 function renderHome(){
   const td=today();
-  const todayTasks=DATA.tasks.filter(t=>!t.completed&&t.dueDate===td);
+  const todayTasks=DATA.tasks.filter(t=>!t.completed&&!t.dismissed&&(t.dueDate===td||!t.dueDate));
   const overdueTasks=DATA.tasks.filter(t=>isOverdue(t));
   const pinnedTasks=DATA.tasks.filter(t=>DATA.focusTasks.includes(t.id)&&!t.completed);
   const wStart=new Date(); wStart.setDate(wStart.getDate()-wStart.getDay());

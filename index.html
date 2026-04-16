@@ -556,6 +556,10 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;heigh
   .fab{display:none}
   .content{padding:14px;padding-bottom:84px}
   .grid-2,.grid-3{grid-template-columns:1fr}
+  #home-col-right{order:-1}
+  #home-col-left{order:0}
+  #home-col-right{order:-1}
+  #home-col-left{order:0}
   .settings-grid{grid-template-columns:1fr}
   .theme-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
   .stat-row{grid-template-columns:repeat(3,1fr)}
@@ -712,7 +716,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;heigh
         <div class="capture-nudge mb14" id="home-capture-nudge" style="display:none" onclick="navigate('capture')"></div>
         <div class="review-nudge" id="home-review-nudge" style="display:none" onclick="navigate('projects');setTimeout(()=>switchHub('review'),50)"></div>
         <div class="grid-2" style="gap:14px">
-          <div>
+          <div id="home-col-left">
             <div class="dtn-card" id="home-dtn-card">
               <div class="dtn-label">Do This Now</div>
               <div class="dtn-sub" id="home-dtn-sub">What matters most right now</div>
@@ -730,7 +734,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;heigh
               <div id="home-habits-list"></div>
             </div>
           </div>
-          <div>
+          <div id="home-col-right">
             <div class="card mb14">
               <div class="flex-between mb12">
                 <div class="card-title" style="margin:0">Today's Schedule</div>

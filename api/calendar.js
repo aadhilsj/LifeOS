@@ -2,7 +2,7 @@ const {
   computeFreeWindows,
   fetchTodayEvents,
   getCalendarIntegration,
-  getValidCalendarSession,
+  getValidCalendarSessions,
   toIsoDate,
 } = require('./calendar/_lib');
 
@@ -13,28 +13,41 @@ module.exports = async function handler(req, res) {
 
   try {
     const integration = await getCalendarIntegration();
-    if (!integration?.refreshToken) {
+    if (!integration.connections.length) {
       return res.status(200).json({
         connected: false,
         date: toIsoDate(new Date()),
         events: [],
         freeWindows: [],
+        connections: [],
+        connectedCount: 0,
         message: 'Google Calendar is not connected yet',
       });
     }
 
-    const session = await getValidCalendarSession();
-    if (!session.connected) {
+    const sessionState = await getValidCalendarSessions();
+    if (!sessionState.connected) {
       return res.status(200).json({
         connected: false,
         date: toIsoDate(new Date()),
         events: [],
         freeWindows: [],
-        message: session.reason || 'Google Calendar is not connected',
+        connections: integration.connections.map(connection => ({
+          id: connection.id,
+          email: connection.email,
+          displayName: connection.displayName,
+        })),
+        connectedCount: integration.connections.length,
+        message: sessionState.reason || 'Google Calendar is not connected',
       });
     }
 
-    const events = await fetchTodayEvents(session.accessToken);
+    const eventGroups = await Promise.all(
+      sessionState.sessions.map(session => fetchTodayEvents(session.accessToken, session.connection))
+    );
+    const events = eventGroups
+      .flat()
+      .sort((a, b) => new Date(a.start || 0).getTime() - new Date(b.start || 0).getTime());
     const freeWindows = computeFreeWindows(events);
 
     return res.status(200).json({
@@ -42,6 +55,12 @@ module.exports = async function handler(req, res) {
       date: toIsoDate(new Date()),
       events,
       freeWindows,
+      connections: sessionState.integration.connections.map(connection => ({
+        id: connection.id,
+        email: connection.email,
+        displayName: connection.displayName,
+      })),
+      connectedCount: sessionState.sessions.length,
     });
   } catch (error) {
     return res.status(500).json({

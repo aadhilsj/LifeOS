@@ -28,6 +28,14 @@ function buildState() {
   })).toString('base64url');
 }
 
+function slugify(value) {
+  return String(value || '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+    .slice(0, 48);
+}
+
 function buildGoogleAuthUrl() {
   const { googleClientId, googleRedirectUri } = getConfig();
   const params = new URLSearchParams({
@@ -80,15 +88,93 @@ async function loadLifeOsRow() {
   return rows?.[0] || null;
 }
 
+function normalizeCalendarConnection(connection, index = 0) {
+  if (!connection || typeof connection !== 'object') return null;
+  if (!connection.refreshToken && !connection.accessToken) return null;
+
+  const email = connection.email || connection.calendarEmail || connection.calendarId || '';
+  const fallbackId = email ? `google-${slugify(email)}` : `google-${index + 1}`;
+
+  return {
+    id: connection.id || fallbackId,
+    email,
+    displayName: connection.displayName || connection.summary || email || `Google Calendar ${index + 1}`,
+    calendarId: connection.calendarId || email || 'primary',
+    accessToken: connection.accessToken || '',
+    refreshToken: connection.refreshToken || '',
+    expiresAt: connection.expiresAt || null,
+    connectedAt: connection.connectedAt || connection.createdAt || new Date().toISOString(),
+    refreshedAt: connection.refreshedAt || connection.connectedAt || null,
+    scope: connection.scope || GOOGLE_SCOPE,
+    tokenType: connection.tokenType || 'Bearer',
+    lastError: connection.lastError || '',
+  };
+}
+
+function normalizeCalendarIntegration(integration) {
+  if (!integration || typeof integration !== 'object') {
+    return {
+      version: 2,
+      updatedAt: null,
+      connections: [],
+    };
+  }
+
+  if (Array.isArray(integration.connections)) {
+    return {
+      version: 2,
+      updatedAt: integration.updatedAt || integration.refreshedAt || integration.connectedAt || null,
+      connections: integration.connections
+        .map((connection, index) => normalizeCalendarConnection(connection, index))
+        .filter(Boolean),
+    };
+  }
+
+  const legacyConnection = normalizeCalendarConnection(integration, 0);
+  return {
+    version: 2,
+    updatedAt: integration.updatedAt || integration.refreshedAt || integration.connectedAt || null,
+    connections: legacyConnection ? [legacyConnection] : [],
+  };
+}
+
+function upsertCalendarConnection(integration, connection) {
+  const normalized = normalizeCalendarIntegration(integration);
+  const nextConnection = normalizeCalendarConnection(connection, normalized.connections.length);
+  if (!nextConnection) return normalized;
+
+  const matchIndex = normalized.connections.findIndex(existing =>
+    (nextConnection.email && existing.email && existing.email === nextConnection.email) ||
+    existing.id === nextConnection.id
+  );
+
+  const nextConnections = [...normalized.connections];
+  if (matchIndex >= 0) {
+    nextConnections[matchIndex] = {
+      ...nextConnections[matchIndex],
+      ...nextConnection,
+    };
+  } else {
+    nextConnections.push(nextConnection);
+  }
+
+  return {
+    version: 2,
+    updatedAt: new Date().toISOString(),
+    connections: nextConnections,
+  };
+}
+
 async function saveIntegrationState(nextIntegrationState) {
   const { integrationRowId } = getConfig();
   const existing = await loadLifeOsRow();
   const currentData = existing?.data && typeof existing.data === 'object' ? existing.data : {};
+  const normalizedIntegration = normalizeCalendarIntegration(nextIntegrationState);
   const nextData = {
     ...currentData,
     integrations: {
       ...(currentData.integrations || {}),
-      googleCalendar: nextIntegrationState,
+      googleCalendar: normalizedIntegration,
     },
   };
 
@@ -106,7 +192,7 @@ async function saveIntegrationState(nextIntegrationState) {
 
 async function getCalendarIntegration() {
   const row = await loadLifeOsRow();
-  return row?.data?.integrations?.googleCalendar || null;
+  return normalizeCalendarIntegration(row?.data?.integrations?.googleCalendar || null);
 }
 
 async function exchangeCodeForTokens(code) {
@@ -156,6 +242,44 @@ async function refreshAccessToken(refreshToken) {
   return response.json();
 }
 
+async function fetchPrimaryCalendar(accessToken) {
+  const response = await fetch(`${GOOGLE_CALENDAR_BASE}/users/me/calendarList/primary`, {
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+
+  if (!response.ok) {
+    const text = await response.text();
+    throw new Error(`Google Calendar primary calendar lookup failed (${response.status}): ${text}`);
+  }
+
+  return response.json();
+}
+
+async function buildCalendarConnection(tokenData, existingConnection = null) {
+  const now = Date.now();
+  const primaryCalendar = await fetchPrimaryCalendar(tokenData.access_token);
+  const email = primaryCalendar.id || existingConnection?.email || '';
+  const displayName = primaryCalendar.summary || email || existingConnection?.displayName || 'Google Calendar';
+
+  return normalizeCalendarConnection({
+    ...existingConnection,
+    id: existingConnection?.id || (email ? `google-${slugify(email)}` : `google-${now}`),
+    email,
+    displayName,
+    calendarId: primaryCalendar.id || existingConnection?.calendarId || 'primary',
+    accessToken: tokenData.access_token,
+    refreshToken: tokenData.refresh_token || existingConnection?.refreshToken || '',
+    expiresAt: new Date(now + (tokenData.expires_in || 3600) * 1000).toISOString(),
+    connectedAt: existingConnection?.connectedAt || new Date(now).toISOString(),
+    refreshedAt: new Date(now).toISOString(),
+    scope: tokenData.scope || existingConnection?.scope || GOOGLE_SCOPE,
+    tokenType: tokenData.token_type || existingConnection?.tokenType || 'Bearer',
+    lastError: '',
+  });
+}
+
 function toIsoDate(date) {
   return date.toISOString().split('T')[0];
 }
@@ -188,7 +312,7 @@ function formatEvent(event) {
   };
 }
 
-async function fetchTodayEvents(accessToken) {
+async function fetchTodayEvents(accessToken, source = {}) {
   const timeMin = startOfDay().toISOString();
   const timeMax = endOfDay().toISOString();
   const params = new URLSearchParams({
@@ -211,7 +335,12 @@ async function fetchTodayEvents(accessToken) {
   }
 
   const data = await response.json();
-  return (data.items || []).map(formatEvent);
+  return (data.items || []).map(event => ({
+    ...formatEvent(event),
+    sourceId: source.id || '',
+    sourceEmail: source.email || '',
+    sourceLabel: source.displayName || source.email || '',
+  }));
 }
 
 function computeFreeWindows(events) {
@@ -256,41 +385,92 @@ function computeFreeWindows(events) {
   return windows;
 }
 
-async function getValidCalendarSession() {
+async function getValidCalendarSessions() {
   const integration = await getCalendarIntegration();
-  if (!integration?.refreshToken) {
-    return { connected: false, reason: 'Google Calendar not connected' };
+  if (!integration.connections.length) {
+    return { connected: false, reason: 'Google Calendar not connected', sessions: [], integration };
   }
 
-  const expiresAt = integration.expiresAt ? new Date(integration.expiresAt).getTime() : 0;
-  const stillValid = integration.accessToken && expiresAt > Date.now() + 60 * 1000;
+  const sessions = [];
+  const nextConnections = [];
+  let didChange = false;
 
-  if (stillValid) {
-    return { connected: true, accessToken: integration.accessToken, integration };
+  for (const connection of integration.connections) {
+    try {
+      const expiresAt = connection.expiresAt ? new Date(connection.expiresAt).getTime() : 0;
+      const stillValid = connection.accessToken && expiresAt > Date.now() + 60 * 1000;
+
+      if (stillValid) {
+        sessions.push({
+          accessToken: connection.accessToken,
+          connection,
+        });
+        nextConnections.push({
+          ...connection,
+          lastError: '',
+        });
+        continue;
+      }
+
+      const refreshed = await refreshAccessToken(connection.refreshToken);
+      const nextConnection = normalizeCalendarConnection({
+        ...connection,
+        accessToken: refreshed.access_token,
+        expiresAt: new Date(Date.now() + (refreshed.expires_in || 3600) * 1000).toISOString(),
+        refreshedAt: new Date().toISOString(),
+        scope: refreshed.scope || connection.scope || GOOGLE_SCOPE,
+        tokenType: refreshed.token_type || connection.tokenType || 'Bearer',
+        lastError: '',
+      });
+
+      sessions.push({
+        accessToken: nextConnection.accessToken,
+        connection: nextConnection,
+      });
+      nextConnections.push(nextConnection);
+      didChange = true;
+    } catch (error) {
+      nextConnections.push({
+        ...connection,
+        lastError: error.message,
+      });
+      didChange = true;
+    }
   }
 
-  const refreshed = await refreshAccessToken(integration.refreshToken);
-  const nextIntegration = {
-    ...integration,
-    accessToken: refreshed.access_token,
-    expiresAt: new Date(Date.now() + (refreshed.expires_in || 3600) * 1000).toISOString(),
-    refreshedAt: new Date().toISOString(),
-    scope: refreshed.scope || integration.scope || GOOGLE_SCOPE,
-    tokenType: refreshed.token_type || integration.tokenType || 'Bearer',
+  if (didChange) {
+    await saveIntegrationState({
+      ...integration,
+      updatedAt: new Date().toISOString(),
+      connections: nextConnections,
+    });
+  }
+
+  if (!sessions.length) {
+    return { connected: false, reason: 'No valid Google Calendar connections found', sessions: [], integration: { ...integration, connections: nextConnections } };
+  }
+
+  return {
+    connected: true,
+    sessions,
+    integration: {
+      ...integration,
+      connections: nextConnections,
+    },
   };
-
-  await saveIntegrationState(nextIntegration);
-  return { connected: true, accessToken: nextIntegration.accessToken, integration: nextIntegration };
 }
 
 module.exports = {
+  buildCalendarConnection,
   buildGoogleAuthUrl,
   computeFreeWindows,
   exchangeCodeForTokens,
   fetchTodayEvents,
   getCalendarIntegration,
   getConfig,
-  getValidCalendarSession,
+  getValidCalendarSessions,
+  normalizeCalendarIntegration,
   saveIntegrationState,
   toIsoDate,
+  upsertCalendarConnection,
 };

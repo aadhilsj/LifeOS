@@ -957,9 +957,9 @@ let DATA = {
   tasks:[], projects:[], jobs:[],
   habits:{},
   habitDefs:[
-    {id:'gym',label:'Gym',icon:'🏋️'},
-    {id:'reading',label:'Reading',icon:'📚'},
-    {id:'journaling',label:'Journaling',icon:'✍️'},
+    {id:'gym',label:'Gym',icon:'🏋️',focusArea:'Health',frequencyType:'weekly',targetCount:3},
+    {id:'reading',label:'Reading',icon:'📚',focusArea:'Growth',frequencyType:'daily',targetCount:1},
+    {id:'journaling',label:'Journaling',icon:'✍️',focusArea:'Personal',frequencyType:'daily',targetCount:1},
   ],
   captures:[], focusTasks:[], weeklyReview:null, calendarLinks:{},
   settings:{
@@ -1045,6 +1045,37 @@ function ensureCalendarLinksShape() {
   }
 }
 
+function normalizeHabitDef(habit, index = 0) {
+  const frequencyType = ['daily', 'weekly', 'monthly'].includes(habit?.frequencyType)
+    ? habit.frequencyType
+    : 'daily';
+  const rawTarget = Number(habit?.targetCount);
+  const maxTarget = frequencyType === 'monthly' ? 31 : frequencyType === 'weekly' ? 7 : 1;
+  const targetCount = frequencyType === 'daily'
+    ? 1
+    : Math.min(maxTarget, Math.max(1, Number.isFinite(rawTarget) ? Math.round(rawTarget) : 1));
+
+  return {
+    id: habit?.id || `habit-${index + 1}`,
+    label: String(habit?.label || '').trim() || `Habit ${index + 1}`,
+    icon: String(habit?.icon || '').trim() || '●',
+    focusArea: FOCUS_AREAS.includes(habit?.focusArea) ? habit.focusArea : 'Personal',
+    frequencyType,
+    targetCount,
+  };
+}
+
+function ensureHabitsShape() {
+  if (!DATA.habits || typeof DATA.habits !== 'object' || Array.isArray(DATA.habits)) {
+    DATA.habits = {};
+  }
+  DATA.habitDefs = (Array.isArray(DATA.habitDefs) && DATA.habitDefs.length ? DATA.habitDefs : [
+    {id:'gym',label:'Gym',icon:'🏋️',focusArea:'Health',frequencyType:'weekly',targetCount:3},
+    {id:'reading',label:'Reading',icon:'📚',focusArea:'Growth',frequencyType:'daily',targetCount:1},
+    {id:'journaling',label:'Journaling',icon:'✍️',focusArea:'Personal',frequencyType:'daily',targetCount:1},
+  ]).map(normalizeHabitDef);
+}
+
 function getUserName() {
   return (DATA.settings?.name || 'Aadhil').trim() || 'Aadhil';
 }
@@ -1085,6 +1116,7 @@ async function loadData() {
   if (local){try{DATA={...DATA,...JSON.parse(local)};}catch{}}
   ensureSettingsShape();
   ensureCalendarLinksShape();
+  ensureHabitsShape();
   applyTheme();
   DATA.tasks=DATA.tasks.map(t=>({...t,focusArea:migrateFocusArea(t)}));
 
@@ -1096,10 +1128,15 @@ async function loadData() {
     if (error) throw error;
     if (data?.data && Object.keys(data.data).length>0) {
       DATA={...DATA,...data.data};
-      if (!DATA.habitDefs?.length) DATA.habitDefs=[{id:'gym',label:'Gym',icon:'🏋️'},{id:'reading',label:'Reading',icon:'📚'},{id:'journaling',label:'Journaling',icon:'✍️'}];
+      if (!DATA.habitDefs?.length) DATA.habitDefs=[
+        {id:'gym',label:'Gym',icon:'🏋️',focusArea:'Health',frequencyType:'weekly',targetCount:3},
+        {id:'reading',label:'Reading',icon:'📚',focusArea:'Growth',frequencyType:'daily',targetCount:1},
+        {id:'journaling',label:'Journaling',icon:'✍️',focusArea:'Personal',frequencyType:'daily',targetCount:1},
+      ];
       if (!DATA.focusTasks) DATA.focusTasks=[];
       ensureSettingsShape();
       ensureCalendarLinksShape();
+      ensureHabitsShape();
       applyTheme();
       DATA.tasks=DATA.tasks.map(t=>({...t,focusArea:migrateFocusArea(t)}));
       // Backfill completedDate for old tasks that were completed before this field existed
@@ -1644,27 +1681,41 @@ function renderJobs(){
 function deleteJob(id){DATA.jobs=DATA.jobs.filter(j=>j.id!==id);scheduleSave();renderJobs();toast('Removed','info');}
 
 // ─── Habits ───────────────────────────────────────────────────────────────────
-const calcStreak=hid=>{let s=0,d=new Date();while(true){const k=d.toISOString().split('T')[0];if(DATA.habits[k]?.[hid]){s++;d.setDate(d.getDate()-1);}else break;}return s;};
+const calcStreak=hid=>{let s=0,d=new Date();while(true){const k=d.toISOString().split('T')[0];if(getHabitCompletionCount(hid,k)>0){s++;d.setDate(d.getDate()-1);}else break;}return s;};
 
 function renderHabits(){
   const days14=Array.from({length:14},(_,i)=>{const d=new Date();d.setDate(d.getDate()-(13-i));return d.toISOString().split('T')[0];});
   document.getElementById('habits-grid').innerHTML=DATA.habitDefs.map(h=>{
-    const streak=calcStreak(h.id),total=Object.values(DATA.habits).filter(d=>d?.[h.id]).length;
+    const streak=calcStreak(h.id);
+    const total=Object.keys(DATA.habits).reduce((sum,dateKey)=>sum+getHabitCompletionCount(h.id,dateKey),0);
+    const info=getHabitWindowInfo(h);
+    const consistency=getHabitConsistency(h);
     return `<div class="habit-card">
       <div class="flex-between">
         <div class="flex-gap">
           <span style="font-size:20px">${h.icon}</span>
-          <div><div style="font-weight:500;font-size:14px">${escHtml(h.label)}</div><div class="text-xs text-dim">${total} total completions</div></div>
+          <div>
+            <div style="font-weight:500;font-size:14px">${escHtml(h.label)}</div>
+            <div class="text-xs text-dim" style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+              <span class="badge ${focusAreaClass(h.focusArea)}">${h.focusArea}</span>
+              <span>${getHabitFrequencyLabel(h)}</span>
+              <span>${total} completions</span>
+            </div>
+          </div>
         </div>
         <div class="flex-gap">
-          <span style="font-size:11px;color:var(--gold);font-weight:600">${streak>0?`${streak} day streak 🔥`:'No streak'}</span>
+          <span style="font-size:11px;color:${info.isComplete?'var(--green)':'var(--gold)'};font-weight:600">${escHtml(info.progressLabel)}</span>
           <button class="btn btn-ghost btn-xs" onclick="openEditHabit('${h.id}')">Edit</button>
           <button class="btn btn-danger btn-xs" onclick="deleteHabit('${h.id}')">✕</button>
         </div>
       </div>
+      <div class="flex-between" style="margin-top:12px;margin-bottom:10px">
+        <div class="text-xs text-dim">${escHtml(info.statusLabel)}</div>
+        <div class="text-xs text-dim">${consistency}% consistency · ${streak>0?`${streak}d streak`:'No streak'}</div>
+      </div>
       <div class="habit-grid">
         ${days14.map(d=>{
-          const done=DATA.habits[d]?.[h.id],isT=d===today();
+          const done=getHabitCompletionCount(h.id,d)>0,isT=d===today();
           return `<div style="text-align:center">
             <div class="text-xs text-dim" style="margin-bottom:3px">${new Date(d+'T12:00:00').toLocaleDateString('en-US',{weekday:'short'}).slice(0,1)}</div>
             <div class="habit-dot${done?' done':''}${isT?' today-ring':''}" onclick="toggleHabit('${h.id}','${d}')" title="${d}">${done?'✓':''}</div>
@@ -1675,7 +1726,12 @@ function renderHabits(){
   }).join('');
 }
 
-function toggleHabit(hid,dateStr){if(!DATA.habits[dateStr])DATA.habits[dateStr]={};DATA.habits[dateStr][hid]=!DATA.habits[dateStr][hid];scheduleSave();renderAll();}
+function toggleHabit(hid,dateStr){
+  const nextCount=getHabitCompletionCount(hid,dateStr)>0?0:1;
+  setHabitCompletionCount(hid,dateStr,nextCount);
+  scheduleSave();
+  renderAll();
+}
 function toggleHabitsExpand(){
   const strips=document.querySelectorAll('.habit-week-strip');
   const btn=document.getElementById('habits-expand-btn');
@@ -1951,20 +2007,64 @@ function saveJob(editId=''){
 
 function openAddHabit(editId=null){
   const h=editId?DATA.habitDefs.find(x=>x.id===editId):{};
+  const normalized=editId
+    ? normalizeHabitDef(h||{})
+    : {label:'',icon:'',focusArea:'Personal',frequencyType:'daily',targetCount:1};
   openModal(`<h3>${editId?'Edit':'New'} Habit</h3>
-    <div class="form-row"><label>Name</label><input class="input" id="m-hname" value="${escHtml(h.label||'')}" autofocus/></div>
-    <div class="form-row"><label>Icon (emoji)</label><input class="input" id="m-hicon" value="${h.icon||''}" placeholder="e.g. 🏃 🧘 💊"/></div>
+    <div class="form-row"><label>Name</label><input class="input" id="m-hname" value="${escHtml(normalized.label||'')}" autofocus/></div>
+    <div class="form-row"><label>Focus Area</label><select class="input" id="m-harea">${FOCUS_AREAS.map(area=>`<option value="${area}" ${normalized.focusArea===area?'selected':''}>${area}</option>`).join('')}</select></div>
+    <div class="form-grid">
+      <div class="form-row">
+        <label>Frequency</label>
+        <select class="input" id="m-hfrequency" onchange="syncHabitFrequencyFields()">
+          <option value="daily" ${normalized.frequencyType==='daily'?'selected':''}>Daily</option>
+          <option value="weekly" ${normalized.frequencyType==='weekly'?'selected':''}>Weekly</option>
+          <option value="monthly" ${normalized.frequencyType==='monthly'?'selected':''}>Monthly</option>
+        </select>
+      </div>
+      <div class="form-row" id="m-htarget-row" style="display:${normalized.frequencyType==='daily'?'none':'flex'};flex-direction:column">
+        <label id="m-htarget-label">${normalized.frequencyType==='monthly'?'Times per month':'Times per week'}</label>
+        <input class="input" id="m-htarget" type="number" min="1" max="${normalized.frequencyType==='monthly'?'31':'7'}" value="${normalized.targetCount||1}"/>
+      </div>
+    </div>
+    <div class="form-row"><label>Icon (emoji)</label><input class="input" id="m-hicon" value="${normalized.icon||''}" placeholder="e.g. 🏃 🧘 💊"/></div>
     <div class="flex-gap" style="justify-content:flex-end;margin-top:6px">
       <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
       <button class="btn btn-primary" onclick="saveHabit('${editId||''}')">Save</button>
     </div>`);
+  syncHabitFrequencyFields();
 }
 function openEditHabit(id){openAddHabit(id);}
+function syncHabitFrequencyFields(){
+  const frequency=document.getElementById('m-hfrequency')?.value||'daily';
+  const row=document.getElementById('m-htarget-row');
+  const label=document.getElementById('m-htarget-label');
+  const input=document.getElementById('m-htarget');
+  if(!row||!label||!input) return;
+  const show=frequency!=='daily';
+  row.style.display=show?'flex':'none';
+  label.textContent=frequency==='monthly'?'Times per month':'Times per week';
+  input.min='1';
+  input.max=frequency==='monthly'?'31':'7';
+  if(!show) input.value='1';
+  if(show && (!input.value || Number(input.value)<1)) input.value='1';
+}
 function saveHabit(editId=''){
   const label=document.getElementById('m-hname')?.value?.trim();if(!label) return;
   const icon=document.getElementById('m-hicon').value||'●';
-  if(editId) DATA.habitDefs=DATA.habitDefs.map(h=>h.id===editId?{...h,label,icon}:h);
-  else DATA.habitDefs.push({id:uid(),label,icon});
+  const focusArea=document.getElementById('m-harea')?.value||'Personal';
+  const frequencyType=document.getElementById('m-hfrequency')?.value||'daily';
+  const rawTarget=Number(document.getElementById('m-htarget')?.value||1);
+  const habit=normalizeHabitDef({
+    id:editId||uid(),
+    label,
+    icon,
+    focusArea,
+    frequencyType,
+    targetCount:frequencyType==='daily'?1:rawTarget,
+  });
+  if(editId) DATA.habitDefs=DATA.habitDefs.map(h=>h.id===editId?habit:h);
+  else DATA.habitDefs.push(habit);
   closeModal();scheduleSave();renderAll();toast('Habit saved','success');
 }
 
@@ -2007,6 +2107,125 @@ function handleToastUndo(){
 // ─── Util ─────────────────────────────────────────────────────────────────────
 function escHtml(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 
+function getLocalDateKey(date = new Date()) {
+  const d = new Date(date);
+  const offset = d.getTimezoneOffset() * 60000;
+  return new Date(d.getTime() - offset).toISOString().split('T')[0];
+}
+
+function parseDateKey(dateStr) {
+  return new Date(`${dateStr}T12:00:00`);
+}
+
+function startOfWeek(dateStr) {
+  const d = parseDateKey(dateStr);
+  const dayOffset = (d.getDay() + 6) % 7;
+  d.setDate(d.getDate() - dayOffset);
+  return getLocalDateKey(d);
+}
+
+function endOfWeek(dateStr) {
+  const d = parseDateKey(startOfWeek(dateStr));
+  d.setDate(d.getDate() + 6);
+  return getLocalDateKey(d);
+}
+
+function startOfMonth(dateStr) {
+  const d = parseDateKey(dateStr);
+  d.setDate(1);
+  return getLocalDateKey(d);
+}
+
+function endOfMonth(dateStr) {
+  const d = parseDateKey(startOfMonth(dateStr));
+  d.setMonth(d.getMonth() + 1, 0);
+  return getLocalDateKey(d);
+}
+
+function enumerateDates(startStr, endStr) {
+  const out = [];
+  const cursor = parseDateKey(startStr);
+  const end = parseDateKey(endStr);
+  while (cursor <= end) {
+    out.push(getLocalDateKey(cursor));
+    cursor.setDate(cursor.getDate() + 1);
+  }
+  return out;
+}
+
+function getHabitCompletionCount(habitId, dateStr) {
+  const value = DATA.habits?.[dateStr]?.[habitId];
+  if (typeof value === 'number') return Math.max(0, Math.floor(value));
+  return value ? 1 : 0;
+}
+
+function setHabitCompletionCount(habitId, dateStr, count) {
+  if (!DATA.habits[dateStr]) DATA.habits[dateStr] = {};
+  if (count > 0) {
+    DATA.habits[dateStr][habitId] = count;
+  } else {
+    delete DATA.habits[dateStr][habitId];
+    if (!Object.keys(DATA.habits[dateStr]).length) delete DATA.habits[dateStr];
+  }
+}
+
+function getHabitFrequencyLabel(habit) {
+  if (habit.frequencyType === 'weekly') return `${habit.targetCount}x / week`;
+  if (habit.frequencyType === 'monthly') return `${habit.targetCount}x / month`;
+  return 'Daily';
+}
+
+function getHabitWindowInfo(habit, refDate = today()) {
+  const start = habit.frequencyType === 'monthly' ? startOfMonth(refDate) : habit.frequencyType === 'weekly' ? startOfWeek(refDate) : refDate;
+  const end = habit.frequencyType === 'monthly' ? endOfMonth(refDate) : habit.frequencyType === 'weekly' ? endOfWeek(refDate) : refDate;
+  const completed = enumerateDates(start, end).reduce((sum, dateKey) => sum + getHabitCompletionCount(habit.id, dateKey), 0);
+  const target = habit.frequencyType === 'daily' ? 1 : habit.targetCount;
+  const remaining = Math.max(0, target - completed);
+  const windowLabel = habit.frequencyType === 'monthly' ? 'This month' : habit.frequencyType === 'weekly' ? 'This week' : 'Today';
+  const endDate = parseDateKey(end);
+  const ref = parseDateKey(refDate);
+  const daysLeft = Math.max(0, Math.ceil((endDate - ref) / 86400000));
+  return {
+    start,
+    end,
+    completed,
+    target,
+    remaining,
+    isComplete: remaining === 0,
+    windowLabel,
+    progressLabel: `${windowLabel}: ${Math.min(completed, target)}/${target}`,
+    statusLabel: remaining === 0
+      ? habit.frequencyType === 'daily' ? 'Done today' : 'On track'
+      : habit.frequencyType === 'daily'
+        ? 'Due today'
+        : `${remaining} left ${habit.frequencyType === 'weekly' ? 'this week' : 'this month'}`,
+    daysLeft,
+  };
+}
+
+function getHabitConsistency(habit, days = 30) {
+  const end = today();
+  const startDate = parseDateKey(end);
+  startDate.setDate(startDate.getDate() - (days - 1));
+  const start = getLocalDateKey(startDate);
+  const completed = enumerateDates(start, end).reduce((sum, dateKey) => sum + getHabitCompletionCount(habit.id, dateKey), 0);
+  const expected = habit.frequencyType === 'monthly'
+    ? (days / 30) * habit.targetCount
+    : habit.frequencyType === 'weekly'
+      ? (days / 7) * habit.targetCount
+      : days;
+  if (!expected) return 0;
+  return Math.min(100, Math.round((completed / expected) * 100));
+}
+
+function getHabitAttentionRank(habit) {
+  const info = getHabitWindowInfo(habit);
+  const consistency = getHabitConsistency(habit);
+  if (info.isComplete) return 1000 + consistency;
+  if (habit.frequencyType === 'daily') return info.remaining * 100 - consistency;
+  return info.remaining * 100 + info.daysLeft * 5 - consistency;
+}
+
 // ─── Drift detection → context bar ───────────────────────────────────────────
 function getContextBar(){
   const td=today();
@@ -2015,17 +2234,15 @@ function getContextBar(){
   const overdue=DATA.tasks.filter(t=>isOverdue(t));
   const doneToday=DATA.tasks.filter(t=>t.completed&&t.completedDate===td);
   const doneWeek=DATA.tasks.filter(t=>t.completed&&t.completedDate>=wStr);
-  const habitsDoneToday=DATA.habitDefs.filter(h=>DATA.habits[td]?.[h.id]).length;
-  const allHabitsDone=habitsDoneToday===DATA.habitDefs.length&&DATA.habitDefs.length>0;
-  const yStr=new Date(new Date().setDate(new Date().getDate()-1)).toISOString().split('T')[0];
-  const dbStr=new Date(new Date().setDate(new Date().getDate()-2)).toISOString().split('T')[0];
-  const habitsDrift=DATA.habitDefs.filter(h=>!DATA.habits[yStr]?.[h.id]&&!DATA.habits[dbStr]?.[h.id]).length;
+  const habitsNeedingAttention=DATA.habitDefs.filter(h=>!getHabitWindowInfo(h, td).isComplete).length;
+  const habitsOnTrack=DATA.habitDefs.length-habitsNeedingAttention;
 
   if(overdue.length>=3) return{cls:'warn',icon:'⚠️',msg:`${overdue.length} tasks overdue — clear the backlog first.`};
   if(overdue.length>0&&doneToday.length===0) return{cls:'warn',icon:'⌛︎',msg:`${overdue.length} overdue task${overdue.length>1?'s':''} — start there.`};
-  if(habitsDrift>=2&&!allHabitsDone) return{cls:'gold',icon:'〰️',msg:`You've missed ${habitsDrift} habits for two days straight. Today's a reset.`};
-  if(allHabitsDone&&doneToday.length>0) return{cls:'green',icon:'🔥',msg:`Habits done + ${doneToday.length} task${doneToday.length>1?'s':''} completed. Strong day.`};
-  if(allHabitsDone) return{cls:'green',icon:'✓',msg:`All habits done today — now tackle the tasks.`};
+  if(habitsNeedingAttention>=2&&doneToday.length===0) return{cls:'gold',icon:'〰️',msg:`${habitsNeedingAttention} habits need progress right now. Reset the rhythm today.`};
+  if(habitsNeedingAttention===0&&doneToday.length>0) return{cls:'green',icon:'🔥',msg:`Habits on track + ${doneToday.length} task${doneToday.length>1?'s':''} completed. Strong day.`};
+  if(habitsNeedingAttention===0&&DATA.habitDefs.length>0) return{cls:'green',icon:'✓',msg:`All habits on track — now tackle the tasks.`};
+  if(habitsOnTrack>0&&habitsNeedingAttention>0) return{cls:'gold',icon:'↺',msg:`${habitsOnTrack} habits on track, ${habitsNeedingAttention} still need attention.`};
   if(doneWeek.length===0&&new Date().getDay()>=3) return{cls:'warn',icon:'📉',msg:`No tasks completed yet this week — let's change that.`};
   if(doneToday.length>=3) return{cls:'green',icon:'⚡',msg:`${doneToday.length} tasks done today. Good momentum.`};
   if(doneWeek.length>=5) return{cls:'gold',icon:'📈',msg:`Strong week — ${doneWeek.length} tasks done. Stay consistent.`};
@@ -2507,39 +2724,35 @@ function renderHome(){
     :nonDtn.map(t=>taskHTML(t,false)).join('');
 
   // Habits
-  const days7=Array.from({length:7},(_,i)=>{const d=new Date();d.setDate(d.getDate()-(6-i));return d.toISOString().split('T')[0];});
-  const habitsDoneToday=DATA.habitDefs.filter(h=>DATA.habits[td]?.[h.id]).length;
-  const allDone=habitsDoneToday===DATA.habitDefs.length&&DATA.habitDefs.length>0;
-  const habitsSummary=`<div style="font-size:11.5px;font-weight:${allDone?'600':'500'};margin-bottom:10px;padding:5px 10px;background:${allDone?'var(--green-soft)':'var(--gold-soft)'};border-radius:6px;display:inline-flex;align-items:center;gap:5px;color:${allDone?'var(--green)':'var(--gold)'}">
-    ${allDone?'✓ All habits done today':`${habitsDoneToday}/${DATA.habitDefs.length} habits done today`}
+  const habitStatus=DATA.habitDefs.map(h=>({habit:h,info:getHabitWindowInfo(h),consistency:getHabitConsistency(h)})).sort((a,b)=>getHabitAttentionRank(a.habit)-getHabitAttentionRank(b.habit));
+  const habitsOnTrack=habitStatus.filter(entry=>entry.info.isComplete).length;
+  const attentionCount=habitStatus.length-habitsOnTrack;
+  const habitsSummary=`<div style="font-size:11.5px;font-weight:${attentionCount===0?'600':'500'};margin-bottom:10px;padding:5px 10px;background:${attentionCount===0?'var(--green-soft)':'var(--gold-soft)'};border-radius:6px;display:inline-flex;align-items:center;gap:5px;color:${attentionCount===0?'var(--green)':'var(--gold)'}">
+    ${attentionCount===0?'✓ All habits on track':`${attentionCount} habit${attentionCount>1?'s':''} need attention`}
   </div>`;
-  const habitRows=DATA.habitDefs.map(h=>{
-    const done=DATA.habits[td]?.[h.id],streak=calcStreak(h.id);
-    const weekDots=days7.map(d=>{
-      const isDone=DATA.habits[d]?.[h.id],isToday=d===td;
-      const dl=new Date(d+'T12:00:00').toLocaleDateString('en-US',{weekday:'short'}).slice(0,1);
-      return `<div style="text-align:center;flex:1">
-        <div class="text-xs" style="margin-bottom:3px;font-size:9px;${isToday?'color:var(--text-2);font-weight:700':'color:var(--text-3)'}">${isToday?'▾':dl}</div>
-        <div class="habit-strip-dot${isDone?' done':''}${isToday?' today':''}"
-          style="${isToday&&!isDone?'border-color:#ffffff35;box-shadow:0 0 8px rgba(255,255,255,0.08)':''}"
-          onclick="event.stopPropagation();toggleHabit('${h.id}','${d}')">${isDone?'✓':''}</div>
-      </div>`;
-    }).join('');
-    return `<div class="habit-strip-row" onclick="toggleHabit('${h.id}','${td}')" style="cursor:pointer;border-radius:8px;margin:-4px;padding:4px;transition:background var(--transition)" onmouseenter="this.style.background='var(--glass-hover)'" onmouseleave="this.style.background=''">
+  const habitRows=habitStatus.slice(0,4).map(({habit:h,info,consistency})=>{
+    const doneToday=getHabitCompletionCount(h.id, td)>0;
+    return `<div class="habit-strip-row" onclick="toggleHabit('${h.id}','${td}')" style="cursor:pointer;border-radius:8px;margin:-4px;padding:8px 6px;transition:background var(--transition)" onmouseenter="this.style.background='var(--glass-hover)'" onmouseleave="this.style.background=''">
       <div class="flex-between">
         <div class="flex-gap">
-          <div class="habit-dot${done?' done':' today-ring'}" style="width:26px;height:26px;flex-shrink:0;pointer-events:none">${done?'✓':h.icon}</div>
-          <span style="font-size:13px;font-weight:500">${h.label}</span>
+          <div class="habit-dot${doneToday?' done':' today-ring'}" style="width:26px;height:26px;flex-shrink:0;pointer-events:none">${doneToday?'✓':h.icon}</div>
+          <div>
+            <div style="font-size:13px;font-weight:500">${escHtml(h.label)}</div>
+            <div class="text-xs text-dim" style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+              <span class="badge ${focusAreaClass(h.focusArea)}">${h.focusArea}</span>
+              <span>${getHabitFrequencyLabel(h)}</span>
+            </div>
+          </div>
         </div>
-        <span style="font-size:11px;color:var(--gold);font-weight:600">${streak>0?streak+'d 🔥':'—'}</span>
+        <span style="font-size:11px;color:${info.isComplete?'var(--green)':'var(--gold)'};font-weight:600">${escHtml(info.progressLabel)}</span>
       </div>
-      <div class="habit-week-strip" id="habit-week-${h.id}" style="display:none;margin-top:8px" onclick="event.stopPropagation()">
-        <div class="habit-strip">${weekDots}</div>
+      <div class="flex-between" style="margin-top:8px">
+        <div class="text-xs text-dim">${escHtml(info.statusLabel)}</div>
+        <div class="text-xs text-dim">${consistency}% consistency</div>
       </div>
     </div>`;
   }).join('');
-  const expandBtn=`<div id="habits-expand-btn" onclick="toggleHabitsExpand()" style="text-align:center;margin-top:8px;padding:4px;cursor:pointer;font-size:11px;color:var(--text-3)" onmouseenter="this.style.color='var(--text-2)'" onmouseleave="this.style.color='var(--text-3)'">Show week view ▾</div>`;
-  document.getElementById('home-habits-list').innerHTML=habitsSummary+habitRows+expandBtn;
+  document.getElementById('home-habits-list').innerHTML=habitStatus.length?habitsSummary+habitRows:`<div class="empty" style="padding:10px 0"><div class="empty-icon">↺</div>No habits yet. Add one to start building rhythm.</div>`;
 
   // Projects
   const active=DATA.projects.filter(p=>p.status==='Active').slice(0,3);
@@ -2631,8 +2844,10 @@ function buildReviewPrompt() {
   const cw=DATA.tasks.filter(t=>t.completed&&t.completedDate>=waStr);
   const ov=DATA.tasks.filter(t=>isOverdue(t));
   const hs=DATA.habitDefs.map(h=>({
-    habit:h.label, streak:calcStreak(h.id),
-    done:Object.entries(DATA.habits).filter(([d,v])=>d>=waStr&&v[h.id]).length
+    habit:h.label,
+    frequency:getHabitFrequencyLabel(h),
+    consistency:getHabitConsistency(h),
+    progress:getHabitWindowInfo(h).progressLabel
   }));
   const ap=DATA.projects.filter(p=>p.status==='Active');
   const lb=FOCUS_AREAS.reduce((a,fa)=>{a[fa]=cw.filter(t=>t.focusArea===fa).length;return a},{});
@@ -2644,7 +2859,7 @@ TODAY: ${td}
 COMPLETED THIS WEEK (${cw.length}): ${cw.slice(0,20).map(t=>`[${t.focusArea}] ${t.title}`).join(', ')||'None'}
 OVERDUE (${ov.length}): ${ov.slice(0,8).map(t=>t.title).join(', ')||'None'}
 DISMISSED THIS WEEK: ${dismissed}
-HABITS: ${hs.map(h=>`${h.habit}: ${h.done}/7 days, ${h.streak}d streak`).join(' | ')}
+HABITS: ${hs.map(h=>`${h.habit} (${h.frequency}) - ${h.progress}, ${h.consistency}% consistency`).join(' | ')}
 ACTIVE PROJECTS: ${ap.map(p=>`${p.title} (${calcProjectProgress(p.id)}%)`).join(', ')||'None'}
 FOCUS AREAS: ${Object.entries(lb).map(([a,c])=>`${a}:${c}`).join(', ')}
 OPPORTUNITIES: ${DATA.jobs.filter(j=>j.stage==='In Progress').length} in progress, ${DATA.jobs.filter(j=>j.stage==='Contacted').length} contacted
@@ -2698,11 +2913,11 @@ async function maybeAutoGenerateReview() {
 function renderReview(){
   const completed=DATA.tasks.filter(t=>t.completed).length;
   const overdue=DATA.tasks.filter(t=>isOverdue(t)).length;
-  const streaks=DATA.habitDefs.filter(h=>calcStreak(h.id)>0).length;
+  const onTrackHabits=DATA.habitDefs.filter(h=>getHabitWindowInfo(h).isComplete).length;
   document.getElementById('review-stats').innerHTML=[
     {val:completed,label:'Tasks Completed',color:'var(--green)'},
     {val:overdue,label:'Still Overdue',color:overdue>0?'var(--accent)':'var(--text-3)'},
-    {val:`${streaks}/${DATA.habitDefs.length}`,label:'Active Streaks',color:'var(--gold)'},
+    {val:`${onTrackHabits}/${DATA.habitDefs.length}`,label:'Habits On Track',color:'var(--gold)'},
   ].map(s=>`<div class="stat-card"><div class="stat-value" style="color:${s.color}">${s.val}</div><div class="stat-label">${s.label}</div></div>`).join('');
   const total=completed||1;
   const areaColors={Career:'var(--blue)',Health:'var(--green)',Growth:'#a3e635',Personal:'var(--gold)','Life Admin':'#c084fc'};

@@ -965,7 +965,7 @@ let currentPage='home', taskFilter='All', syncTimer=null, projectDetailId=null;
 let modalState = { kind: null };
 let pendingVoiceReview = false;
 let pendingReviewStatusTarget = null;
-let CALENDAR_STATE = { status:'idle', connected:false, events:[], freeWindows:[], message:'' };
+let CALENDAR_STATE = { status:'idle', connected:false, events:[], freeWindows:[], message:'', connections:[], connectedCount:0 };
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 const FOCUS_AREAS  = ['Career','Health','Personal','Life Admin','Growth'];
@@ -2029,6 +2029,8 @@ async function fetchCalendarData(){
       events:data.events||[],
       freeWindows:data.freeWindows||[],
       message:data.message||'',
+      connections:data.connections||[],
+      connectedCount:data.connectedCount||0,
       error:'',
     };
   }catch(e){
@@ -2038,6 +2040,8 @@ async function fetchCalendarData(){
       events:[],
       freeWindows:[],
       message:'',
+      connections:[],
+      connectedCount:0,
       error:'Calendar unavailable until Google and Vercel are configured.',
     };
   }
@@ -2307,7 +2311,8 @@ function renderHome(){
   const calendarEl=document.getElementById('home-calendar-card');
   const calendarBtn=document.getElementById('calendar-connect-btn');
   if(calendarEl && calendarBtn){
-    calendarBtn.style.display=CALENDAR_STATE.connected?'none':'';
+    calendarBtn.style.display='';
+    calendarBtn.textContent=CALENDAR_STATE.connected?'Add account':'Connect';
     if(CALENDAR_STATE.status==='loading'){
       calendarEl.innerHTML=`<div class="calendar-empty">Loading today's schedule…</div>`;
     } else if(CALENDAR_STATE.status==='error'){
@@ -2316,15 +2321,16 @@ function renderHome(){
       calendarEl.innerHTML=`<div class="calendar-empty">Connect Google Calendar to see today's events and free windows here.</div>`;
     } else if(!CALENDAR_STATE.events.length){
       const free = CALENDAR_STATE.freeWindows[0];
-      calendarEl.innerHTML=`<div class="calendar-empty">No events on your calendar today.</div>${free?`<div class="calendar-free">${formatFreeWindow(free)} to use however you want.</div>`:''}`;
+      calendarEl.innerHTML=`<div class="calendar-empty">${CALENDAR_STATE.connectedCount||1} calendar${(CALENDAR_STATE.connectedCount||1)>1?'s':''} connected. No events on your calendar today.</div>${free?`<div class="calendar-free">${formatFreeWindow(free)} to use however you want.</div>`:''}`;
     } else {
       const nextEvents = CALENDAR_STATE.events.slice(0,3);
       const windows = CALENDAR_STATE.freeWindows.slice(0,2);
       calendarEl.innerHTML=
+        `<div class="calendar-empty" style="margin-bottom:8px">${CALENDAR_STATE.connectedCount||1} calendar${(CALENDAR_STATE.connectedCount||1)>1?'s':''} connected.</div>`+
         nextEvents.map(event=>`
           <div class="calendar-item">
             <div class="calendar-item-title">${escHtml(event.summary)}</div>
-            <div class="calendar-item-meta">${formatCalendarTime(event.start,event.isAllDay)}${event.end&&!event.isAllDay?` - ${formatCalendarTime(event.end,false)}`:''}${event.location?` · ${escHtml(event.location)}`:''}</div>
+            <div class="calendar-item-meta">${formatCalendarTime(event.start,event.isAllDay)}${event.end&&!event.isAllDay?` - ${formatCalendarTime(event.end,false)}`:''}${event.location?` · ${escHtml(event.location)}`:''}${event.sourceLabel?` · ${escHtml(event.sourceLabel)}`:''}</div>
           </div>
         `).join('')+
         (windows.length?windows.map(window=>`<div class="calendar-free">${formatFreeWindow(window)}</div>`).join(''):'');

@@ -2974,7 +2974,8 @@ function renderReview(){
     {val:overdue,label:'Overdue',color:overdue>0?'var(--accent)':'var(--text-3)'},
     {val:habitVal,label:'Habit rate this week',color:habitColor},
   ].map(s=>`<div class="stat-card"><div class="stat-value" style="color:${s.color}">${s.val}</div><div class="stat-label">${s.label}</div></div>`).join('');
-  const total=completed||1;
+  const allCompleted=DATA.tasks.filter(t=>t.completed).length;
+  const total=allCompleted||1;
   const areaColors={Career:'var(--blue)',Health:'var(--green)',Growth:'#a3e635',Personal:'var(--gold)','Life Admin':'#c084fc'};
   document.getElementById('review-areas').innerHTML=FOCUS_AREAS.map(area=>{
     const count=DATA.tasks.filter(t=>t.completed&&t.focusArea===area).length;

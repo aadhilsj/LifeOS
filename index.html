@@ -218,6 +218,13 @@ input[type="date"].input,input[type="time"].input{color-scheme:dark}
 .task-meta{display:flex;gap:4px;margin-top:4px;flex-wrap:wrap;align-items:center}
 .task-actions{display:flex;gap:2px;opacity:0;transition:opacity var(--transition);flex-shrink:0;padding-top:1px}
 .task-item:hover .task-actions{opacity:1}
+.task-actions button{position:relative}
+.task-actions button[data-tip]::after{
+  content:attr(data-tip);position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%) translateY(4px);
+  background:#11141d;border:1px solid var(--glass-border);border-radius:8px;padding:5px 7px;font-size:10px;font-weight:600;
+  color:var(--text-2);white-space:nowrap;box-shadow:var(--shadow-sm);opacity:0;pointer-events:none;transition:all var(--transition)
+}
+.task-actions button[data-tip]:hover::after{opacity:1;transform:translateX(-50%) translateY(0)}
 .focus-btn{cursor:pointer;font-size:12px;color:var(--text-3);padding:3px 4px;border-radius:4px;
   transition:color var(--transition);background:none;border:none;font-family:inherit;line-height:1}
 .focus-btn:hover,.focus-btn.active{color:var(--gold)}
@@ -271,6 +278,25 @@ input[type="date"].input,input[type="time"].input{color-scheme:dark}
 /* Capture */
 .capture-item{display:flex;align-items:flex-start;gap:10px;padding:9px 0;border-bottom:1px solid var(--border)}
 .capture-item:last-child{border-bottom:none}
+
+/* Settings */
+.settings-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:14px}
+.settings-stack{display:flex;flex-direction:column;gap:14px}
+.theme-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px}
+.theme-option{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:10px 8px;cursor:pointer;
+  transition:all var(--transition);text-align:center;color:var(--text-2);font-family:var(--font-sans);width:100%}
+.theme-option:hover{border-color:var(--border-active);background:var(--surface2);color:var(--text)}
+.theme-option.active{border-color:var(--accent);background:var(--accent-soft);color:var(--text)}
+.theme-swatch{width:28px;height:28px;border-radius:50%;margin:0 auto 8px;border:2px solid #ffffff14;box-shadow:inset 0 0 0 1px #00000020}
+.theme-label{font-size:11px;font-weight:600}
+.settings-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:1px solid var(--border)}
+.settings-row:last-child{border-bottom:none;padding-bottom:0}
+.settings-copy{flex:1}
+.settings-copy strong{display:block;font-size:12.5px;font-weight:600;color:var(--text)}
+.settings-copy span{display:block;font-size:11px;color:var(--text-3);margin-top:2px;line-height:1.45}
+.toggle{background:var(--surface2);border:1px solid var(--border);color:var(--text-2);border-radius:999px;padding:6px 12px;cursor:pointer;
+  font-size:11.5px;font-weight:600;transition:all var(--transition);white-space:nowrap;font-family:var(--font-sans)}
+.toggle.active{background:var(--accent-soft);border-color:var(--accent);color:var(--text)}
 
 /* Tabs */
 .tabs{display:flex;gap:2px;background:var(--surface);padding:3px;border-radius:10px;margin-bottom:14px;overflow-x:auto}
@@ -476,6 +502,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;heigh
 /* ── Mobile task action improvements ── */
 @media(max-width:768px){
   .task-actions{opacity:1;gap:6px}
+  .task-actions button[data-tip]::after{display:none}
   .btn-icon{width:32px;height:32px;display:flex;align-items:center;justify-content:center;
     border-radius:8px;font-size:15px;background:var(--surface2);border:1px solid var(--border)}
   .focus-btn{width:32px;height:32px;display:flex;align-items:center;justify-content:center;
@@ -491,15 +518,18 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;heigh
   border-radius:7px;cursor:pointer;transition:all var(--transition)}
 .page-tab:hover{color:var(--text-2)}
 .page-tab.active{background:var(--surface3);color:var(--text)}
+.page-tab.hidden{display:none}
 
 /* ── Responsive ── */
 @media(max-width:768px){
   :root{--sidebar:0px}
   .sidebar{display:none}
   .bottom-nav{display:block}
-  .fab{display:flex}
+  .fab{display:none}
   .content{padding:14px;padding-bottom:84px}
   .grid-2,.grid-3{grid-template-columns:1fr}
+  .settings-grid{grid-template-columns:1fr}
+  .theme-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
   .stat-row{grid-template-columns:repeat(3,1fr)}
   .form-grid{grid-template-columns:1fr}
   .topbar{padding:10px 14px}
@@ -594,6 +624,10 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;heigh
         <span class="nav-label">Quick Capture</span>
         <span class="nav-badge" id="capture-badge" style="display:none">0</span>
       </div>
+      <div class="nav-item" data-page="settings">
+        <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06A2 2 0 1 1 4.37 16.9l.06-.06A1.65 1.65 0 0 0 4.76 15a1.65 1.65 0 0 0-1.51-1H3.16a2 2 0 1 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06A2 2 0 1 1 7.2 4.29l.06.06A1.65 1.65 0 0 0 9.08 4a1.65 1.65 0 0 0 1-1.51V2.4a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06A2 2 0 1 1 19.79 7.1l-.06.06a1.65 1.65 0 0 0-.33 1.82 1.65 1.65 0 0 0 1.51 1h.09a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></span>
+        <span class="nav-label">Settings</span>
+      </div>
     </div>
 
     <div class="sidebar-bottom">
@@ -613,7 +647,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;heigh
           <span class="breadcrumb-sep">›</span>
           <span class="breadcrumb-current" id="bc-current">Home</span>
         </div>
-        <div class="page-title" id="page-title">Good morning, Aadhil.</div>
+        <div class="page-title" id="page-title">Good morning.</div>
         <div class="page-sub" id="page-sub"></div>
       </div>
       <div class="topbar-actions" id="topbar-actions"></div>
@@ -690,9 +724,13 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;heigh
           <div class="card-title" id="tasks-pending-title">Pending</div>
           <div id="tasks-pending-list"></div>
         </div>
-        <div class="card" id="tasks-done-card" style="display:none">
+      <div class="card" id="tasks-done-card" style="display:none">
           <div class="card-title" id="tasks-done-title">Completed</div>
           <div id="tasks-done-list"></div>
+        </div>
+        <div class="card mt14" id="tasks-dismissed-card" style="display:none">
+          <div class="card-title" id="tasks-dismissed-title">Dismissed</div>
+          <div id="tasks-dismissed-list"></div>
         </div>
       </div>
 
@@ -770,6 +808,42 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;heigh
         </div>
       </div>
 
+      <!-- SETTINGS -->
+      <div class="page" id="page-settings">
+        <div class="settings-grid">
+          <div class="settings-stack">
+            <div class="card">
+              <div class="card-title">Profile</div>
+              <div class="form-row">
+                <label>Name</label>
+                <input class="input" id="settings-name" placeholder="What should Kairo call you?" oninput="updateSettingName(this.value)"/>
+              </div>
+              <div class="text-xs text-dim">This updates your greeting and weekly review context.</div>
+            </div>
+
+            <div class="card">
+              <div class="card-title">Look & Feel</div>
+              <div class="text-sm text-muted mb12">Pick a small accent palette for the whole dashboard.</div>
+              <div class="theme-grid" id="theme-options"></div>
+            </div>
+          </div>
+
+          <div class="settings-stack">
+            <div class="card">
+              <div class="card-title">Preferences</div>
+              <div id="settings-preferences"></div>
+            </div>
+
+            <div class="card">
+              <div class="card-title">Product Controls</div>
+              <div class="text-sm text-muted" style="line-height:1.6">
+                These switches are intentionally lightweight for now, so we can grow the product without hardcoding every choice.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
     </div>
   </div>
 </div>
@@ -802,6 +876,10 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;heigh
     <button class="bottom-nav-item" data-page="projects" onclick="navigate('projects')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
       <span>Projects</span>
+    </button>
+    <button class="bottom-nav-item" data-page="settings" onclick="navigate('settings')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06A2 2 0 1 1 4.37 16.9l.06-.06A1.65 1.65 0 0 0 4.76 15a1.65 1.65 0 0 0-1.51-1H3.16a2 2 0 1 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06A2 2 0 1 1 7.2 4.29l.06.06A1.65 1.65 0 0 0 9.08 4a1.65 1.65 0 0 0 1-1.51V2.4a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06A2 2 0 1 1 19.79 7.1l-.06.06a1.65 1.65 0 0 0-.33 1.82 1.65 1.65 0 0 0 1.51 1h.09a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      <span>Settings</span>
     </button>
   </div>
 </nav>
@@ -841,8 +919,17 @@ let DATA = {
     {id:'journaling',label:'Journaling',icon:'✍️'},
   ],
   captures:[], focusTasks:[], weeklyReview:null,
+  settings:{
+    name:'Aadhil',
+    accentTheme:'red',
+    notifications:{weeklyReview:true,overdueNudge:true},
+    modules:{opportunities:true},
+  },
 };
 let currentPage='home', taskFilter='All', syncTimer=null, projectDetailId=null;
+let modalState = { kind: null };
+let pendingVoiceReview = false;
+let pendingReviewStatusTarget = null;
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 const FOCUS_AREAS  = ['Career','Health','Personal','Life Admin','Growth'];
@@ -850,6 +937,13 @@ const OPP_STAGES   = ['Exploring','Contacted','In Progress','Won','Dropped'];
 const OPP_TYPES    = ['Job','Business','Personal','Other'];
 const JOB_STAGES   = OPP_STAGES; // backward compat alias
 const PROJ_STATUS  = ['Active','Paused','Completed'];
+const THEME_PRESETS = {
+  red:    {label:'Red',accent:'#c8392b',rgb:'200,57,43'},
+  blue:   {label:'Blue',accent:'#3b82f6',rgb:'59,130,246'},
+  purple: {label:'Purple',accent:'#8b5cf6',rgb:'139,92,246'},
+  green:  {label:'Green',accent:'#2f9e6f',rgb:'47,158,111'},
+  yellow: {label:'Gold',accent:'#c9a84c',rgb:'201,168,76'},
+};
 
 const uid       = () => Math.random().toString(36).slice(2,9);
 const today     = () => new Date().toISOString().split('T')[0];
@@ -888,9 +982,35 @@ const oppStageClass  = s => ({'Exploring':'stage-exploring','Contacted':'stage-c
 const stageClass     = s => oppStageClass(s); // alias
 const statusClass    = s => ({Active:'status-active',Paused:'status-paused',Completed:'status-completed'}[s]||'status-active');
 
+function ensureSettingsShape() {
+  DATA.settings = DATA.settings || {};
+  DATA.settings.name = (DATA.settings.name || 'Aadhil').trim() || 'Aadhil';
+  DATA.settings.accentTheme = THEME_PRESETS[DATA.settings.accentTheme] ? DATA.settings.accentTheme : 'red';
+  DATA.settings.notifications = {
+    weeklyReview: DATA.settings.notifications?.weeklyReview !== false,
+    overdueNudge: DATA.settings.notifications?.overdueNudge !== false,
+  };
+  DATA.settings.modules = {
+    opportunities: DATA.settings.modules?.opportunities !== false,
+  };
+}
+
+function getUserName() {
+  return (DATA.settings?.name || 'Aadhil').trim() || 'Aadhil';
+}
+
+function applyTheme() {
+  ensureSettingsShape();
+  const theme = THEME_PRESETS[DATA.settings.accentTheme] || THEME_PRESETS.red;
+  const root = document.documentElement;
+  root.style.setProperty('--accent', theme.accent);
+  root.style.setProperty('--accent-soft', `rgba(${theme.rgb},0.16)`);
+  root.style.setProperty('--accent-glow', `rgba(${theme.rgb},0.12)`);
+}
+
 function getGreeting() {
   const h=new Date().getHours();
-  return (h<12?'Good morning':h<17?'Good afternoon':'Good evening')+', Aadhil.';
+  return (h<12?'Good morning':h<17?'Good afternoon':'Good evening')+', '+getUserName()+'.';
 }
 function todayLong() {
   return new Date().toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'});
@@ -913,6 +1033,8 @@ function formatDue(task) {
 async function loadData() {
   const local=localStorage.getItem('kairo_v1');
   if (local){try{DATA={...DATA,...JSON.parse(local)};}catch{}}
+  ensureSettingsShape();
+  applyTheme();
   DATA.tasks=DATA.tasks.map(t=>({...t,focusArea:migrateFocusArea(t)}));
 
   const ok=await initSupabase();
@@ -925,6 +1047,8 @@ async function loadData() {
       DATA={...DATA,...data.data};
       if (!DATA.habitDefs?.length) DATA.habitDefs=[{id:'gym',label:'Gym',icon:'🏋️'},{id:'reading',label:'Reading',icon:'📚'},{id:'journaling',label:'Journaling',icon:'✍️'}];
       if (!DATA.focusTasks) DATA.focusTasks=[];
+      ensureSettingsShape();
+      applyTheme();
       DATA.tasks=DATA.tasks.map(t=>({...t,focusArea:migrateFocusArea(t)}));
       // Backfill completedDate for old tasks that were completed before this field existed
       DATA.tasks=DATA.tasks.map(t=>t.completed&&!t.completedDate?{...t,completedDate:t.dueDate||t.createdAt||today()}:t);
@@ -949,6 +1073,7 @@ async function saveNow() {
 }
 
 function scheduleSave() {
+  ensureSettingsShape();
   localStorage.setItem('kairo_v1',JSON.stringify(DATA));
   clearTimeout(syncTimer); syncTimer=setTimeout(saveNow,1000);
 }
@@ -962,6 +1087,7 @@ function setSyncStatus(state,label) {
 
 // ─── Navigation ───────────────────────────────────────────────────────────────
 function navigate(page) {
+  ensureSettingsShape();
   currentPage=page;
   document.querySelectorAll('.nav-item').forEach(el=>el.classList.toggle('active',el.dataset.page===page));
   document.querySelectorAll('.bottom-nav-item').forEach(el=>el.classList.toggle('active',el.dataset.page===page));
@@ -972,6 +1098,7 @@ function navigate(page) {
     projects:['Projects','Track your initiatives'],
     habits:  ['Habits','Build consistency'],
     capture: ['Quick Capture','Dump ideas, sort later'],
+    settings:['Settings','Personalise your dashboard'],
   };
   const [title,sub]=meta[page]||['Kairo',''];
   document.getElementById('page-title').textContent=page==='home'?getGreeting():title;
@@ -993,7 +1120,7 @@ function navigate(page) {
   }
   const fab=document.getElementById('fab');
   if(fab){
-    const showFab={home:false,tasks:true,projects:true,habits:false,capture:false};
+    const showFab={home:false,tasks:true,projects:true,habits:false,capture:false,settings:false};
     fab.style.display=showFab[page]?'flex':'none';
     if(page==='tasks'){
       fab.innerHTML='🎙';
@@ -1017,12 +1144,14 @@ function navigate(page) {
       if(pill){pill.textContent='';pill.className='fab-voice-status';}
     }
   }
+  updateModuleVisibility();
   renderPage(page);
 }
 
 let currentHub = 'projects'; // tracks which sub-view is active in the projects hub
 
 function switchHub(hub) {
+  if(hub==='opportunities' && !DATA.settings?.modules?.opportunities) hub='projects';
   currentHub = hub;
   ['projects','opportunities','review'].forEach(h => {
     const el = document.getElementById('hub-'+h);
@@ -1047,13 +1176,21 @@ function switchHub(hub) {
   if(hub==='review')        renderReview();
 }
 
-function renderAll(){renderPage(currentPage);updateBadges();requestAnimationFrame(attachSwipeHandlers);}
+function renderAll(){
+  ensureSettingsShape();
+  applyTheme();
+  updateModuleVisibility();
+  renderPage(currentPage);
+  updateBadges();
+  requestAnimationFrame(attachSwipeHandlers);
+}
 function renderPage(p){
   if(p==='home')     renderHome();
   if(p==='tasks')    renderTasks();
   if(p==='projects') renderProjects();
   if(p==='habits')   renderHabits();
   if(p==='capture')  renderCapture();
+  if(p==='settings') renderSettings();
 }
 
 function updateBadges(){
@@ -1067,6 +1204,16 @@ function updateBadges(){
   if(tbm){if(ov>0){tbm.style.display='';tbm.textContent=ov;}else tbm.style.display='none';}
   const cbm=document.getElementById('capture-badge-mob');
   if(cbm){if(cap>0){cbm.style.display='';cbm.textContent=cap;}else cbm.style.display='none';}
+}
+
+function updateModuleVisibility(){
+  ensureSettingsShape();
+  const oppVisible = DATA.settings.modules.opportunities;
+  const sideOpp = document.getElementById('nav-sub-opportunities');
+  if(sideOpp) sideOpp.style.display = oppVisible ? '' : 'none';
+  const hubOpp = document.querySelector('.page-tab[data-hub="opportunities"]');
+  if(hubOpp) hubOpp.classList.toggle('hidden', !oppVisible);
+  if(!oppVisible && currentHub==='opportunities') switchHub('projects');
 }
 
 
@@ -1084,6 +1231,7 @@ function renderTasks(){
   });
   const pending=filtered.filter(t=>!t.completed&&!t.dismissed);
   const done=filtered.filter(t=>t.completed);
+  const dismissed=filtered.filter(t=>t.dismissed&&!t.completed);
   pending.sort((a,b)=>{
     const ao=isOverdue(a)?0:1,bo=isOverdue(b)?0:1;
     if(ao!==bo) return ao-bo;
@@ -1101,6 +1249,12 @@ function renderTasks(){
   const dc=document.getElementById('tasks-done-card');
   if(done.length>0){dc.style.display='';document.getElementById('tasks-done-title').textContent=`Completed (${done.length})`;document.getElementById('tasks-done-list').innerHTML=done.map(t=>taskHTML(t,false)).join('');}
   else dc.style.display='none';
+  const dim=document.getElementById('tasks-dismissed-card');
+  if(dismissed.length>0){
+    dim.style.display='';
+    document.getElementById('tasks-dismissed-title').textContent=`Dismissed (${dismissed.length})`;
+    document.getElementById('tasks-dismissed-list').innerHTML=dismissed.map(t=>taskHTML(t,false)).join('');
+  } else dim.style.display='none';
 }
 
 function setTaskFilter(f){taskFilter=f;renderTasks();}
@@ -1109,16 +1263,16 @@ function taskHTML(task,isFocus){
   const overdue=isOverdue(task),proj=DATA.projects.find(p=>p.id===task.projectId);
   const subtasks=task.subtasks||[],sdone=subtasks.filter(s=>s.done).length;
   const dueChip=formatDue(task),fa=task.focusArea||migrateFocusArea(task);
-  return `<div class="task-item" id="task-${task.id}">
+  return `<div class="task-item${task.dismissed?' dismissed':''}" id="task-${task.id}">
     <div class="task-check${task.completed?' done':''}" onclick="toggleTask('${task.id}')"></div>
     <div class="task-body">
       <div class="flex-between">
         <span class="task-title-text${task.completed?' done':''}" onclick="toggleExpand('${task.id}')">${escHtml(task.title)}</span>
         <div class="task-actions flex-gap-sm">
-          <button class="focus-btn${isFocus?' active':''}" onclick="toggleFocus('${task.id}')" title="Toggle focus">★</button>
-          ${overdue?`<button class="dismiss-btn" onclick="dismissTask('${task.id}')" title="Dismiss">✕</button>`:''}
-          <button class="btn-icon" onclick="openEditTask('${task.id}')" title="Edit">✎</button>
-          <button class="btn-icon delete-btn" onclick="deleteTask('${task.id}')" title="Delete" style="color:var(--accent)">🗑</button>
+          <button class="focus-btn${isFocus?' active':''}" onclick="toggleFocus('${task.id}')" title="Toggle focus" data-tip="${isFocus?'Unstar focus':'Star as focus'}">★</button>
+          <button class="dismiss-btn" onclick="dismissTask('${task.id}')" title="${task.dismissed?'Restore':'Dismiss'}" data-tip="${task.dismissed?'Restore task':'Dismiss task'}">${task.dismissed?'↺':'↷'}</button>
+          <button class="btn-icon" onclick="openEditTask('${task.id}')" title="Edit" data-tip="Edit task">✎</button>
+          <button class="btn-icon delete-btn" onclick="deleteTask('${task.id}')" title="Delete" data-tip="Delete task" style="color:var(--accent)">🗑</button>
         </div>
       </div>
       <div class="task-meta">
@@ -1141,8 +1295,9 @@ function taskHTML(task,isFocus){
             onkeydown="if(event.key==='Enter')addSubtask('${task.id}')"/>
           <button class="btn btn-ghost btn-xs" onclick="addSubtask('${task.id}')">Add</button>
         </div>
-        <div class="mt8" style="display:none" id="mobile-delete-${task.id}">
-          <button class="btn btn-danger btn-xs" onclick="deleteTask('${task.id}')">🗑 Delete task</button>
+        <div class="mt8 flex-gap" style="display:none" id="mobile-delete-${task.id}">
+          <button class="btn btn-ghost btn-xs" onclick="dismissTask('${task.id}')">${task.dismissed?'Restore':'Dismiss'}</button>
+          <button class="btn btn-danger btn-xs" onclick="deleteTask('${task.id}')">Delete</button>
         </div>
       </div>
     </div>
@@ -1157,8 +1312,8 @@ function projectTaskHTML(task){
       <div class="flex-between">
         <span class="task-title-text${task.completed?' done':''}">${escHtml(task.title)}</span>
         <div class="task-actions flex-gap-sm">
-          <button class="btn-icon" onclick="openEditTask('${task.id}')" title="Edit">✎</button>
-          <button class="btn-icon" onclick="deleteTask('${task.id}')" title="Delete" style="color:var(--accent)">✕</button>
+          <button class="btn-icon" onclick="openEditTask('${task.id}')" title="Edit" data-tip="Edit task">✎</button>
+          <button class="btn-icon" onclick="deleteTask('${task.id}')" title="Delete" data-tip="Delete task" style="color:var(--accent)">✕</button>
         </div>
       </div>
       <div class="task-meta">${dueChip}</div>
@@ -1186,11 +1341,43 @@ function toggleExpand(id){
   el.style.display=isOpen?'none':'';
   // Show mobile delete button only when expanded and on mobile
   const mbd=document.getElementById('mobile-delete-'+id);
-  if(mbd) mbd.style.display=(el.style.display!==''||!isOpen)&&window.innerWidth<=768?'':'none';
+  if(mbd) mbd.style.display=!isOpen&&window.innerWidth<=768?'flex':'none';
 }
 function toggleTask(id){const td=today();DATA.tasks=DATA.tasks.map(t=>t.id===id?{...t,completed:!t.completed,completedDate:!t.completed?td:null}:t);scheduleSave();renderAll();}
-function deleteTask(id){DATA.tasks=DATA.tasks.filter(t=>t.id!==id);DATA.focusTasks=DATA.focusTasks.filter(f=>f!==id);scheduleSave();renderAll();toast('Task deleted','info');}
-function dismissTask(id){DATA.tasks=DATA.tasks.map(t=>t.id===id?{...t,dismissed:true,dismissedDate:today()}:t);DATA.focusTasks=DATA.focusTasks.filter(f=>f!==id);scheduleSave();renderAll();toast('Task dismissed','info');}
+function deleteTask(id){
+  const task=DATA.tasks.find(t=>t.id===id);
+  if(task && !confirm(`Delete "${task.title}"? This removes it completely.`)) return;
+  const removedTask = task ? JSON.parse(JSON.stringify(task)) : null;
+  const removedWasFocus = DATA.focusTasks.includes(id);
+  DATA.tasks=DATA.tasks.filter(t=>t.id!==id);
+  DATA.focusTasks=DATA.focusTasks.filter(f=>f!==id);
+  scheduleSave();renderAll();
+  showTaskUndoToast('Task deleted',()=>{
+    if(!removedTask) return;
+    DATA.tasks.unshift(removedTask);
+    if(removedWasFocus && !DATA.focusTasks.includes(id)) DATA.focusTasks=[...DATA.focusTasks,id];
+    scheduleSave();renderAll();toast('Task restored','info');
+  });
+}
+function dismissTask(id){
+  const task=DATA.tasks.find(t=>t.id===id);
+  if(!task) return;
+  const nextDismissed = !task.dismissed;
+  const previousState = {...task};
+  const wasFocus = DATA.focusTasks.includes(id);
+  DATA.tasks=DATA.tasks.map(t=>t.id===id?{...t,dismissed:nextDismissed,dismissedDate:nextDismissed?today():null}:t);
+  if(nextDismissed) DATA.focusTasks=DATA.focusTasks.filter(f=>f!==id);
+  scheduleSave();renderAll();
+  if(nextDismissed){
+    showTaskUndoToast('Task dismissed',()=>{
+      DATA.tasks=DATA.tasks.map(t=>t.id===id?previousState:t);
+      if(wasFocus && !DATA.focusTasks.includes(id)) DATA.focusTasks=[...DATA.focusTasks,id];
+      scheduleSave();renderAll();toast('Task restored','info');
+    });
+  } else {
+    toast('Task restored','info');
+  }
+}
 function toggleFocus(id){DATA.focusTasks=DATA.focusTasks.includes(id)?DATA.focusTasks.filter(f=>f!==id):[...DATA.focusTasks,id];scheduleSave();renderAll();}
 function addSubtask(taskId){
   const inp=document.getElementById('sti-'+taskId);
@@ -1414,17 +1601,113 @@ function assignCapture(id,projectId){
   scheduleSave();renderAll();toast('Added as task','success');
 }
 
+// ─── Settings ─────────────────────────────────────────────────────────────────
+function renderSettings(){
+  ensureSettingsShape();
+  const nameInput=document.getElementById('settings-name');
+  if(nameInput) nameInput.value=getUserName();
+
+  const themeEl=document.getElementById('theme-options');
+  if(themeEl){
+    themeEl.innerHTML=Object.entries(THEME_PRESETS).map(([key,theme])=>`
+      <button type="button" class="theme-option${DATA.settings.accentTheme===key?' active':''}" onclick="setAccentTheme('${key}')">
+        <div class="theme-swatch" style="background:${theme.accent}"></div>
+        <div class="theme-label">${theme.label}</div>
+      </button>
+    `).join('');
+  }
+
+  const prefsEl=document.getElementById('settings-preferences');
+  if(prefsEl){
+    const rows = [
+      {
+        key:'weeklyReview',
+        group:'notifications',
+        title:'Weekly review reminder',
+        copy:'Keep the Sunday review reminder enabled as we build the actual notification system.',
+        enabled:DATA.settings.notifications.weeklyReview,
+      },
+      {
+        key:'overdueNudge',
+        group:'notifications',
+        title:'Overdue task nudge',
+        copy:'Store your preference now so daily reminders are ready when notifications go live.',
+        enabled:DATA.settings.notifications.overdueNudge,
+      },
+      {
+        key:'opportunities',
+        group:'modules',
+        title:'Show Opportunities',
+        copy:'Hide or show the Opportunities section in navigation while the product is evolving.',
+        enabled:DATA.settings.modules.opportunities,
+      },
+    ];
+
+    prefsEl.innerHTML=rows.map(row=>`
+      <div class="settings-row">
+        <div class="settings-copy">
+          <strong>${row.title}</strong>
+          <span>${row.copy}</span>
+        </div>
+        <button type="button" class="toggle${row.enabled?' active':''}" onclick="toggleSetting('${row.group}','${row.key}')">${row.enabled?'On':'Off'}</button>
+      </div>
+    `).join('');
+  }
+}
+
+function updateSettingName(value){
+  DATA.settings.name=(value||'').trimStart() || 'Aadhil';
+  scheduleSave();
+  if(currentPage==='home') document.getElementById('page-title').textContent=getGreeting();
+}
+
+function setAccentTheme(themeKey){
+  if(!THEME_PRESETS[themeKey]) return;
+  DATA.settings.accentTheme=themeKey;
+  applyTheme();
+  scheduleSave();
+  renderSettings();
+  renderAll();
+}
+
+function toggleSetting(group,key){
+  if(!DATA.settings[group]) DATA.settings[group]={};
+  DATA.settings[group][key]=!DATA.settings[group][key];
+  scheduleSave();
+  updateModuleVisibility();
+  if(currentPage==='settings') renderSettings();
+  if(currentPage==='projects' && key==='opportunities' && !DATA.settings.modules.opportunities) switchHub('projects');
+}
+
 
 // ─── Modals ───────────────────────────────────────────────────────────────────
-function openModal(html){document.getElementById('modal-content').innerHTML=html;document.getElementById('modal-overlay').style.display='flex';}
-function closeModal(){document.getElementById('modal-overlay').style.display='none';}
+function clearPendingVoiceReview(){
+  pendingVoiceReview=false;
+  if(pendingReviewStatusTarget){
+    pendingReviewStatusTarget.textContent='';
+    if(pendingReviewStatusTarget.classList.contains('fab-voice-status')) pendingReviewStatusTarget.className='fab-voice-status';
+    else pendingReviewStatusTarget.className='voice-status';
+  }
+  pendingReviewStatusTarget = null;
+}
+
+function openModal(html, options={}){
+  modalState = { kind: options.kind || null };
+  document.getElementById('modal-content').innerHTML=html;
+  document.getElementById('modal-overlay').style.display='flex';
+}
+function closeModal(){
+  document.getElementById('modal-overlay').style.display='none';
+  if(modalState.kind==='voice-single-task-review') clearPendingVoiceReview();
+  modalState = { kind: null };
+}
 
 function renderAreaPills(selected){
   return `<div class="area-pills" id="area-pills">${FOCUS_AREAS.map(a=>`<div class="area-pill${a===selected?' selected':''}" data-area="${a}" onclick="selectPill(this,'${a}')">${a}</div>`).join('')}</div><input type="hidden" id="m-area" value="${selected||'Career'}"/>`;
 }
 function selectPill(el,area){document.querySelectorAll('.area-pill').forEach(p=>p.classList.remove('selected'));el.classList.add('selected');document.getElementById('m-area').value=area;}
 
-function openAddTask(projectId=''){
+function openAddTask(projectId='', options={}){
   openModal(`<h3>New Task</h3>
     <div class="form-row"><label>Title</label><input class="input" id="m-title" placeholder="What needs to be done?" autofocus onkeydown="if(event.key==='Enter')saveTask()"/></div>
     <div class="form-row"><label>Focus Area</label>${renderAreaPills('Career')}</div>
@@ -1437,7 +1720,7 @@ function openAddTask(projectId=''){
     <div class="flex-gap" style="justify-content:flex-end;margin-top:6px">
       <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
       <button class="btn btn-primary" onclick="saveTask()">Add Task</button>
-    </div>`);
+    </div>`, { kind:options.kind || 'task-form' });
 }
 
 function openAddProjectTask(projectId){
@@ -1453,7 +1736,7 @@ function openAddProjectTask(projectId){
     <div class="flex-gap" style="justify-content:flex-end;margin-top:6px">
       <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
       <button class="btn btn-primary" onclick="saveTask(null,'${projectId}')">Add Task</button>
-    </div>`);
+    </div>`, { kind:'task-form' });
 }
 
 function saveTask(editId=null,forceProjectId=null){
@@ -1467,6 +1750,7 @@ function saveTask(editId=null,forceProjectId=null){
   if(editId) DATA.tasks=DATA.tasks.map(t=>t.id===editId?task:t);
   else DATA.tasks.unshift(task);
   if(projectId) DATA.projects=DATA.projects.map(p=>p.id===projectId?{...p,lastUpdated:today()}:p);
+  if(modalState.kind==='voice-single-task-review') clearPendingVoiceReview();
   closeModal();scheduleSave();renderAll();toast(editId?'Task updated':'Task added','success');
 }
 
@@ -1485,7 +1769,7 @@ function openEditTask(id){
     <div class="flex-gap" style="justify-content:flex-end;margin-top:6px">
       <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
       <button class="btn btn-primary" onclick="saveTask('${id}')">Save</button>
-    </div>`);
+    </div>`, { kind:'task-form' });
 }
 
 function openAddProject(){
@@ -1582,6 +1866,32 @@ function toast(msg,type='success'){
   document.getElementById('toast-msg').textContent=msg;
   el.style.display='flex';el.className='toast';
   toastTimer=setTimeout(()=>{el.classList.add('hide');setTimeout(()=>el.style.display='none',250);},2200);
+}
+
+function showTaskUndoToast(label, undoFn){
+  const el=document.getElementById('toast');clearTimeout(toastTimer);
+  document.getElementById('toast-dot').className='toast-dot info';
+  document.getElementById('toast-msg').innerHTML=
+    `${label} &nbsp;<button type="button" onclick="handleToastUndo()" style="background:none;border:none;color:var(--gold);font-size:12px;cursor:pointer;font-family:inherit;font-weight:600;padding:0">Undo</button>`;
+  window.__toastUndo = ()=>{
+    window.__toastUndo = null;
+    undoFn();
+  };
+  el.style.display='flex';el.className='toast';
+  toastTimer=setTimeout(()=>{
+    window.__toastUndo = null;
+    el.classList.add('hide');
+    setTimeout(()=>el.style.display='none',250);
+  },5000);
+}
+
+function handleToastUndo(){
+  const undo = window.__toastUndo;
+  if(!undo) return;
+  const el=document.getElementById('toast');
+  el.classList.add('hide');
+  setTimeout(()=>el.style.display='none',250);
+  undo();
 }
 
 // ─── Util ─────────────────────────────────────────────────────────────────────
@@ -1691,7 +2001,9 @@ async function sendToVoiceAPI(text, audioB64, mimeType, overrideStatusEl){
 
     if(tasks.length===1){
       setStatus(`1 task ready — review before saving`,'done');
-      openAddTask(tasks[0].projectId||'');
+      pendingVoiceReview = true;
+      pendingReviewStatusTarget = statusEl || null;
+      openAddTask(tasks[0].projectId||'', { kind:'voice-single-task-review' });
       setTimeout(()=>{
         const ti=document.getElementById('m-title'); if(ti) ti.value=tasks[0].title;
         if(tasks[0].focusArea){const pill=document.querySelector(`.area-pill[data-area="${tasks[0].focusArea}"]`);if(pill)selectPill(pill,tasks[0].focusArea);}
@@ -2043,7 +2355,7 @@ function buildReviewPrompt() {
   const lb=FOCUS_AREAS.reduce((a,fa)=>{a[fa]=cw.filter(t=>t.focusArea===fa).length;return a},{});
   const dismissed=DATA.tasks.filter(t=>t.dismissed&&t.dismissedDate>=waStr).length;
 
-  return `You are a direct, honest personal productivity coach. Weekly review for Aadhil.
+  return `You are a direct, honest personal productivity coach. Weekly review for ${getUserName()}.
 
 TODAY: ${td}
 COMPLETED THIS WEEK (${cw.length}): ${cw.slice(0,20).map(t=>`[${t.focusArea}] ${t.title}`).join(', ')||'None'}

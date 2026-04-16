@@ -1,7 +1,10 @@
 const {
+  buildCalendarConnection,
   exchangeCodeForTokens,
   getConfig,
+  getCalendarIntegration,
   saveIntegrationState,
+  upsertCalendarConnection,
 } = require('./_lib');
 
 function buildReturnUrl(success, message) {
@@ -32,16 +35,10 @@ module.exports = async function handler(req, res) {
 
   try {
     const tokenData = await exchangeCodeForTokens(code);
-    const now = Date.now();
-    await saveIntegrationState({
-      connectedAt: new Date(now).toISOString(),
-      refreshedAt: new Date(now).toISOString(),
-      accessToken: tokenData.access_token,
-      refreshToken: tokenData.refresh_token,
-      expiresAt: new Date(now + (tokenData.expires_in || 3600) * 1000).toISOString(),
-      scope: tokenData.scope,
-      tokenType: tokenData.token_type || 'Bearer',
-    });
+    const currentIntegration = await getCalendarIntegration();
+    const connection = await buildCalendarConnection(tokenData);
+    const nextIntegration = upsertCalendarConnection(currentIntegration, connection);
+    await saveIntegrationState(nextIntegration);
 
     const redirectUrl = buildReturnUrl(true, 'google-calendar-connected');
     if (redirectUrl) return res.redirect(redirectUrl);

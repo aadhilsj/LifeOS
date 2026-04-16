@@ -739,10 +739,10 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;heigh
               </div>
               <div id="home-calendar-card"></div>
             </div>
-            <div class="card">
+            <div class="card" style="cursor:pointer" onclick="navigate('projects');setTimeout(()=>switchHub('projects'),50)">
               <div class="flex-between mb12">
                 <div class="card-title" style="margin:0">Active Projects</div>
-                <span class="text-xs text-dim" style="cursor:pointer" onclick="navigate('projects')">All →</span>
+                <span class="text-xs text-dim" style="cursor:pointer" onclick="event.stopPropagation();navigate('projects');setTimeout(()=>switchHub('projects'),50)">All →</span>
               </div>
               <div id="home-projects-list"></div>
             </div>
@@ -2330,7 +2330,14 @@ async function processHomeVoice(){
   const blob=new Blob(audioChunks,{type:audioChunks[0]?.type||'audio/webm'});
   const reader=new FileReader();
   reader.readAsDataURL(blob);
-  reader.onload=async()=>{ await sendToVoiceAPI(null, reader.result.split(',')[1], blob.type); };
+  reader.onload=async()=>{
+    await sendToVoiceAPI(
+      null,
+      reader.result.split(',')[1],
+      blob.type,
+      document.getElementById('home-voice-status')
+    );
+  };
 }
 
 // ─── Tasks page FAB voice ─────────────────────────────────────────────────────
@@ -2541,7 +2548,7 @@ function renderHome(){
     :active.map(p=>{
         const pct=calcProjectProgress(p.id);
         const nextTask=DATA.tasks.find(t=>t.projectId===p.id&&!t.completed);
-        return `<div style="margin-bottom:13px;cursor:pointer" onclick="openProjectDetail('${p.id}')">
+        return `<div style="margin-bottom:13px;cursor:pointer" onclick="navigate('projects');setTimeout(()=>switchHub('projects'),50)">
           <div class="flex-between"><span style="font-size:13px;font-weight:500">${escHtml(p.title)}</span><span class="text-xs text-dim">${pct}%</span></div>
           ${nextTask?`<div class="project-next">↳ <span>${escHtml(nextTask.title)}</span></div>`:'<div class="project-next" style="color:var(--green)">↳ All tasks done</div>'}
           <div class="progress-track"><div class="progress-fill" style="width:${pct}%"></div></div>

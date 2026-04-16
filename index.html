@@ -285,6 +285,11 @@ input[type="date"].input,input[type="time"].input{color-scheme:dark}
 .calendar-item:last-child{border-bottom:none;padding-bottom:0}
 .calendar-item-title{font-size:12.5px;font-weight:600;color:var(--text)}
 .calendar-item-meta{font-size:11px;color:var(--text-3);margin-top:3px;line-height:1.45}
+.calendar-item-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
+.calendar-link-btn{border:1px solid var(--border);background:var(--surface2);color:var(--text-2);border-radius:999px;padding:4px 8px;font-size:10px;font-family:inherit;cursor:pointer;flex-shrink:0}
+.calendar-link-btn:hover{background:var(--glass-hover);color:var(--text)}
+.calendar-project-badge{display:inline-flex;align-items:center;gap:5px;margin-top:7px;padding:4px 8px;border-radius:999px;background:var(--accent-soft);color:var(--accent);font-size:10.5px;font-weight:600}
+.calendar-project-badge::before{content:"◈";font-size:9px;opacity:.85}
 .calendar-free{padding:8px 10px;border-radius:9px;background:var(--surface2);border:1px solid var(--border);font-size:11.5px;color:var(--text-2);margin-top:8px}
 .calendar-empty{font-size:12px;color:var(--text-3);line-height:1.55}
 
@@ -956,7 +961,7 @@ let DATA = {
     {id:'reading',label:'Reading',icon:'📚'},
     {id:'journaling',label:'Journaling',icon:'✍️'},
   ],
-  captures:[], focusTasks:[], weeklyReview:null,
+  captures:[], focusTasks:[], weeklyReview:null, calendarLinks:{},
   settings:{
     name:'Aadhil',
     accentTheme:'red',
@@ -1034,6 +1039,12 @@ function ensureSettingsShape() {
   };
 }
 
+function ensureCalendarLinksShape() {
+  if (!DATA.calendarLinks || typeof DATA.calendarLinks !== 'object' || Array.isArray(DATA.calendarLinks)) {
+    DATA.calendarLinks = {};
+  }
+}
+
 function getUserName() {
   return (DATA.settings?.name || 'Aadhil').trim() || 'Aadhil';
 }
@@ -1073,6 +1084,7 @@ async function loadData() {
   const local=localStorage.getItem('kairo_v1');
   if (local){try{DATA={...DATA,...JSON.parse(local)};}catch{}}
   ensureSettingsShape();
+  ensureCalendarLinksShape();
   applyTheme();
   DATA.tasks=DATA.tasks.map(t=>({...t,focusArea:migrateFocusArea(t)}));
 
@@ -1087,6 +1099,7 @@ async function loadData() {
       if (!DATA.habitDefs?.length) DATA.habitDefs=[{id:'gym',label:'Gym',icon:'🏋️'},{id:'reading',label:'Reading',icon:'📚'},{id:'journaling',label:'Journaling',icon:'✍️'}];
       if (!DATA.focusTasks) DATA.focusTasks=[];
       ensureSettingsShape();
+      ensureCalendarLinksShape();
       applyTheme();
       DATA.tasks=DATA.tasks.map(t=>({...t,focusArea:migrateFocusArea(t)}));
       // Backfill completedDate for old tasks that were completed before this field existed
@@ -1102,6 +1115,7 @@ async function loadData() {
 }
 
 async function saveNow() {
+  ensureCalendarLinksShape();
   localStorage.setItem('kairo_v1',JSON.stringify(DATA));
   if (!sb) return;
   setSyncStatus('syncing','Saving…');
@@ -1114,6 +1128,7 @@ async function saveNow() {
 
 function scheduleSave() {
   ensureSettingsShape();
+  ensureCalendarLinksShape();
   localStorage.setItem('kairo_v1',JSON.stringify(DATA));
   clearTimeout(syncTimer); syncTimer=setTimeout(saveNow,1000);
 }
@@ -1508,6 +1523,7 @@ function renderProjectDetail(id){
   const pct=calcProjectProgress(id),projTasks=DATA.tasks.filter(t=>t.projectId===id);
   const pending=projTasks.filter(t=>!t.completed),done=projTasks.filter(t=>t.completed);
   const daysAgo=Math.floor((Date.now()-new Date(p.lastUpdated))/86400000);
+  const linkedMeetings = CALENDAR_STATE.events.filter(event=>getCalendarLinkedProject(event)?.id===id);
   document.getElementById('project-detail-view').innerHTML=`
     <button class="btn btn-ghost btn-sm mb16" onclick="backToProjects()">← Back to Projects</button>
     <div class="flex-between mb20">
@@ -1542,6 +1558,18 @@ function renderProjectDetail(id){
         </div>
       </div>
     </div>
+    <div class="card mb14">
+      <div class="card-title">Linked Meetings (${linkedMeetings.length})</div>
+      ${!linkedMeetings.length?'<div class="text-dim text-sm">No calendar events linked yet.</div>':linkedMeetings.map(event=>`
+        <div class="calendar-item">
+          <div class="calendar-item-head">
+            <div class="calendar-item-title">${escHtml(event.summary)}</div>
+            <button class="calendar-link-btn" onclick="openCalendarLinkModal('${getCalendarEventKey(event)}')">Edit Link</button>
+          </div>
+          <div class="calendar-item-meta">${formatCalendarTime(event.start,event.isAllDay)}${event.end&&!event.isAllDay?` - ${formatCalendarTime(event.end,false)}`:''}${event.location?` · ${escHtml(event.location)}`:''}${event.sourceLabel?` · ${escHtml(event.sourceLabel)}`:''}</div>
+        </div>
+      `).join('')}
+    </div>
     <div class="card">
       <div class="card-title">Tasks (${projTasks.length})</div>
       ${!projTasks.length?'<div class="empty">No tasks yet.</div>':''}
@@ -1553,7 +1581,15 @@ function renderProjectDetail(id){
 function backToProjects(){projectDetailId=null;document.getElementById('projects-list-view').style.display='';document.getElementById('project-detail-view').style.display='none';renderProjects();}
 function updateProjectStatus(id,status){DATA.projects=DATA.projects.map(p=>p.id===id?{...p,status,lastUpdated:today()}:p);scheduleSave();renderProjectDetail(id);}
 function editProjectNotes(id){const p=DATA.projects.find(x=>x.id===id);if(!p) return;const notes=prompt('Project notes:',p.notes||'');if(notes===null) return;DATA.projects=DATA.projects.map(x=>x.id===id?{...x,notes,lastUpdated:today()}:x);scheduleSave();renderProjectDetail(id);}
-function deleteProject(id){if(!confirm('Delete this project?')) return;DATA.projects=DATA.projects.filter(p=>p.id!==id);scheduleSave();renderProjects();toast('Project deleted','info');}
+function deleteProject(id){
+  if(!confirm('Delete this project?')) return;
+  DATA.projects=DATA.projects.filter(p=>p.id!==id);
+  ensureCalendarLinksShape();
+  Object.keys(DATA.calendarLinks).forEach(key=>{
+    if(DATA.calendarLinks[key]?.projectId===id) delete DATA.calendarLinks[key];
+  });
+  scheduleSave();renderProjects();toast('Project deleted','info');
+}
 
 // ─── Opportunities (formerly Job Tracker) ────────────────────────────────────
 // Migrate old job data: company→name, role→description, old stages→new stages
@@ -2007,6 +2043,84 @@ function formatCalendarTime(isoString, isAllDay){
   return new Date(isoString).toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'});
 }
 
+function getCalendarEventKey(event){
+  return `${event.sourceId||'calendar'}:${event.id||'event'}`;
+}
+
+function getCalendarLinkedProject(event){
+  ensureCalendarLinksShape();
+  const link = DATA.calendarLinks[getCalendarEventKey(event)];
+  if(!link?.projectId) return null;
+  const project = DATA.projects.find(p=>p.id===link.projectId);
+  if(!project) return null;
+  return project;
+}
+
+function saveCalendarProjectLink(event, projectId){
+  ensureCalendarLinksShape();
+  const key = getCalendarEventKey(event);
+  if(projectId){
+    DATA.calendarLinks[key] = {
+      projectId,
+      linkedAt:new Date().toISOString(),
+      summary:event.summary||'',
+      start:event.start||'',
+      sourceId:event.sourceId||'',
+      sourceLabel:event.sourceLabel||'',
+    };
+  } else {
+    delete DATA.calendarLinks[key];
+  }
+  scheduleSave();
+}
+
+function openCalendarLinkModal(eventKey){
+  const event = CALENDAR_STATE.events.find(item=>getCalendarEventKey(item)===eventKey);
+  if(!event) return;
+  const linkedProject = getCalendarLinkedProject(event);
+  openModal(`<h3>Link Event to Project</h3>
+    <div class="form-row">
+      <label>Event</label>
+      <div class="note-block" style="min-height:auto">
+        <div style="font-weight:600;color:var(--text)">${escHtml(event.summary||'Untitled event')}</div>
+        <div class="text-xs text-dim" style="margin-top:4px">${escHtml(formatCalendarTime(event.start,event.isAllDay))}${event.end&&!event.isAllDay?` - ${escHtml(formatCalendarTime(event.end,false))}`:''}${event.sourceLabel?` · ${escHtml(event.sourceLabel)}`:''}</div>
+      </div>
+    </div>
+    <div class="form-row">
+      <label>Project</label>
+      <select class="input" id="m-calendar-project">
+        <option value="">None</option>
+        ${DATA.projects.map(project=>`<option value="${project.id}"${project.id===linkedProject?.id?' selected':''}>${escHtml(project.title)}</option>`).join('')}
+      </select>
+    </div>
+    <div class="flex-gap" style="justify-content:space-between;margin-top:6px">
+      <button class="btn btn-ghost" onclick="removeCalendarLink('${eventKey}')">Remove Link</button>
+      <div class="flex-gap">
+        <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+        <button class="btn btn-primary" onclick="saveCalendarLinkFromModal('${eventKey}')">Save</button>
+      </div>
+    </div>`, { kind:'calendar-link' });
+}
+
+function saveCalendarLinkFromModal(eventKey){
+  const event = CALENDAR_STATE.events.find(item=>getCalendarEventKey(item)===eventKey);
+  if(!event) return;
+  const projectId = document.getElementById('m-calendar-project')?.value || '';
+  saveCalendarProjectLink(event, projectId || null);
+  closeModal();
+  renderAll();
+  toast(projectId ? 'Calendar event linked' : 'Calendar link removed','success');
+}
+
+function removeCalendarLink(eventKey){
+  const event = CALENDAR_STATE.events.find(item=>getCalendarEventKey(item)===eventKey);
+  if(!event) return;
+  saveCalendarProjectLink(event, null);
+  closeModal();
+  renderAll();
+  toast('Calendar link removed','info');
+}
+
 function formatFreeWindow(window){
   const mins = window.minutes;
   if(mins < 60) return `${mins} min free`;
@@ -2336,12 +2450,19 @@ function renderHome(){
       const nextEvents = CALENDAR_STATE.events.slice(0,3);
       calendarEl.innerHTML=
         `<div class="calendar-empty" style="margin-bottom:8px">${CALENDAR_STATE.connectedCount||1} calendar${(CALENDAR_STATE.connectedCount||1)>1?'s':''} connected.</div>`+
-        nextEvents.map(event=>`
+        nextEvents.map(event=>{
+          const linkedProject = getCalendarLinkedProject(event);
+          return `
           <div class="calendar-item">
-            <div class="calendar-item-title">${escHtml(event.summary)}</div>
+            <div class="calendar-item-head">
+              <div class="calendar-item-title">${escHtml(event.summary)}</div>
+              <button class="calendar-link-btn" onclick="openCalendarLinkModal('${getCalendarEventKey(event)}')">${linkedProject?'Linked':'Link'}</button>
+            </div>
             <div class="calendar-item-meta">${formatCalendarTime(event.start,event.isAllDay)}${event.end&&!event.isAllDay?` - ${formatCalendarTime(event.end,false)}`:''}${event.location?` · ${escHtml(event.location)}`:''}${event.sourceLabel?` · ${escHtml(event.sourceLabel)}`:''}</div>
+            ${linkedProject?`<div class="calendar-project-badge">${escHtml(linkedProject.title)}</div>`:''}
           </div>
-        `).join('');
+        `;
+        }).join('');
     }
   }
 

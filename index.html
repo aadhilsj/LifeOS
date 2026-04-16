@@ -628,6 +628,9 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;heigh
         <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></span>
         <span class="nav-label">Workspace</span>
       </div>
+      <div class="nav-sub-item" id="nav-sub-projects" onclick="navigate('projects');setTimeout(()=>switchHub('projects'),50)">
+        <span class="nav-sub-dot"></span>Projects
+      </div>
       <div class="nav-sub-item" id="nav-sub-opportunities" onclick="navigate('projects');setTimeout(()=>switchHub('opportunities'),50)">
         <span class="nav-sub-dot"></span>Opportunities
       </div>
@@ -718,6 +721,10 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;heigh
               </div>
               <div id="home-tasks-list"></div>
             </div>
+            <div class="card mt14">
+              <div class="card-title">Daily Habits</div>
+              <div id="home-habits-list"></div>
+            </div>
           </div>
           <div>
             <div class="card mb14">
@@ -726,10 +733,6 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;heigh
                 <button class="btn btn-ghost btn-xs" id="calendar-connect-btn" onclick="connectGoogleCalendar()" style="display:none">Connect</button>
               </div>
               <div id="home-calendar-card"></div>
-            </div>
-            <div class="card mb14">
-              <div class="card-title">Daily Habits</div>
-              <div id="home-habits-list"></div>
             </div>
             <div class="card">
               <div class="flex-between mb12">
@@ -2110,12 +2113,17 @@ async function sendToVoiceAPI(text, audioB64, mimeType, overrideStatusEl){
       .filter(t=>t.title.length>0);
 
     if(tasks.length===0||result.fallback){
-      // Drop to capture
-      const inp=document.getElementById('capture-input');
-      if(inp) inp.value=transcript;
-      setStatus('Added to capture inbox','info');
-      DATA.captures.unshift({id:uid(),text:transcript,createdAt:today()});
-      scheduleSave(); renderAll();
+      if(isTextMode){
+        const inp=document.getElementById('capture-input');
+        if(inp) inp.value=transcript;
+        setStatus('Added to capture inbox','info');
+        DATA.captures.unshift({id:uid(),text:transcript,createdAt:today()});
+        scheduleSave(); renderAll();
+      } else {
+        const cleanTranscript = transcript.trim();
+        const unclear = !cleanTranscript || cleanTranscript.length < 4;
+        setStatus(unclear ? `Didn't quite catch that. Try again.` : `Didn't fully catch that. Try again or type it instead.`, 'error');
+      }
       setTimeout(()=>setStatus(''),3000);
       return;
     }
@@ -2155,12 +2163,15 @@ async function sendToVoiceAPI(text, audioB64, mimeType, overrideStatusEl){
     }
   } catch(e){
     console.error('Command error:',e);
-    // Graceful fallback — add raw text as capture
-    const inp=document.getElementById('capture-input');
-    if(inp) inp.value=text;
-    DATA.captures.unshift({id:uid(),text,createdAt:today()});
-    scheduleSave(); renderAll();
-    setStatus('Added to capture (AI unavailable)','info');
+    if(isTextMode && text){
+      const inp=document.getElementById('capture-input');
+      if(inp) inp.value=text;
+      DATA.captures.unshift({id:uid(),text,createdAt:today()});
+      scheduleSave(); renderAll();
+      setStatus('Added to capture (AI unavailable)','info');
+    } else {
+      setStatus(`Didn't quite catch that. Try again.`, 'error');
+    }
     setTimeout(()=>setStatus(''),3000);
   }
 }
@@ -2283,7 +2294,7 @@ function renderHome(){
   // Context bar
   const ctx=getContextBar();
   const ctxEl=document.getElementById('home-context-bar');
-  if(ctxEl) ctxEl.innerHTML=ctx?`<div class="context-bar ${ctx.cls}"><span class="context-icon">${ctx.icon}</span>${ctx.msg}</div>`:'';
+  if(ctxEl) ctxEl.innerHTML=ctx?`<div class="context-bar ${ctx.cls}">${ctx.msg}</div>`:'';
 
   // Capture nudge
   const nudge=document.getElementById('home-capture-nudge');

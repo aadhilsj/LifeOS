@@ -708,7 +708,6 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;heigh
           <div class="voice-status" id="home-voice-status"></div>
           <div class="command-bar-hint">Speak or type naturally — <span>Kairo will sort it into tasks</span></div>
         </div>
-        <div class="stat-row" id="home-stats"></div>
         <div id="home-context-bar"></div>
         <div class="capture-nudge mb14" id="home-capture-nudge" style="display:none" onclick="navigate('capture')"></div>
         <div class="review-nudge" id="home-review-nudge" style="display:none" onclick="navigate('projects');setTimeout(()=>switchHub('review'),50)"></div>
@@ -727,7 +726,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;heigh
               <div id="home-tasks-list"></div>
             </div>
             <div class="card mt14">
-              <div class="card-title">Daily Habits</div>
+              <div class="card-title">Habits</div>
               <div id="home-habits-list"></div>
             </div>
           </div>
@@ -1472,18 +1471,23 @@ function toggleExpand(id){
 function toggleTask(id){const td=today();DATA.tasks=DATA.tasks.map(t=>t.id===id?{...t,completed:!t.completed,completedDate:!t.completed?td:null}:t);scheduleSave();renderAll();}
 function deleteTask(id){
   const task=DATA.tasks.find(t=>t.id===id);
-  if(task && !confirm(`Delete "${task.title}"? This removes it completely.`)) return;
-  const removedTask = task ? JSON.parse(JSON.stringify(task)) : null;
-  const removedWasFocus = DATA.focusTasks.includes(id);
-  DATA.tasks=DATA.tasks.filter(t=>t.id!==id);
-  DATA.focusTasks=DATA.focusTasks.filter(f=>f!==id);
-  scheduleSave();renderAll();
-  showTaskUndoToast('Task deleted',()=>{
-    if(!removedTask) return;
-    DATA.tasks.unshift(removedTask);
-    if(removedWasFocus && !DATA.focusTasks.includes(id)) DATA.focusTasks=[...DATA.focusTasks,id];
-    scheduleSave();renderAll();toast('Task restored','info');
-  });
+  if(!task) return;
+  confirmAction(
+    'Delete Task',
+    `Delete "${task.title}"? This removes it completely.`,
+    ()=>{
+      const removedTask = JSON.parse(JSON.stringify(task));
+      const removedWasFocus = DATA.focusTasks.includes(id);
+      DATA.tasks=DATA.tasks.filter(t=>t.id!==id);
+      DATA.focusTasks=DATA.focusTasks.filter(f=>f!==id);
+      scheduleSave();renderAll();
+      showTaskUndoToast('Task deleted',()=>{
+        DATA.tasks.unshift(removedTask);
+        if(removedWasFocus && !DATA.focusTasks.includes(id)) DATA.focusTasks=[...DATA.focusTasks,id];
+        scheduleSave();renderAll();toast('Task restored','info');
+      });
+    }
+  );
 }
 function dismissTask(id){
   const task=DATA.tasks.find(t=>t.id===id);
@@ -1684,7 +1688,6 @@ function deleteJob(id){DATA.jobs=DATA.jobs.filter(j=>j.id!==id);scheduleSave();r
 const calcStreak=hid=>{let s=0,d=new Date();while(true){const k=d.toISOString().split('T')[0];if(getHabitCompletionCount(hid,k)>0){s++;d.setDate(d.getDate()-1);}else break;}return s;};
 
 function renderHabits(){
-  const days14=Array.from({length:14},(_,i)=>{const d=new Date();d.setDate(d.getDate()-(13-i));return d.toISOString().split('T')[0];});
   document.getElementById('habits-grid').innerHTML=DATA.habitDefs.map(h=>{
     const streak=calcStreak(h.id);
     const total=Object.keys(DATA.habits).reduce((sum,dateKey)=>sum+getHabitCompletionCount(h.id,dateKey),0);
@@ -1713,15 +1716,7 @@ function renderHabits(){
         <div class="text-xs text-dim">${escHtml(info.statusLabel)}</div>
         <div class="text-xs text-dim">${consistency}% consistency · ${streak>0?`${streak}d streak`:'No streak'}</div>
       </div>
-      <div class="habit-grid">
-        ${days14.map(d=>{
-          const done=getHabitCompletionCount(h.id,d)>0,isT=d===today();
-          return `<div style="text-align:center">
-            <div class="text-xs text-dim" style="margin-bottom:3px">${new Date(d+'T12:00:00').toLocaleDateString('en-US',{weekday:'short'}).slice(0,1)}</div>
-            <div class="habit-dot${done?' done':''}${isT?' today-ring':''}" onclick="toggleHabit('${h.id}','${d}')" title="${d}">${done?'✓':''}</div>
-          </div>`;
-        }).join('')}
-      </div>
+      ${renderHabitHistoryGrid(h)}
     </div>`;
   }).join('');
 }
@@ -1731,13 +1726,6 @@ function toggleHabit(hid,dateStr){
   setHabitCompletionCount(hid,dateStr,nextCount);
   scheduleSave();
   renderAll();
-}
-function toggleHabitsExpand(){
-  const strips=document.querySelectorAll('.habit-week-strip');
-  const btn=document.getElementById('habits-expand-btn');
-  const isExpanded=strips[0]?.style.display!=='none';
-  strips.forEach(el=>el.style.display=isExpanded?'none':'');
-  if(btn) btn.innerHTML=isExpanded?'Show week view ▾':'Hide week view ▴';
 }
 function deleteHabit(id){if(!confirm('Delete this habit?')) return;DATA.habitDefs=DATA.habitDefs.filter(h=>h.id!==id);scheduleSave();renderAll();toast('Habit deleted','info');}
 
@@ -2226,6 +2214,61 @@ function getHabitAttentionRank(habit) {
   return info.remaining * 100 + info.daysLeft * 5 - consistency;
 }
 
+function renderHabitHistoryGrid(habit) {
+  if (habit.frequencyType === 'monthly') return '';
+  const days14 = Array.from({length:14},(_,i)=>{
+    const d=new Date();
+    d.setDate(d.getDate()-(13-i));
+    return d.toISOString().split('T')[0];
+  });
+  const rows = [days14.slice(0,7), days14.slice(7)];
+  return `
+    <div id="habit-history-${habit.id}" style="display:none;margin-top:10px" onclick="event.stopPropagation()">
+      ${rows.map(row=>`
+        <div class="habit-grid" style="margin-top:6px">
+          ${row.map(d=>{
+            const done=getHabitCompletionCount(habit.id,d)>0;
+            const isT=d===today();
+            const dayLabel=new Date(d+'T12:00:00').toLocaleDateString('en-US',{weekday:'short'});
+            return `<div style="text-align:center;flex:1;min-width:0">
+              <div class="text-xs text-dim" style="margin-bottom:3px">${dayLabel}</div>
+              <div class="habit-dot${done?' done':''}${isT?' today-ring':''}" onclick="toggleHabit('${habit.id}','${d}')" title="${d}">${done?'✓':''}</div>
+            </div>`;
+          }).join('')}
+        </div>
+      `).join('')}
+    </div>
+    <div style="margin-top:8px">
+      <button class="btn btn-ghost btn-xs" id="habit-history-btn-${habit.id}" onclick="toggleHabitHistory('${habit.id}');event.stopPropagation()">
+        View history
+      </button>
+    </div>`;
+}
+
+function toggleHabitHistory(habitId){
+  const panel=document.getElementById(`habit-history-${habitId}`);
+  const btn=document.getElementById(`habit-history-btn-${habitId}`);
+  if(!panel||!btn) return;
+  const isOpen=panel.style.display!=='none';
+  panel.style.display=isOpen?'none':'';
+  btn.textContent=isOpen?'View history':'Hide history';
+}
+
+function confirmAction(title, message, onConfirm, confirmLabel='Delete') {
+  openModal(`
+    <h3>${escHtml(title)}</h3>
+    <div style="font-size:13px;color:var(--text-2);line-height:1.55;margin-bottom:18px">${escHtml(message)}</div>
+    <div class="flex-gap" style="justify-content:flex-end">
+      <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-danger" onclick="confirmModalAction()">${escHtml(confirmLabel)}</button>
+    </div>`);
+  window.confirmModalAction = () => {
+    closeModal();
+    if (typeof onConfirm === 'function') onConfirm();
+    window.confirmModalAction = null;
+  };
+}
+
 // ─── Drift detection → context bar ───────────────────────────────────────────
 function getContextBar(){
   const td=today();
@@ -2618,16 +2661,6 @@ function renderHome(){
   const todayTasks=[...datedTodayTasks,...undatedTasks]; // for DTN/home task list
   const overdueTasks=DATA.tasks.filter(t=>isOverdue(t));
   const pinnedTasks=DATA.tasks.filter(t=>DATA.focusTasks.includes(t.id)&&!t.completed);
-  const wStart=new Date(); wStart.setDate(wStart.getDate()-wStart.getDay());
-  const doneToday=DATA.tasks.filter(t=>t.completed&&t.completedDate===td).length;
-
-  // Stats — "Due Today" = explicitly dated today + overdue; undated shown separately
-  const dueNowCount=datedTodayTasks.length+overdueTasks.length;
-  document.getElementById('home-stats').innerHTML=[
-    {val:dueNowCount,label:'Due Today',color:'var(--text)'},
-    {val:doneToday,label:'Done Today',color:doneToday>0?'var(--green)':'var(--text-3)'},
-    {val:overdueTasks.length,label:'Overdue',color:overdueTasks.length>0?'var(--accent)':'var(--text-3)'},
-  ].map(s=>`<div class="stat-card"><div class="stat-value" style="color:${s.color}">${s.val}</div><div class="stat-label">${s.label}</div></div>`).join('');
 
   // Context bar
   const ctx=getContextBar();
@@ -2767,14 +2800,6 @@ function renderHome(){
           <div class="progress-track"><div class="progress-fill" style="width:${pct}%"></div></div>
         </div>`;
       }).join('');
-}
-
-function toggleHabitsExpand(){
-  const strips=document.querySelectorAll('.habit-week-strip');
-  const btn=document.getElementById('habits-expand-btn');
-  const isExpanded=strips[0]?.style.display!=='none';
-  strips.forEach(el=>el.style.display=isExpanded?'none':'');
-  if(btn) btn.innerHTML=isExpanded?'Show week view ▾':'Hide week view ▴';
 }
 
 // ─── Voice capture ────────────────────────────────────────────────────────────

@@ -402,8 +402,26 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;heigh
   background:var(--accent);color:#fff;border:none;cursor:pointer;
   font-size:26px;line-height:1;box-shadow:0 4px 20px rgba(200,57,43,.45);
   align-items:center;justify-content:center;
-  transition:transform var(--transition);font-family:var(--font-sans)}
+  transition:transform var(--transition),background var(--transition);font-family:var(--font-sans)}
 .fab:active{transform:scale(.92)}
+.fab.recording{background:#9b2a1f;animation:pulse 1s ease infinite;font-size:18px}
+
+/* ── FAB voice status pill ── */
+.fab-voice-status{
+  position:fixed;bottom:136px;right:14px;z-index:200;
+  background:linear-gradient(135deg,#1a1c25,#141620);
+  border:1px solid var(--glass-border);border-radius:20px;
+  padding:6px 12px;font-size:11px;font-weight:500;color:var(--text-2);
+  box-shadow:var(--shadow-sm);white-space:nowrap;
+  opacity:0;transform:translateY(6px);
+  transition:opacity .2s ease,transform .2s ease;
+  pointer-events:none;
+}
+.fab-voice-status.visible{opacity:1;transform:none}
+.fab-voice-status.active{color:var(--gold)}
+.fab-voice-status.processing{color:var(--blue)}
+.fab-voice-status.done{color:var(--green)}
+.fab-voice-status.error{color:#e57373}
 
 /* ── Home command bar ── */
 .command-bar{
@@ -465,6 +483,8 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;heigh
   .task-check{width:22px;height:22px;margin-top:0}
   .task-item{padding:11px 0;gap:11px;align-items:center}
   .task-title-text{font-size:14px}
+  /* Hide trash in header row on mobile — available in expanded view */
+  .task-actions .delete-btn{display:none}
 }
 .page-tabs{display:flex;gap:2px;background:var(--surface);padding:3px;border-radius:10px;margin-bottom:16px}
 .page-tab{flex:1;padding:7px 8px;text-align:center;font-size:12px;font-weight:500;color:var(--text-3);
@@ -755,6 +775,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;heigh
 </div>
 
 <!-- ── FAB ── -->
+<div class="fab-voice-status" id="fab-voice-status"></div>
 <button class="fab" id="fab" onclick="openAddTask()" aria-label="Add task">+</button>
 
 <!-- ── Mobile Bottom Nav ── -->
@@ -972,9 +993,29 @@ function navigate(page) {
   }
   const fab=document.getElementById('fab');
   if(fab){
-    const showFab={home:true,tasks:true,projects:true,habits:false,capture:false};
+    const showFab={home:false,tasks:true,projects:true,habits:false,capture:false};
     fab.style.display=showFab[page]?'flex':'none';
-    fab.onclick=page==='projects'?()=>openAddProjectOrOpp():()=>openAddTask();
+    if(page==='tasks'){
+      fab.innerHTML='🎙';
+      fab.title='Voice add task';
+      fab.onclick=()=>toggleTasksFabVoice();
+      fab.classList.remove('recording');
+    } else if(page==='projects'){
+      fab.innerHTML='+';
+      fab.title='New project';
+      fab.onclick=()=>openAddProjectOrOpp();
+      fab.classList.remove('recording');
+    } else {
+      fab.innerHTML='+';
+      fab.title='Add task';
+      fab.onclick=()=>openAddTask();
+      fab.classList.remove('recording');
+    }
+    // Hide FAB status pill when leaving tasks page
+    if(page!=='tasks'){
+      const pill=document.getElementById('fab-voice-status');
+      if(pill){pill.textContent='';pill.className='fab-voice-status';}
+    }
   }
   renderPage(page);
 }
@@ -1077,7 +1118,7 @@ function taskHTML(task,isFocus){
           <button class="focus-btn${isFocus?' active':''}" onclick="toggleFocus('${task.id}')" title="Toggle focus">★</button>
           ${overdue?`<button class="dismiss-btn" onclick="dismissTask('${task.id}')" title="Dismiss">✕</button>`:''}
           <button class="btn-icon" onclick="openEditTask('${task.id}')" title="Edit">✎</button>
-          <button class="btn-icon" onclick="deleteTask('${task.id}')" title="Delete" style="color:var(--accent)">🗑</button>
+          <button class="btn-icon delete-btn" onclick="deleteTask('${task.id}')" title="Delete" style="color:var(--accent)">🗑</button>
         </div>
       </div>
       <div class="task-meta">
@@ -1099,6 +1140,9 @@ function taskHTML(task,isFocus){
           <input class="input" id="sti-${task.id}" placeholder="Add subtask… (Enter)" style="font-size:12px;flex:1"
             onkeydown="if(event.key==='Enter')addSubtask('${task.id}')"/>
           <button class="btn btn-ghost btn-xs" onclick="addSubtask('${task.id}')">Add</button>
+        </div>
+        <div class="mt8" style="display:none" id="mobile-delete-${task.id}">
+          <button class="btn btn-danger btn-xs" onclick="deleteTask('${task.id}')">🗑 Delete task</button>
         </div>
       </div>
     </div>
@@ -1135,7 +1179,15 @@ function projectTaskHTML(task){
   </div>`;
 }
 
-function toggleExpand(id){const el=document.getElementById('expand-'+id);if(el)el.style.display=el.style.display==='none'?'':'none';}
+function toggleExpand(id){
+  const el=document.getElementById('expand-'+id);
+  if(!el) return;
+  const isOpen=el.style.display!=='none';
+  el.style.display=isOpen?'none':'';
+  // Show mobile delete button only when expanded and on mobile
+  const mbd=document.getElementById('mobile-delete-'+id);
+  if(mbd) mbd.style.display=(el.style.display!==''||!isOpen)&&window.innerWidth<=768?'':'none';
+}
 function toggleTask(id){const td=today();DATA.tasks=DATA.tasks.map(t=>t.id===id?{...t,completed:!t.completed,completedDate:!t.completed?td:null}:t);scheduleSave();renderAll();}
 function deleteTask(id){DATA.tasks=DATA.tasks.filter(t=>t.id!==id);DATA.focusTasks=DATA.focusTasks.filter(f=>f!==id);scheduleSave();renderAll();toast('Task deleted','info');}
 function dismissTask(id){DATA.tasks=DATA.tasks.map(t=>t.id===id?{...t,dismissed:true,dismissedDate:today()}:t);DATA.focusTasks=DATA.focusTasks.filter(f=>f!==id);scheduleSave();renderAll();toast('Task dismissed','info');}
@@ -1377,7 +1429,7 @@ function openAddTask(projectId=''){
     <div class="form-row"><label>Title</label><input class="input" id="m-title" placeholder="What needs to be done?" autofocus onkeydown="if(event.key==='Enter')saveTask()"/></div>
     <div class="form-row"><label>Focus Area</label>${renderAreaPills('Career')}</div>
     <div class="form-grid">
-      <div class="form-row"><label>Due Date <span class="text-dim" style="text-transform:none;letter-spacing:0;font-size:10px">(optional)</span></label><input type="date" class="input" id="m-due" value="${today()}"/></div>
+      <div class="form-row"><label>Due Date <span class="text-dim" style="text-transform:none;letter-spacing:0;font-size:10px">(optional)</span></label><input type="date" class="input" id="m-due"/></div>
       <div class="form-row"><label>Due Time <span class="text-dim" style="text-transform:none;letter-spacing:0;font-size:10px">(optional)</span></label><input type="time" class="input" id="m-time"/></div>
     </div>
     <div class="form-row"><label>Project</label><select class="input" id="m-proj"><option value="">None</option>${DATA.projects.map(p=>`<option value="${p.id}"${p.id===projectId?' selected':''}>${escHtml(p.title)}</option>`).join('')}</select></div>
@@ -1393,8 +1445,8 @@ function openAddProjectTask(projectId){
     <div class="form-row"><label>Title</label><input class="input" id="m-title" placeholder="What needs to be done?" autofocus onkeydown="if(event.key==='Enter')saveTask(null,'${projectId}')"/></div>
     <div class="form-row"><label>Focus Area</label>${renderAreaPills('Career')}</div>
     <div class="form-grid">
-      <div class="form-row"><label>Due Date</label><input type="date" class="input" id="m-due" value="${today()}"/></div>
-      <div class="form-row"><label>Due Time</label><input type="time" class="input" id="m-time"/></div>
+      <div class="form-row"><label>Due Date <span class="text-dim" style="text-transform:none;letter-spacing:0;font-size:10px">(optional)</span></label><input type="date" class="input" id="m-due"/></div>
+      <div class="form-row"><label>Due Time <span class="text-dim" style="text-transform:none;letter-spacing:0;font-size:10px">(optional)</span></label><input type="time" class="input" id="m-time"/></div>
     </div>
     <div class="form-row"><label>Notes</label><textarea class="input" id="m-notes" placeholder="Optional…" style="min-height:56px"></textarea></div>
     <input type="hidden" id="m-proj" value="${projectId}"/>
@@ -1425,7 +1477,7 @@ function openEditTask(id){
     <div class="form-row"><label>Title</label><input class="input" id="m-title" value="${escHtml(t.title)}"/></div>
     <div class="form-row"><label>Focus Area</label>${renderAreaPills(fa)}</div>
     <div class="form-grid">
-      <div class="form-row"><label>Due Date</label><input type="date" class="input" id="m-due" value="${t.dueDate||today()}"/></div>
+      <div class="form-row"><label>Due Date <span class="text-dim" style="text-transform:none;letter-spacing:0;font-size:10px">(optional)</span></label><input type="date" class="input" id="m-due" value="${t.dueDate||''}"/></div>
       <div class="form-row"><label>Due Time</label><input type="time" class="input" id="m-time" value="${t.dueTime||''}"/></div>
     </div>
     <div class="form-row"><label>Project</label><select class="input" id="m-proj"><option value="">None</option>${DATA.projects.map(p=>`<option value="${p.id}"${p.id===t.projectId?' selected':''}>${escHtml(p.title)}</option>`).join('')}</select></div>
@@ -1576,15 +1628,23 @@ function submitCommand(){
   sendToVoiceAPI(text, null /* no audio, text-only mode */);
 }
 
-// Shared processing for both home command bar and voice capture
-async function sendToVoiceAPI(text, audioB64, mimeType){
+// Shared processing for home command bar, capture voice, and tasks FAB voice
+// overrideStatusEl: optional element to use for status (e.g. FAB pill)
+async function sendToVoiceAPI(text, audioB64, mimeType, overrideStatusEl){
   const isTextMode = !audioB64;
-  const statusEl   = isTextMode
+  const statusEl   = overrideStatusEl || (isTextMode
     ? document.getElementById('home-voice-status')
-    : document.getElementById('voice-status');
+    : document.getElementById('voice-status'));
+  const isFabPill  = overrideStatusEl?.classList?.contains('fab-voice-status');
 
   function setStatus(msg, cls=''){
-    if(statusEl){ statusEl.textContent=msg; statusEl.className='voice-status'+(cls?' '+cls:''); }
+    if(!statusEl) return;
+    statusEl.textContent=msg;
+    if(isFabPill){
+      statusEl.className='fab-voice-status'+(msg?' visible':'')+(cls?' '+cls:'');
+    } else {
+      statusEl.className='voice-status'+(cls?' '+cls:'');
+    }
   }
 
   setStatus('Thinking…','processing');
@@ -1715,10 +1775,65 @@ async function processHomeVoice(){
   reader.onload=async()=>{ await sendToVoiceAPI(null, reader.result.split(',')[1], blob.type); };
 }
 
+// ─── Tasks page FAB voice ─────────────────────────────────────────────────────
+async function toggleTasksFabVoice(){
+  const fab=document.getElementById('fab');
+  const pill=document.getElementById('fab-voice-status');
+
+  if(isRecording){
+    // Stop
+    if(mediaRecorder&&mediaRecorder.state!=='inactive'){
+      mediaRecorder.stop();
+      mediaRecorder.stream.getTracks().forEach(t=>t.stop());
+    }
+    isRecording=false;
+    if(fab){fab.innerHTML='🎙';fab.classList.remove('recording');}
+    if(pill){pill.textContent='Processing…';pill.className='fab-voice-status visible processing';}
+    return;
+  }
+
+  if(!navigator.mediaDevices?.getUserMedia){
+    if(pill){pill.textContent='Mic not supported';pill.className='fab-voice-status visible error';}
+    setTimeout(()=>{if(pill)pill.className='fab-voice-status';},3000);
+    return;
+  }
+
+  try{
+    const stream=await navigator.mediaDevices.getUserMedia({audio:true});
+    audioChunks=[];
+    mediaRecorder=new MediaRecorder(stream,{mimeType:MediaRecorder.isTypeSupported('audio/webm')?'audio/webm':'audio/mp4'});
+    mediaRecorder.ondataavailable=e=>{if(e.data.size>0)audioChunks.push(e.data);};
+    mediaRecorder.onstop=processTasksFabVoice;
+    mediaRecorder.start();
+    isRecording=true;
+    if(fab){fab.innerHTML='⏹';fab.classList.add('recording');}
+    if(pill){pill.textContent='Listening… tap to stop';pill.className='fab-voice-status visible active';}
+  }catch(e){
+    if(pill){pill.textContent='Mic access denied';pill.className='fab-voice-status visible error';}
+    setTimeout(()=>{if(pill)pill.className='fab-voice-status';},3000);
+  }
+}
+
+async function processTasksFabVoice(){
+  const fab=document.getElementById('fab');
+  const pill=document.getElementById('fab-voice-status');
+  if(fab){fab.innerHTML='🎙';fab.classList.remove('recording');}
+  const blob=new Blob(audioChunks,{type:audioChunks[0]?.type||'audio/webm'});
+  const reader=new FileReader();
+  reader.readAsDataURL(blob);
+  reader.onload=async()=>{
+    await sendToVoiceAPI(null, reader.result.split(',')[1], blob.type, pill);
+    // Auto-hide pill after completion
+    setTimeout(()=>{if(pill)pill.className='fab-voice-status';},3500);
+  };
+}
+
 // ─── Home ─────────────────────────────────────────────────────────────────────
 function renderHome(){
   const td=today();
-  const todayTasks=DATA.tasks.filter(t=>!t.completed&&!t.dismissed&&(t.dueDate===td||!t.dueDate));
+  const datedTodayTasks=DATA.tasks.filter(t=>!t.completed&&!t.dismissed&&t.dueDate===td);
+  const undatedTasks=DATA.tasks.filter(t=>!t.completed&&!t.dismissed&&!t.dueDate);
+  const todayTasks=[...datedTodayTasks,...undatedTasks]; // for DTN/home task list
   const overdueTasks=DATA.tasks.filter(t=>isOverdue(t));
   const pinnedTasks=DATA.tasks.filter(t=>DATA.focusTasks.includes(t.id)&&!t.completed);
   const wStart=new Date(); wStart.setDate(wStart.getDate()-wStart.getDay());
@@ -1727,9 +1842,10 @@ function renderHome(){
   const daysActive=Array.from({length:7},(_,i)=>{const d=new Date(wStart);d.setDate(d.getDate()+i);return d.toISOString().split('T')[0];})
     .filter(d=>DATA.tasks.some(t=>t.completed&&t.completedDate===d)).length;
 
-  // Stats
+  // Stats — "Due Today" = explicitly dated today + overdue; undated shown separately
+  const dueNowCount=datedTodayTasks.length+overdueTasks.length;
   document.getElementById('home-stats').innerHTML=[
-    {val:todayTasks.length+overdueTasks.length,label:'Remaining Today',color:'var(--text)'},
+    {val:dueNowCount,label:'Due Today',color:'var(--text)'},
     {val:doneToday,label:'Done Today',color:doneToday>0?'var(--green)':'var(--text-3)'},
     {val:`${daysActive}/7`,label:'Days Active',color:daysActive>=5?'var(--gold)':daysActive>0?'var(--text-2)':'var(--text-3)'},
   ].map(s=>`<div class="stat-card"><div class="stat-value" style="color:${s.color}">${s.val}</div><div class="stat-label">${s.label}</div></div>`).join('');
@@ -1782,9 +1898,10 @@ function renderHome(){
     :dtnTasks.map(t=>{
         const isFocus=DATA.focusTasks.includes(t.id);
         const over=isOverdue(t);
-        const label=over?`overdue since ${formatDueLabel(t.dueDate)}`:t.dueDate===td?'due today':'next up';
+        const label=over?`overdue since ${formatDueLabel(t.dueDate)}`:t.dueDate===td?'due today':t.dueDate?`due ${formatDueLabel(t.dueDate)}`:'no due date';
+        const labelColor=over?'#e57373':t.dueDate===td?'var(--gold)':t.dueDate?'var(--text-2)':'var(--text-3)';
         return taskHTML(t,isFocus)+(dtnMode==='auto'
-          ?`<div style="font-size:10.5px;color:var(--text-3);margin:-4px 0 6px 25px;display:flex;align-items:center;gap:5px"><span style="opacity:.4">↑</span> Star to pin · <span style="color:${over?'#e57373':'var(--gold)'}">${label}</span></div>`
+          ?`<div style="font-size:10.5px;color:var(--text-3);margin:-4px 0 6px 25px;display:flex;align-items:center;gap:5px"><span style="opacity:.4">↑</span> Star to pin · <span style="color:${labelColor}">${label}</span></div>`
           :'');
       }).join('');
 

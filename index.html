@@ -426,7 +426,16 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;heigh
 .command-bar-hint{font-size:10.5px;color:var(--text-3);margin-top:8px}
 .command-bar-hint span{color:var(--text-2)}
 
-/* ── Opportunity stage badges ── */
+/* ── Sidebar sub-nav items (hub shortcuts) ── */
+.nav-sub-item{
+  display:flex;align-items:center;gap:9px;
+  padding:6px 10px 6px 28px;border-radius:var(--radius-sm);
+  cursor:pointer;color:var(--text-3);transition:all var(--transition);
+  user-select:none;font-size:12px;font-weight:500;
+}
+.nav-sub-item:hover{color:var(--text-2);background:var(--glass-hover)}
+.nav-sub-item.active{color:var(--accent)}
+.nav-sub-dot{width:5px;height:5px;border-radius:50%;background:currentColor;flex-shrink:0;opacity:.6}
 .stage-exploring{background:var(--surface2);color:var(--text-3);border:1px solid var(--border)}
 .stage-contacted{background:#1e3a5f20;color:#7cb9e8;border:1px solid #7cb9e818}
 .stage-in-progress{background:var(--gold-soft);color:var(--gold);border:1px solid #c9a84c18}
@@ -440,7 +449,23 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;heigh
   transition:color var(--transition);background:none;border:none;font-family:inherit;line-height:1}
 .dismiss-btn:hover{color:#e57373}
 
-/* ── Projects page tabs (mobile hub) ── */
+/* ── Hub-active sidebar items ── */
+.nav-item.hub-active{color:var(--text-2);background:var(--surface)}
+.nav-item.hub-active .nav-icon{opacity:.8}
+.nav-item.hub-active::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);
+  width:2px;height:55%;background:var(--text-3);border-radius:0 2px 2px 0}
+
+/* ── Mobile task action improvements ── */
+@media(max-width:768px){
+  .task-actions{opacity:1;gap:6px}
+  .btn-icon{width:32px;height:32px;display:flex;align-items:center;justify-content:center;
+    border-radius:8px;font-size:15px;background:var(--surface2);border:1px solid var(--border)}
+  .focus-btn{width:32px;height:32px;display:flex;align-items:center;justify-content:center;
+    border-radius:8px;font-size:15px;background:var(--surface2);border:1px solid var(--border)}
+  .task-check{width:22px;height:22px;margin-top:0}
+  .task-item{padding:11px 0;gap:11px;align-items:center}
+  .task-title-text{font-size:14px}
+}
 .page-tabs{display:flex;gap:2px;background:var(--surface);padding:3px;border-radius:10px;margin-bottom:16px}
 .page-tab{flex:1;padding:7px 8px;text-align:center;font-size:12px;font-weight:500;color:var(--text-3);
   border-radius:7px;cursor:pointer;transition:all var(--transition)}
@@ -463,6 +488,12 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;heigh
   .breadcrumb{display:none}
   .topbar-actions .btn{padding:5px 11px;font-size:11.5px}
   .task-actions{opacity:1}
+  /* Bigger tap targets for task actions on mobile */
+  .task-check{width:22px;height:22px}
+  .btn-icon{padding:8px;font-size:14px}
+  .focus-btn{padding:6px 8px;font-size:14px}
+  .dismiss-btn{padding:6px 8px;font-size:13px}
+  .task-item{padding:11px 0;gap:11px}
   .task-check{width:20px;height:20px}
   .card{padding:14px 16px}
   .stat-card{min-height:60px;padding:10px 12px}
@@ -524,9 +555,11 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;heigh
         <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></span>
         <span class="nav-label">Projects</span>
       </div>
-      <div class="nav-item" onclick="navigate('projects');setTimeout(()=>switchHub('opportunities'),50)" style="cursor:pointer">
-        <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/><path d="M3.05 11a9 9 0 1 0 .5-2.5"/></svg></span>
-        <span class="nav-label">Opportunities</span>
+      <div class="nav-sub-item" id="nav-sub-opportunities" onclick="navigate('projects');setTimeout(()=>switchHub('opportunities'),50)">
+        <span class="nav-sub-dot"></span>Opportunities
+      </div>
+      <div class="nav-sub-item" id="nav-sub-review" onclick="navigate('projects');setTimeout(()=>switchHub('review'),50)">
+        <span class="nav-sub-dot"></span>Weekly Review
       </div>
       <div class="nav-item" data-page="habits">
         <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg></span>
@@ -540,10 +573,6 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;heigh
         <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><polyline points="13 2 13 9 20 9"/><line x1="12" y1="13" x2="12" y2="17"/><line x1="10" y1="15" x2="14" y2="15"/></svg></span>
         <span class="nav-label">Quick Capture</span>
         <span class="nav-badge" id="capture-badge" style="display:none">0</span>
-      </div>
-      <div class="nav-item" onclick="navigate('projects');setTimeout(()=>switchHub('review'),50)" style="cursor:pointer">
-        <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg></span>
-        <span class="nav-label">Weekly Review</span>
       </div>
     </div>
 
@@ -931,7 +960,16 @@ function navigate(page) {
   if(page==='tasks')    ta.innerHTML=`<button class="btn btn-primary btn-sm" onclick="openAddTask()">+ New Task</button>`;
   if(page==='projects') ta.innerHTML=`<button class="btn btn-primary btn-sm" onclick="openAddProjectOrOpp()">+ New</button>`;
   if(page==='habits')   ta.innerHTML=`<button class="btn btn-primary btn-sm" onclick="openAddHabit()">+ New Habit</button>`;
-  if(page!=='projects'){projectDetailId=null;document.getElementById('projects-list-view').style.display='';document.getElementById('project-detail-view').style.display='none';}
+  if(page!=='projects'){
+    projectDetailId=null;
+    document.getElementById('projects-list-view').style.display='';
+    document.getElementById('project-detail-view').style.display='none';
+    // Clear sub-item highlights
+    const subOpp=document.getElementById('nav-sub-opportunities');
+    const subRev=document.getElementById('nav-sub-review');
+    if(subOpp) subOpp.classList.remove('active');
+    if(subRev) subRev.classList.remove('active');
+  }
   const fab=document.getElementById('fab');
   if(fab){
     const showFab={home:true,tasks:true,projects:true,habits:false,capture:false};
@@ -951,14 +989,18 @@ function switchHub(hub) {
   });
   document.querySelectorAll('.page-tab').forEach(t =>
     t.classList.toggle('active', t.dataset.hub === hub));
+  // Sidebar sub-item highlighting
+  const subOpp = document.getElementById('nav-sub-opportunities');
+  const subRev = document.getElementById('nav-sub-review');
+  if(subOpp) subOpp.classList.toggle('active', hub==='opportunities');
+  if(subRev) subRev.classList.toggle('active', hub==='review');
   // Update topbar action button
   const ta = document.getElementById('topbar-actions');
   if(ta) {
-    if(hub==='projects')      ta.innerHTML=`<button class="btn btn-primary btn-sm" onclick="openAddProject()">+ New Project</button>`;
+    if(hub==='projects')           ta.innerHTML=`<button class="btn btn-primary btn-sm" onclick="openAddProject()">+ New Project</button>`;
     else if(hub==='opportunities') ta.innerHTML=`<button class="btn btn-primary btn-sm" onclick="openAddJob()">+ Add Opportunity</button>`;
-    else                      ta.innerHTML='';
+    else                           ta.innerHTML='';
   }
-  // Render the active sub-view
   if(hub==='projects')      renderProjects();
   if(hub==='opportunities') renderJobs();
   if(hub==='review')        renderReview();

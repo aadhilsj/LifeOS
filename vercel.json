@@ -7,6 +7,9 @@
 
     { "src": "/api/review", "dest": "/api/review.js" },
     { "src": "/api/voice", "dest": "/api/voice.js" },
+    { "src": "/api/calendar/auth", "dest": "/api/calendar/auth.js" },
+    { "src": "/api/calendar/callback", "dest": "/api/calendar/callback.js" },
+    { "src": "/api/calendar", "dest": "/api/calendar.js" },
 
     { "src": "/(.*)", "dest": "/index.html" }
   ]

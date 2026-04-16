@@ -556,8 +556,11 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;heigh
   .fab{display:none}
   .content{padding:14px;padding-bottom:84px}
   .grid-2,.grid-3{grid-template-columns:1fr}
-  #home-col-right{order:-1}
-  #home-col-left{order:0}
+  #page-home .grid-2{display:flex;flex-direction:column}
+  #home-col-right{order:-1;display:contents}
+  #home-col-left{order:0;display:contents}
+  #home-col-right .card:first-child{order:-1}
+  #home-active-projects{order:10}
   #home-col-right{order:-1}
   #home-col-left{order:0}
   .settings-grid{grid-template-columns:1fr}
@@ -742,7 +745,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;heigh
               </div>
               <div id="home-calendar-card"></div>
             </div>
-            <div class="card" style="cursor:pointer" onclick="navigate('projects');setTimeout(()=>switchHub('projects'),50)">
+            <div class="card" id="home-active-projects" style="cursor:pointer" onclick="navigate('projects');setTimeout(()=>switchHub('projects'),50)">
               <div class="flex-between mb12">
                 <div class="card-title" style="margin:0">Active Projects</div>
                 <span class="text-xs text-dim" style="cursor:pointer" onclick="event.stopPropagation();navigate('projects');setTimeout(()=>switchHub('projects'),50)">All →</span>

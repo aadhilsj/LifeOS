@@ -280,6 +280,14 @@ input[type="date"].input,input[type="time"].input{color-scheme:dark}
 .review-block h4{font-size:10px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:var(--text-3);margin-bottom:7px}
 .review-text{font-size:13px;line-height:1.7;color:var(--text-2);white-space:pre-wrap}
 
+/* Calendar */
+.calendar-item{padding:9px 0;border-bottom:1px solid var(--border)}
+.calendar-item:last-child{border-bottom:none;padding-bottom:0}
+.calendar-item-title{font-size:12.5px;font-weight:600;color:var(--text)}
+.calendar-item-meta{font-size:11px;color:var(--text-3);margin-top:3px;line-height:1.45}
+.calendar-free{padding:8px 10px;border-radius:9px;background:var(--surface2);border:1px solid var(--border);font-size:11.5px;color:var(--text-2);margin-top:8px}
+.calendar-empty{font-size:12px;color:var(--text-3);line-height:1.55}
+
 /* Capture */
 .capture-item{display:flex;align-items:flex-start;gap:10px;padding:9px 0;border-bottom:1px solid var(--border)}
 .capture-item:last-child{border-bottom:none}
@@ -549,7 +557,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;heigh
   .form-grid{grid-template-columns:1fr}
   .topbar{padding:10px 14px}
   .page-title{font-size:18px}
-  .page-sub{display:none}
+  .page-sub{display:block;font-size:10px;margin-top:3px}
   .breadcrumb{display:none}
   .topbar-actions .btn{padding:5px 11px;font-size:11.5px}
   .task-actions{opacity:1}
@@ -677,7 +685,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;heigh
           <div class="command-bar-label">What needs to happen today?</div>
           <div class="command-bar-input-row">
             <input class="command-bar-input" id="command-input"
-              placeholder="e.g. Call dentist, pay rent, gym tomorrow…"
+              placeholder="e.g. Call dentist, pay rent…"
               onkeydown="if(event.key==='Enter')submitCommand()"/>
             <button class="voice-btn" id="home-voice-btn" onclick="toggleHomeVoice()" title="Voice input">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -712,6 +720,13 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;heigh
             </div>
           </div>
           <div>
+            <div class="card mb14">
+              <div class="flex-between mb12">
+                <div class="card-title" style="margin:0">Today's Schedule</div>
+                <button class="btn btn-ghost btn-xs" id="calendar-connect-btn" onclick="connectGoogleCalendar()" style="display:none">Connect</button>
+              </div>
+              <div id="home-calendar-card"></div>
+            </div>
             <div class="card mb14">
               <div class="card-title">Daily Habits</div>
               <div id="home-habits-list"></div>
@@ -950,6 +965,7 @@ let currentPage='home', taskFilter='All', syncTimer=null, projectDetailId=null;
 let modalState = { kind: null };
 let pendingVoiceReview = false;
 let pendingReviewStatusTarget = null;
+let CALENDAR_STATE = { status:'idle', connected:false, events:[], freeWindows:[], message:'' };
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 const FOCUS_AREAS  = ['Career','Health','Personal','Life Admin','Growth'];
@@ -1077,6 +1093,7 @@ async function loadData() {
     setSyncStatus('ok','Synced');
   } catch(e){ console.error('Load error:',e); setSyncStatus('error','Offline'); }
   renderAll();
+  fetchCalendarData();
   // Auto-generate weekly review on Sunday if not yet done this week
   maybeAutoGenerateReview();
 }
@@ -1325,8 +1342,8 @@ function taskHTML(task,isFocus){
         </div>
       </div>
       <div class="task-meta">
-        <span class="badge ${focusAreaClass(fa)}">${fa}</span>
         ${isFocus?'<span class="badge badge-focus">★</span>':''}
+        <span class="badge ${focusAreaClass(fa)}">${fa}</span>
         ${dueChip}
         ${proj?`<span class="badge badge-other">${escHtml(proj.title)}</span>`:''}
         ${subtasks.length?`<span class="text-xs text-dim">${sdone}/${subtasks.length} subtasks</span>`:''}
@@ -1967,7 +1984,7 @@ function getContextBar(){
 
   if(overdue.length>=3) return{cls:'warn',icon:'⚠️',msg:`${overdue.length} tasks overdue — clear the backlog first.`};
   if(overdue.length>0&&doneToday.length===0) return{cls:'warn',icon:'⌛︎',msg:`${overdue.length} overdue task${overdue.length>1?'s':''} — start there.`};
-  if(habitsDrift>=2&&!allHabitsDone) return{cls:'gold',icon:'〰️',msg:`${habitsDrift} habits missed 2 days in a row — today's a reset.`};
+  if(habitsDrift>=2&&!allHabitsDone) return{cls:'gold',icon:'〰️',msg:`You've missed ${habitsDrift} habits for two days straight. Today's a reset.`};
   if(allHabitsDone&&doneToday.length>0) return{cls:'green',icon:'🔥',msg:`Habits done + ${doneToday.length} task${doneToday.length>1?'s':''} completed. Strong day.`};
   if(allHabitsDone) return{cls:'green',icon:'✓',msg:`All habits done today — now tackle the tasks.`};
   if(doneWeek.length===0&&new Date().getDay()>=3) return{cls:'warn',icon:'📉',msg:`No tasks completed yet this week — let's change that.`};
@@ -1979,6 +1996,52 @@ function getContextBar(){
 function formatDueLabel(dateStr){
   if(!dateStr) return '';
   return new Date(dateStr+'T12:00:00').toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short'});
+}
+
+function formatCalendarTime(isoString, isAllDay){
+  if(!isoString) return '';
+  if(isAllDay) return 'All day';
+  return new Date(isoString).toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'});
+}
+
+function formatFreeWindow(window){
+  const mins = window.minutes;
+  if(mins < 60) return `${mins} min free`;
+  const hours = Math.floor(mins / 60);
+  const remainder = mins % 60;
+  return remainder ? `${hours}h ${remainder}m free` : `${hours}h free`;
+}
+
+function connectGoogleCalendar(){
+  window.location.href='/api/calendar/auth';
+}
+
+async function fetchCalendarData(){
+  CALENDAR_STATE = {...CALENDAR_STATE, status:'loading'};
+  if(currentPage==='home') renderHome();
+  try{
+    const res = await fetch('/api/calendar');
+    if(!res.ok) throw new Error(res.status);
+    const data = await res.json();
+    CALENDAR_STATE = {
+      status:'ready',
+      connected:!!data.connected,
+      events:data.events||[],
+      freeWindows:data.freeWindows||[],
+      message:data.message||'',
+      error:'',
+    };
+  }catch(e){
+    CALENDAR_STATE = {
+      status:'error',
+      connected:false,
+      events:[],
+      freeWindows:[],
+      message:'',
+      error:'Calendar unavailable until Google and Vercel are configured.',
+    };
+  }
+  if(currentPage==='home') renderHome();
 }
 
 // ─── Command bar (Home) ───────────────────────────────────────────────────────
@@ -2203,17 +2266,14 @@ function renderHome(){
   const overdueTasks=DATA.tasks.filter(t=>isOverdue(t));
   const pinnedTasks=DATA.tasks.filter(t=>DATA.focusTasks.includes(t.id)&&!t.completed);
   const wStart=new Date(); wStart.setDate(wStart.getDate()-wStart.getDay());
-  const wStr=wStart.toISOString().split('T')[0];
   const doneToday=DATA.tasks.filter(t=>t.completed&&t.completedDate===td).length;
-  const daysActive=Array.from({length:7},(_,i)=>{const d=new Date(wStart);d.setDate(d.getDate()+i);return d.toISOString().split('T')[0];})
-    .filter(d=>DATA.tasks.some(t=>t.completed&&t.completedDate===d)).length;
 
   // Stats — "Due Today" = explicitly dated today + overdue; undated shown separately
   const dueNowCount=datedTodayTasks.length+overdueTasks.length;
   document.getElementById('home-stats').innerHTML=[
     {val:dueNowCount,label:'Due Today',color:'var(--text)'},
     {val:doneToday,label:'Done Today',color:doneToday>0?'var(--green)':'var(--text-3)'},
-    {val:`${daysActive}/7`,label:'Days Active',color:daysActive>=5?'var(--gold)':daysActive>0?'var(--text-2)':'var(--text-3)'},
+    {val:overdueTasks.length,label:'Overdue',color:overdueTasks.length>0?'var(--accent)':'var(--text-3)'},
   ].map(s=>`<div class="stat-card"><div class="stat-value" style="color:${s.color}">${s.val}</div><div class="stat-label">${s.label}</div></div>`).join('');
 
   // Context bar
@@ -2241,6 +2301,33 @@ function renderHome(){
       reviewNudge.innerHTML=`<div class="flex-gap"><span style="font-size:14px">📋</span><span style="font-size:12.5px;color:#7cb9e8;font-weight:500">Your weekly review is ready</span></div><span class="text-xs text-dim">View →</span>`;
     } else {
       reviewNudge.style.display='none';
+    }
+  }
+
+  const calendarEl=document.getElementById('home-calendar-card');
+  const calendarBtn=document.getElementById('calendar-connect-btn');
+  if(calendarEl && calendarBtn){
+    calendarBtn.style.display=CALENDAR_STATE.connected?'none':'';
+    if(CALENDAR_STATE.status==='loading'){
+      calendarEl.innerHTML=`<div class="calendar-empty">Loading today's schedule…</div>`;
+    } else if(CALENDAR_STATE.status==='error'){
+      calendarEl.innerHTML=`<div class="calendar-empty">${escHtml(CALENDAR_STATE.error||'Calendar unavailable.')}</div>`;
+    } else if(!CALENDAR_STATE.connected){
+      calendarEl.innerHTML=`<div class="calendar-empty">Connect Google Calendar to see today's events and free windows here.</div>`;
+    } else if(!CALENDAR_STATE.events.length){
+      const free = CALENDAR_STATE.freeWindows[0];
+      calendarEl.innerHTML=`<div class="calendar-empty">No events on your calendar today.</div>${free?`<div class="calendar-free">${formatFreeWindow(free)} to use however you want.</div>`:''}`;
+    } else {
+      const nextEvents = CALENDAR_STATE.events.slice(0,3);
+      const windows = CALENDAR_STATE.freeWindows.slice(0,2);
+      calendarEl.innerHTML=
+        nextEvents.map(event=>`
+          <div class="calendar-item">
+            <div class="calendar-item-title">${escHtml(event.summary)}</div>
+            <div class="calendar-item-meta">${formatCalendarTime(event.start,event.isAllDay)}${event.end&&!event.isAllDay?` - ${formatCalendarTime(event.end,false)}`:''}${event.location?` · ${escHtml(event.location)}`:''}</div>
+          </div>
+        `).join('')+
+        (windows.length?windows.map(window=>`<div class="calendar-free">${formatFreeWindow(window)}</div>`).join(''):'');
     }
   }
 

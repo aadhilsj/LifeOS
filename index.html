@@ -2320,11 +2320,9 @@ function renderHome(){
     } else if(!CALENDAR_STATE.connected){
       calendarEl.innerHTML=`<div class="calendar-empty">Connect Google Calendar to see today's events and free windows here.</div>`;
     } else if(!CALENDAR_STATE.events.length){
-      const free = CALENDAR_STATE.freeWindows[0];
-      calendarEl.innerHTML=`<div class="calendar-empty">${CALENDAR_STATE.connectedCount||1} calendar${(CALENDAR_STATE.connectedCount||1)>1?'s':''} connected. No events on your calendar today.</div>${free?`<div class="calendar-free">${formatFreeWindow(free)} to use however you want.</div>`:''}`;
+      calendarEl.innerHTML=`<div class="calendar-empty">${CALENDAR_STATE.connectedCount||1} calendar${(CALENDAR_STATE.connectedCount||1)>1?'s':''} connected. No events on your calendar today.</div>`;
     } else {
       const nextEvents = CALENDAR_STATE.events.slice(0,3);
-      const windows = CALENDAR_STATE.freeWindows.slice(0,2);
       calendarEl.innerHTML=
         `<div class="calendar-empty" style="margin-bottom:8px">${CALENDAR_STATE.connectedCount||1} calendar${(CALENDAR_STATE.connectedCount||1)>1?'s':''} connected.</div>`+
         nextEvents.map(event=>`
@@ -2332,8 +2330,7 @@ function renderHome(){
             <div class="calendar-item-title">${escHtml(event.summary)}</div>
             <div class="calendar-item-meta">${formatCalendarTime(event.start,event.isAllDay)}${event.end&&!event.isAllDay?` - ${formatCalendarTime(event.end,false)}`:''}${event.location?` · ${escHtml(event.location)}`:''}${event.sourceLabel?` · ${escHtml(event.sourceLabel)}`:''}</div>
           </div>
-        `).join('')+
-        (windows.length?windows.map(window=>`<div class="calendar-free">${formatFreeWindow(window)}</div>`).join(''):'');
+        `).join('');
     }
   }
 

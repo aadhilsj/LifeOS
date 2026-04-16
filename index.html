@@ -803,7 +803,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;heigh
 
         <!-- Review sub-view -->
         <div id="hub-review" style="display:none">
-          <div class="grid-3 mb16" id="review-stats"></div>
+          <div class="stat-row" id="review-stats"></div>
           <div class="card mb14">
             <div class="card-title">Focus Area Distribution</div>
             <div id="review-areas"></div>
@@ -2943,13 +2943,36 @@ async function maybeAutoGenerateReview() {
 }
 
 function renderReview(){
-  const completed=DATA.tasks.filter(t=>t.completed).length;
+  // Tasks done this week
+  const wStr=startOfWeek(today());
+  const doneThisWeek=DATA.tasks.filter(t=>t.completed&&t.completedDate&&t.completedDate>=wStr).length;
+
+  // Overdue
   const overdue=DATA.tasks.filter(t=>isOverdue(t)).length;
-  const onTrackHabits=DATA.habitDefs.filter(h=>getHabitWindowInfo(h).isComplete).length;
+
+  // Habit rate this week (daily + weekly only)
+  const weekDates=enumerateDates(wStr,today());
+  const trackableHabits=DATA.habitDefs.filter(h=>h.frequencyType==='daily'||h.frequencyType==='weekly');
+  let totalSlots=0,totalCompletions=0;
+  trackableHabits.forEach(h=>{
+    if(h.frequencyType==='daily'){
+      totalSlots+=7;
+      weekDates.forEach(d=>{ totalCompletions+=Math.min(1,getHabitCompletionCount(h.id,d)); });
+    } else {
+      // weekly: targetCount slots
+      totalSlots+=h.targetCount||1;
+      const weekCompletions=weekDates.reduce((sum,d)=>sum+getHabitCompletionCount(h.id,d),0);
+      totalCompletions+=Math.min(h.targetCount||1,weekCompletions);
+    }
+  });
+  const habitPct=trackableHabits.length===0?null:Math.round(totalCompletions/totalSlots*100);
+  const habitVal=habitPct===null?'—':`${habitPct}%`;
+  const habitColor=habitPct===null?'var(--text-3)':habitPct>=80?'var(--green)':habitPct>=50?'var(--gold)':'var(--accent)';
+
   document.getElementById('review-stats').innerHTML=[
-    {val:completed,label:'Tasks Completed',color:'var(--green)'},
-    {val:overdue,label:'Still Overdue',color:overdue>0?'var(--accent)':'var(--text-3)'},
-    {val:`${onTrackHabits}/${DATA.habitDefs.length}`,label:'Habits On Track',color:'var(--gold)'},
+    {val:doneThisWeek,label:'Done this week',color:'var(--green)'},
+    {val:overdue,label:'Overdue',color:overdue>0?'var(--accent)':'var(--text-3)'},
+    {val:habitVal,label:'Habit rate this week',color:habitColor},
   ].map(s=>`<div class="stat-card"><div class="stat-value" style="color:${s.color}">${s.val}</div><div class="stat-label">${s.label}</div></div>`).join('');
   const total=completed||1;
   const areaColors={Career:'var(--blue)',Health:'var(--green)',Growth:'#a3e635',Personal:'var(--gold)','Life Admin':'#c084fc'};

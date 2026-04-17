@@ -6,7 +6,7 @@ module.exports = async function handler(req, res) {
   }
 
   try {
-    const authUrl = buildGoogleAuthUrl();
+    const authUrl = buildGoogleAuthUrl(req.query?.userId || '');
     return res.redirect(authUrl);
   } catch (error) {
     return res.status(500).json({

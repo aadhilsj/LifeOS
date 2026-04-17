@@ -5,8 +5,8 @@
   "start_url": "/",
   "display": "standalone",
   "orientation": "any",
-  "background_color": "#0d1117",
-  "theme_color": "#0d1117",
+  "background_color": "#141210",
+  "theme_color": "#141210",
   "icons": [
     {
       "src": "/icon-192.png",
@@ -16,7 +16,8 @@
     {
       "src": "/icon-512.png",
       "sizes": "512x512",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
     }
   ],
   "categories": ["productivity", "lifestyle"],

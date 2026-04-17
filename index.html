@@ -1313,16 +1313,17 @@ async function loadData(user) {
     } else {
       // First time user — check if name looks like an email/username
       const googleName = user.user_metadata?.full_name || user.user_metadata?.name || '';
-      const looksWeird = !googleName || googleName.includes('@') || googleName.includes('.');
-      if (looksWeird || !googleName) {
+      const firstName = googleName.split(' ')[0] || googleName;
+      const looksWeird = !firstName || firstName.includes('@') || firstName.includes('.');
+      if (looksWeird || !firstName) {
         // Show name setup
         document.getElementById('login-screen').style.display = 'flex';
         document.getElementById('login-box').style.display = 'none';
         document.getElementById('name-setup-box').style.display = 'flex';
-        document.getElementById('name-setup-input').value = googleName;
+        document.getElementById('name-setup-input').value = firstName;
         document.querySelector('.app').style.display = 'none';
       } else {
-        DATA.settings.name = googleName;
+        DATA.settings.name = firstName;
         await saveNow();
         setSyncStatus('ok','Synced');
         renderAll();

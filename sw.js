@@ -1,4 +1,4 @@
-const CACHE = 'kairo-v1';
+const CACHE = 'kairo-v2';
 
 const PRECACHE = [
   '/',

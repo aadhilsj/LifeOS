@@ -16,16 +16,30 @@ function getConfig() {
     googleRedirectUri: getEnv('GOOGLE_REDIRECT_URI'),
     supabaseUrl: getEnv('SUPABASE_URL'),
     supabaseServiceRoleKey: getEnv('SUPABASE_SERVICE_ROLE_KEY'),
-    integrationRowId: process.env.KAIRO_DATA_ROW_ID || 'main',
     appBaseUrl: process.env.APP_BASE_URL || process.env.VERCEL_PROJECT_PRODUCTION_URL || '',
   };
 }
 
-function buildState() {
+function getIntegrationRowId(userId) {
+  return userId || process.env.KAIRO_DATA_ROW_ID || 'main';
+}
+
+function buildState(userId) {
   return Buffer.from(JSON.stringify({
     nonce: Math.random().toString(36).slice(2, 10),
     createdAt: Date.now(),
+    userId: userId || '',
   })).toString('base64url');
+}
+
+function parseState(state) {
+  if (!state) return {};
+  try {
+    const decoded = Buffer.from(state, 'base64url').toString('utf8');
+    return JSON.parse(decoded);
+  } catch {
+    return {};
+  }
 }
 
 function slugify(value) {
@@ -36,7 +50,7 @@ function slugify(value) {
     .slice(0, 48);
 }
 
-function buildGoogleAuthUrl() {
+function buildGoogleAuthUrl(userId) {
   const { googleClientId, googleRedirectUri } = getConfig();
   const params = new URLSearchParams({
     client_id: googleClientId,
@@ -46,7 +60,7 @@ function buildGoogleAuthUrl() {
     prompt: 'consent',
     include_granted_scopes: 'true',
     scope: GOOGLE_SCOPE,
-    state: buildState(),
+    state: buildState(userId),
   });
   return `${GOOGLE_AUTH_BASE}?${params.toString()}`;
 }
@@ -82,8 +96,8 @@ async function supabaseRequest(path, { method = 'GET', body } = {}) {
   return response.json();
 }
 
-async function loadLifeOsRow() {
-  const { integrationRowId } = getConfig();
+async function loadLifeOsRow(userId) {
+  const integrationRowId = getIntegrationRowId(userId);
   const rows = await supabaseRequest(`lifeos_data?id=eq.${encodeURIComponent(integrationRowId)}&select=id,data`);
   return rows?.[0] || null;
 }
@@ -165,9 +179,9 @@ function upsertCalendarConnection(integration, connection) {
   };
 }
 
-async function saveIntegrationState(nextIntegrationState) {
-  const { integrationRowId } = getConfig();
-  const existing = await loadLifeOsRow();
+async function saveIntegrationState(nextIntegrationState, userId) {
+  const integrationRowId = getIntegrationRowId(userId);
+  const existing = await loadLifeOsRow(userId);
   const currentData = existing?.data && typeof existing.data === 'object' ? existing.data : {};
   const normalizedIntegration = normalizeCalendarIntegration(nextIntegrationState);
   const nextData = {
@@ -190,8 +204,8 @@ async function saveIntegrationState(nextIntegrationState) {
   return rows?.[0] || null;
 }
 
-async function getCalendarIntegration() {
-  const row = await loadLifeOsRow();
+async function getCalendarIntegration(userId) {
+  const row = await loadLifeOsRow(userId);
   return normalizeCalendarIntegration(row?.data?.integrations?.googleCalendar || null);
 }
 
@@ -385,8 +399,8 @@ function computeFreeWindows(events) {
   return windows;
 }
 
-async function getValidCalendarSessions() {
-  const integration = await getCalendarIntegration();
+async function getValidCalendarSessions(userId) {
+  const integration = await getCalendarIntegration(userId);
   if (!integration.connections.length) {
     return { connected: false, reason: 'Google Calendar not connected', sessions: [], integration };
   }
@@ -443,7 +457,7 @@ async function getValidCalendarSessions() {
       ...integration,
       updatedAt: new Date().toISOString(),
       connections: nextConnections,
-    });
+    }, userId);
   }
 
   if (!sessions.length) {
@@ -468,8 +482,10 @@ module.exports = {
   fetchTodayEvents,
   getCalendarIntegration,
   getConfig,
+  getIntegrationRowId,
   getValidCalendarSessions,
   normalizeCalendarIntegration,
+  parseState,
   saveIntegrationState,
   toIsoDate,
   upsertCalendarConnection,

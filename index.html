@@ -814,10 +814,10 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;heigh
                 <div class="card-title" style="margin:0">AI Weekly Review</div>
                 <div class="text-xs text-dim mt4" id="review-last-generated"></div>
               </div>
-              <button class="btn btn-primary btn-sm" id="review-btn" onclick="generateReview()">Generate Review</button>
+              <div id="review-week-tabs" style="display:flex;gap:6px;flex-wrap:wrap"></div>
             </div>
             <div id="review-output">
-              <div class="empty"><div class="empty-icon">🤔</div>Click "Generate Review" for an AI-powered weekly reflection.</div>
+              <div class="empty"><div class="empty-icon">📅</div>Your review generates automatically every Sunday at 8pm. Check back then.</div>
             </div>
           </div>
         </div>
@@ -2686,12 +2686,34 @@ function renderHome(){
   // Review ready nudge
   const reviewNudge=document.getElementById('home-review-nudge');
   if(reviewNudge){
-    const cached=DATA.weeklyReview;
-    const thisWeekStr=(() => { const d=new Date(); d.setDate(d.getDate()-d.getDay()); return d.toISOString().split('T')[0]; })();
-    const reviewIsThisWeek = cached?.weekStart === thisWeekStr;
-    if(cached?.text && reviewIsThisWeek){
+    const thisWeekStr=startOfWeek(today());
+    const reviews=DATA.weeklyReviews||{};
+    // Migrate legacy
+    if(DATA.weeklyReview?.weekStart&&DATA.weeklyReview?.text&&!reviews[DATA.weeklyReview.weekStart]){
+      reviews[DATA.weeklyReview.weekStart]=DATA.weeklyReview;
+    }
+    const hasThisWeek=!!reviews[thisWeekStr];
+    const dismissed=DATA.dismissedReviewWeek===thisWeekStr;
+    const now=new Date();
+    const day=now.getDay();
+    const hour=now.getHours();
+    const isSundayBeforeReview=day===0&&hour<20;
+    const isWeekday=day>=2&&day<=5;
+
+    if(hasThisWeek&&!dismissed){
       reviewNudge.style.display='flex';
       reviewNudge.innerHTML=`<div class="flex-gap"><span style="font-size:14px">📋</span><span style="font-size:12.5px;color:#7cb9e8;font-weight:500">Your weekly review is ready</span></div><span class="text-xs text-dim">View →</span>`;
+      reviewNudge.onclick=()=>{
+        DATA.dismissedReviewWeek=thisWeekStr;
+        scheduleSave();
+        navigate('projects');
+        setTimeout(()=>switchHub('review'),50);
+      };
+    } else if(!hasThisWeek&&isSundayBeforeReview){
+      reviewNudge.style.display='flex';
+      reviewNudge.innerHTML=`<div class="flex-gap"><span style="font-size:14px">📅</span><span style="font-size:12.5px;color:var(--text-3)">Weekly review generates tonight at 8pm</span></div>`;
+      reviewNudge.onclick=null;
+      reviewNudge.style.cursor='default';
     } else {
       reviewNudge.style.display='none';
     }
@@ -2906,43 +2928,65 @@ FOCUS FOR NEXT WEEK
 Be direct, specific, honest. Max 3 sentences per section. No filler.`;
 }
 
-// Auto-generate on Sunday if no review exists for this week
+// Auto-generate: Sunday after 8pm, or Monday (grace period) if Sunday was missed
 async function maybeAutoGenerateReview() {
-  const dayOfWeek = new Date().getDay(); // 0 = Sunday
-  if (dayOfWeek !== 0) return; // only Sundays
+  const now = new Date();
+  const day = now.getDay(); // 0=Sun, 1=Mon
+  const hour = now.getHours();
 
-  // Check if we already have a review for this week
-  const wStart = new Date(); wStart.setDate(wStart.getDate() - wStart.getDay());
+  const isSundayEvening = day === 0 && hour >= 20;
+  const isMonday = day === 1;
+  if (!isSundayEvening && !isMonday) return;
+
+  // Get this week's Sunday
+  const wStart = new Date(now);
+  wStart.setDate(now.getDate() - now.getDay());
   const thisWeekStr = wStart.toISOString().split('T')[0];
-  if (DATA.weeklyReview?.weekStart === thisWeekStr) return; // already done
+
+  // Check if already generated for this week
+  if (!DATA.weeklyReviews) DATA.weeklyReviews = {};
+  if (DATA.weeklyReviews[thisWeekStr]) return;
 
   // Generate silently in background
   try {
-    const res=await fetch('/api/review',{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:900,
-        messages:[{role:'user',content:buildReviewPrompt()}]})
+    const res = await fetch('/api/review', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({model:'claude-sonnet-4-20250514', max_tokens:900,
+        messages:[{role:'user', content:buildReviewPrompt()}]})
     });
-    if(!res.ok) return; // fail silently
-    const result=await res.json();
-    const text=result.content?.map(c=>c.text||'').join('')||'';
-    if(!text) return;
+    if (!res.ok) return;
+    const result = await res.json();
+    const text = result.content?.map(c=>c.text||'').join('') || '';
+    if (!text) return;
 
-    DATA.weeklyReview={
+    if (!DATA.weeklyReviews) DATA.weeklyReviews = {};
+    DATA.weeklyReviews[thisWeekStr] = {
       text,
       weekStart: thisWeekStr,
-      date: new Date().toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short'})
+      date: now.toLocaleDateString('en-GB', {weekday:'short', day:'numeric', month:'short'})
     };
+    // Migrate legacy single review if exists
+    if (DATA.weeklyReview?.weekStart && !DATA.weeklyReviews[DATA.weeklyReview.weekStart]) {
+      DATA.weeklyReviews[DATA.weeklyReview.weekStart] = DATA.weeklyReview;
+    }
     scheduleSave();
-    renderAll(); // re-render home to show the nudge
+    renderAll();
   } catch(e) {
-    // Fail silently — don't bother the user if auto-review fails
     console.log('Auto-review failed silently:', e.message);
   }
 }
 
 function renderReview(){
+  // Migrate legacy single review
+  if (DATA.weeklyReview?.weekStart && DATA.weeklyReview?.text) {
+    if (!DATA.weeklyReviews) DATA.weeklyReviews = {};
+    if (!DATA.weeklyReviews[DATA.weeklyReview.weekStart]) {
+      DATA.weeklyReviews[DATA.weeklyReview.weekStart] = DATA.weeklyReview;
+      scheduleSave();
+    }
+  }
+
   // Tasks done this week
   const wStr=startOfWeek(today());
   const doneThisWeek=DATA.tasks.filter(t=>t.completed&&t.completedDate&&t.completedDate>=wStr).length;
@@ -2959,7 +3003,6 @@ function renderReview(){
       totalSlots+=7;
       weekDates.forEach(d=>{ totalCompletions+=Math.min(1,getHabitCompletionCount(h.id,d)); });
     } else {
-      // weekly: targetCount slots
       totalSlots+=h.targetCount||1;
       const weekCompletions=weekDates.reduce((sum,d)=>sum+getHabitCompletionCount(h.id,d),0);
       totalCompletions+=Math.min(h.targetCount||1,weekCompletions);
@@ -2974,6 +3017,7 @@ function renderReview(){
     {val:overdue,label:'Overdue',color:overdue>0?'var(--accent)':'var(--text-3)'},
     {val:habitVal,label:'Habit rate this week',color:habitColor},
   ].map(s=>`<div class="stat-card"><div class="stat-value" style="color:${s.color}">${s.val}</div><div class="stat-label">${s.label}</div></div>`).join('');
+
   const allCompleted=DATA.tasks.filter(t=>t.completed).length;
   const total=allCompleted||1;
   const areaColors={Career:'var(--blue)',Health:'var(--green)',Growth:'#a3e635',Personal:'var(--gold)','Life Admin':'#c084fc'};
@@ -2986,26 +3030,52 @@ function renderReview(){
     </div>`;
   }).join('');
 
-  // Show cached review if available
-  const cached=DATA.weeklyReview;
-  const lastEl=document.getElementById('review-last-generated');
-  if(cached?.text){
-    renderReviewOutput(cached.text);
-    if(lastEl) lastEl.textContent=`Generated ${cached.date||'recently'}`;
-    document.getElementById('review-btn').textContent='Regenerate';
-  } else {
-    if(lastEl) lastEl.textContent='';
+  // Build sorted list of all weeks with reviews
+  const reviews = DATA.weeklyReviews || {};
+  const weekKeys = Object.keys(reviews).sort((a,b)=>b.localeCompare(a)); // newest first
+
+  const tabsEl = document.getElementById('review-week-tabs');
+  const outputEl = document.getElementById('review-output');
+  const lastEl = document.getElementById('review-last-generated');
+
+  if (!weekKeys.length) {
+    if (tabsEl) tabsEl.innerHTML = '';
+    if (lastEl) lastEl.textContent = '';
+    if (outputEl) outputEl.innerHTML = `<div class="empty"><div class="empty-icon">📅</div>Your review generates automatically every Sunday at 8pm. Check back then.</div>`;
+    return;
   }
+
+  // Default to most recent week
+  if (!window._reviewActiveWeek || !reviews[window._reviewActiveWeek]) {
+    window._reviewActiveWeek = weekKeys[0];
+  }
+
+  // Render week tabs
+  if (tabsEl) {
+    tabsEl.innerHTML = weekKeys.map(k => {
+      const d = new Date(k + 'T12:00:00');
+      const label = k === wStr ? 'This week' : d.toLocaleDateString('en-GB', {day:'numeric', month:'short'});
+      const active = k === window._reviewActiveWeek;
+      return `<button onclick="selectReviewWeek('${k}')" style="font-size:11px;padding:4px 10px;border-radius:20px;border:1px solid ${active?'var(--border-active)':'var(--border)'};background:${active?'var(--surface3)':'transparent'};color:${active?'var(--text)':'var(--text-3)'};cursor:pointer;font-family:var(--font-sans);transition:all var(--transition)">${label}</button>`;
+    }).join('');
+  }
+
+  // Render selected week's review
+  const selected = reviews[window._reviewActiveWeek];
+  if (lastEl) lastEl.textContent = `Generated ${selected.date||'recently'}`;
+  renderReviewOutput(selected.text);
+}
+
+function selectReviewWeek(weekKey) {
+  window._reviewActiveWeek = weekKey;
+  renderReview();
 }
 
 async function generateReview(){
-  const btn=document.getElementById('review-btn');
-  btn.disabled=true;btn.innerHTML='<span style="display:inline-block;animation:spin 1s linear infinite">◌</span> Generating…';
+  // Legacy — kept for internal use only, not exposed in UI
   document.getElementById('review-output').innerHTML=`<div class="empty"><div class="empty-icon" style="animation:spin 1.5s linear infinite">◌</div>Analysing your week…</div>`;
-
   const wStart=new Date(); wStart.setDate(wStart.getDate()-wStart.getDay());
   const thisWeekStr=wStart.toISOString().split('T')[0];
-
   try{
     const res=await fetch('/api/review',{method:'POST',headers:{'Content-Type':'application/json'},
       body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:900,
@@ -3013,19 +3083,13 @@ async function generateReview(){
     if(!res.ok) throw new Error(res.status);
     const result=await res.json();
     const text=result.content?.map(c=>c.text||'').join('')||'';
-    renderReviewOutput(text);
-    DATA.weeklyReview={
-      text,
-      weekStart: thisWeekStr,
-      date:new Date().toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short'})
-    };
+    if (!DATA.weeklyReviews) DATA.weeklyReviews={};
+    DATA.weeklyReviews[thisWeekStr]={text,weekStart:thisWeekStr,date:new Date().toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short'})};
     scheduleSave();
-    const lastEl=document.getElementById('review-last-generated');
-    if(lastEl) lastEl.textContent=`Generated ${DATA.weeklyReview.date}`;
+    renderReview();
   }catch(e){
     document.getElementById('review-output').innerHTML=`<div style="color:var(--gold);font-size:13px;padding:12px 14px;background:var(--gold-soft);border-radius:8px;line-height:1.6">ℹ The AI review works once deployed to Vercel (requires the <code>/api/review</code> serverless function).<br>All other features work fully in this HTML file.</div>`;
   }
-  btn.disabled=false;btn.innerHTML='Regenerate';
 }
 
 function renderReviewOutput(text){

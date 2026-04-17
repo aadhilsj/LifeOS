@@ -12,7 +12,8 @@ module.exports = async function handler(req, res) {
   }
 
   try {
-    const integration = await getCalendarIntegration();
+    const userId = req.query?.userId || '';
+    const integration = await getCalendarIntegration(userId);
     if (!integration.connections.length) {
       return res.status(200).json({
         connected: false,
@@ -25,7 +26,7 @@ module.exports = async function handler(req, res) {
       });
     }
 
-    const sessionState = await getValidCalendarSessions();
+    const sessionState = await getValidCalendarSessions(userId);
     if (!sessionState.connected) {
       return res.status(200).json({
         connected: false,

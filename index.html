@@ -1017,6 +1017,7 @@ const SUPA_URL = 'https://oulbhauthynnqumormte.supabase.co';
 const SUPA_KEY = 'sb_publishable_Sdzm9TR3gKYwRbZ960xDdg_l3GALVBQ';
 let sb = null;
 let currentUser = null;
+let currentStorageKey = 'kairo_v1_anon';
 
 async function initSupabase() {
   if (typeof supabase === 'undefined') {
@@ -1048,8 +1049,11 @@ async function signInWithGoogle() {
 async function signOut() {
   if (!sb) return;
   await sb.auth.signOut();
+  const previousStorageKey = currentStorageKey;
   currentUser = null;
-  localStorage.removeItem('kairo_v1');
+  window._dataLoaded = false;
+  localStorage.removeItem(previousStorageKey);
+  resetAppState();
   document.getElementById('login-screen').style.display = 'flex';
   document.getElementById('login-box').style.display = 'flex';
   document.getElementById('name-setup-box').style.display = 'none';
@@ -1081,50 +1085,79 @@ async function handleAuth() {
 
   // Listen for auth state — this fires on page load with existing session
   // AND after OAuth redirect callback is processed
-  sb.auth.onAuthStateChange((event, session) => {
+  sb.auth.onAuthStateChange(async (event, session) => {
     if (event === 'SIGNED_IN' || event === 'INITIAL_SESSION') {
       if (session?.user) {
         currentUser = session.user;
+        const nextStorageKey = getStorageKey(currentUser);
+        const shouldReload = !window._dataLoaded || window._loadedUserId !== currentUser.id;
+        document.getElementById('login-screen').style.display = 'none';
+        document.querySelector('.app').style.display = 'none';
+        if (shouldReload) {
+          window._dataLoaded = true;
+          window._loadedUserId = currentUser.id;
+          currentStorageKey = nextStorageKey;
+          resetAppState();
+          await loadData(currentUser);
+        }
         document.getElementById('login-screen').style.display = 'none';
         document.querySelector('.app').style.display = 'flex';
-        // Only load data once
-        if (!window._dataLoaded) {
-          window._dataLoaded = true;
-          loadData(currentUser);
-        }
       } else {
+        window._loadedUserId = null;
+        currentStorageKey = getStorageKey(null);
+        resetAppState();
         showLoginScreen();
         document.getElementById('login-box').style.display = 'flex';
       }
     } else if (event === 'SIGNED_OUT') {
       window._dataLoaded = false;
+      window._loadedUserId = null;
+      currentStorageKey = getStorageKey(null);
+      resetAppState();
       showLoginScreen();
     }
   });
 }
 
 // ─── State ────────────────────────────────────────────────────────────────────
-let DATA = {
-  tasks:[], projects:[], jobs:[],
-  habits:{},
-  habitDefs:[
-    {id:'gym',label:'Gym',icon:'🏋️',focusArea:'Health',frequencyType:'weekly',targetCount:3},
-    {id:'reading',label:'Reading',icon:'📚',focusArea:'Growth',frequencyType:'daily',targetCount:1},
-    {id:'journaling',label:'Journaling',icon:'✍️',focusArea:'Personal',frequencyType:'daily',targetCount:1},
-  ],
-  captures:[], focusTasks:[], weeklyReview:null, calendarLinks:{},
-  settings:{
-    name:'Aadhil',
-    accentTheme:'red',
-    notifications:{weeklyReview:true,overdueNudge:true},
-    modules:{opportunities:true},
-  },
-};
+function createDefaultData() {
+  return {
+    tasks:[], projects:[], jobs:[],
+    habits:{},
+    habitDefs:[
+      {id:'gym',label:'Gym',icon:'🏋️',focusArea:'Health',frequencyType:'weekly',targetCount:3},
+      {id:'reading',label:'Reading',icon:'📚',focusArea:'Growth',frequencyType:'daily',targetCount:1},
+      {id:'journaling',label:'Journaling',icon:'✍️',focusArea:'Personal',frequencyType:'daily',targetCount:1},
+    ],
+    captures:[], focusTasks:[], weeklyReview:null, calendarLinks:{},
+    settings:{
+      name:'',
+      accentTheme:'red',
+      notifications:{weeklyReview:true,overdueNudge:true},
+      modules:{opportunities:true},
+    },
+  };
+}
+
+let DATA = createDefaultData();
 let currentPage='home', taskFilter='All', syncTimer=null, projectDetailId=null;
 let modalState = { kind: null };
 let pendingVoiceReview = false;
 let pendingReviewStatusTarget = null;
 let CALENDAR_STATE = { status:'idle', connected:false, events:[], freeWindows:[], message:'', connections:[], connectedCount:0 };
+
+function getStorageKey(user) {
+  return `kairo_v1_${user?.id || 'anon'}`;
+}
+
+function resetAppState() {
+  DATA = createDefaultData();
+  CALENDAR_STATE = { status:'idle', connected:false, events:[], freeWindows:[], message:'', connections:[], connectedCount:0, error:'' };
+  ensureSettingsShape();
+  ensureCalendarLinksShape();
+  ensureHabitsShape();
+  applyTheme();
+}
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 const FOCUS_AREAS  = ['Career','Health','Personal','Life Admin','Growth'];
@@ -1179,7 +1212,7 @@ const statusClass    = s => ({Active:'status-active',Paused:'status-paused',Comp
 
 function ensureSettingsShape() {
   DATA.settings = DATA.settings || {};
-  DATA.settings.name = (DATA.settings.name || 'Aadhil').trim() || 'Aadhil';
+  DATA.settings.name = (DATA.settings.name || '').trim();
   DATA.settings.accentTheme = THEME_PRESETS[DATA.settings.accentTheme] ? DATA.settings.accentTheme : 'red';
   DATA.settings.notifications = {
     weeklyReview: DATA.settings.notifications?.weeklyReview !== false,
@@ -1228,7 +1261,10 @@ function ensureHabitsShape() {
 }
 
 function getUserName() {
-  return (DATA.settings?.name || 'Aadhil').trim() || 'Aadhil';
+  const savedName = (DATA.settings?.name || '').trim();
+  if (savedName) return savedName;
+  const authName = currentUser?.user_metadata?.full_name || currentUser?.user_metadata?.name || '';
+  return authName.split(' ')[0] || 'there';
 }
 
 function applyTheme() {
@@ -1263,8 +1299,10 @@ function formatDue(task) {
 
 // ─── Supabase sync ────────────────────────────────────────────────────────────
 async function loadData(user) {
-  const local=localStorage.getItem('kairo_v1');
-  if (local){try{DATA={...DATA,...JSON.parse(local)};}catch{}}
+  resetAppState();
+  currentStorageKey = getStorageKey(user);
+  const local=localStorage.getItem(currentStorageKey);
+  if (local){try{DATA={...createDefaultData(),...JSON.parse(local)};}catch{}}
   ensureSettingsShape();
   ensureCalendarLinksShape();
   ensureHabitsShape();
@@ -1291,7 +1329,7 @@ async function loadData(user) {
       applyTheme();
       DATA.tasks=DATA.tasks.map(t=>({...t,focusArea:migrateFocusArea(t)}));
       DATA.tasks=DATA.tasks.map(t=>t.completed&&!t.completedDate?{...t,completedDate:t.dueDate||t.createdAt||today()}:t);
-      localStorage.setItem('kairo_v1',JSON.stringify(DATA));
+      localStorage.setItem(currentStorageKey,JSON.stringify(DATA));
       setSyncStatus('ok','Synced');
       renderAll();
       fetchCalendarData();
@@ -1322,7 +1360,7 @@ async function loadData(user) {
 
 async function saveNow() {
   ensureCalendarLinksShape();
-  localStorage.setItem('kairo_v1',JSON.stringify(DATA));
+  localStorage.setItem(currentStorageKey,JSON.stringify(DATA));
   if (!sb || !currentUser) return;
   setSyncStatus('syncing','Saving…');
   try {
@@ -1340,7 +1378,7 @@ async function saveNow() {
 function scheduleSave() {
   ensureSettingsShape();
   ensureCalendarLinksShape();
-  localStorage.setItem('kairo_v1',JSON.stringify(DATA));
+  localStorage.setItem(currentStorageKey,JSON.stringify(DATA));
   clearTimeout(syncTimer); syncTimer=setTimeout(saveNow,1000);
 }
 
@@ -1990,7 +2028,7 @@ function renderSettings(){
 }
 
 function updateSettingName(value){
-  DATA.settings.name=(value||'').trimStart() || 'Aadhil';
+  DATA.settings.name=(value||'').trimStart();
   scheduleSave();
   if(currentPage==='home') document.getElementById('page-title').textContent=getGreeting();
 }
@@ -2570,14 +2608,17 @@ function formatFreeWindow(window){
 }
 
 function connectGoogleCalendar(){
-  window.location.href='/api/calendar/auth';
+  const userId = currentUser?.id;
+  if (!userId) return;
+  window.location.href=`/api/calendar/auth?userId=${encodeURIComponent(userId)}`;
 }
 
 async function fetchCalendarData(){
   CALENDAR_STATE = {...CALENDAR_STATE, status:'loading'};
   if(currentPage==='home') renderHome();
   try{
-    const res = await fetch('/api/calendar');
+    const userId = currentUser?.id;
+    const res = await fetch(userId ? `/api/calendar?userId=${encodeURIComponent(userId)}` : '/api/calendar');
     if(!res.ok) throw new Error(res.status);
     const data = await res.json();
     CALENDAR_STATE = {

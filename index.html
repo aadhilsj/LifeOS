@@ -959,6 +959,12 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;heigh
                 These switches are intentionally lightweight for now, so we can grow the product without hardcoding every choice.
               </div>
             </div>
+
+            <div class="card">
+              <div class="card-title">Account</div>
+              <div class="text-sm text-muted mb12" id="settings-account-email"></div>
+              <button onclick="signOut()" class="btn btn-ghost btn-sm" style="color:#e57373;border-color:#c8392b30">Sign out</button>
+            </div>
           </div>
         </div>
       </div>
@@ -1944,6 +1950,9 @@ function renderSettings(){
   ensureSettingsShape();
   const nameInput=document.getElementById('settings-name');
   if(nameInput) nameInput.value=getUserName();
+
+  const emailEl=document.getElementById('settings-account-email');
+  if(emailEl) emailEl.textContent=currentUser?.email||'';
 
   const themeEl=document.getElementById('theme-options');
   if(themeEl){

@@ -4,7 +4,7 @@
   "description": "Your personal OS — tasks, habits, projects and more.",
   "start_url": "/",
   "display": "standalone",
-  "orientation": "portrait-primary",
+  "orientation": "any",
   "background_color": "#0d1117",
   "theme_color": "#0d1117",
   "icons": [

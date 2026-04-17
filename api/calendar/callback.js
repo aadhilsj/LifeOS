@@ -3,6 +3,7 @@ const {
   exchangeCodeForTokens,
   getConfig,
   getCalendarIntegration,
+  parseState,
   saveIntegrationState,
   upsertCalendarConnection,
 } = require('./_lib');
@@ -21,7 +22,9 @@ module.exports = async function handler(req, res) {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  const { code, error } = req.query;
+  const { code, error, state } = req.query;
+  const authState = parseState(state);
+  const userId = authState.userId || '';
 
   if (error) {
     const redirectUrl = buildReturnUrl(false, error);
@@ -35,10 +38,10 @@ module.exports = async function handler(req, res) {
 
   try {
     const tokenData = await exchangeCodeForTokens(code);
-    const currentIntegration = await getCalendarIntegration();
+    const currentIntegration = await getCalendarIntegration(userId);
     const connection = await buildCalendarConnection(tokenData);
     const nextIntegration = upsertCalendarConnection(currentIntegration, connection);
-    await saveIntegrationState(nextIntegration);
+    await saveIntegrationState(nextIntegration, userId);
 
     const redirectUrl = buildReturnUrl(true, 'google-calendar-connected');
     if (redirectUrl) return res.redirect(redirectUrl);

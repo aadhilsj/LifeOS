@@ -528,7 +528,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;heigh
   width:2px;height:55%;background:var(--text-3);border-radius:0 2px 2px 0}
 
 /* ── Mobile task action improvements ── */
-@media(max-width:768px){
+@media(max-width:600px){
   .task-actions{opacity:1;gap:6px}
   .task-actions button[data-tip]::after{display:none}
   .btn-icon{width:32px;height:32px;display:flex;align-items:center;justify-content:center;
@@ -627,7 +627,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;heigh
   .tabs{-webkit-overflow-scrolling:touch}
 }
 @keyframes slideUpSheet{from{transform:translateY(100%)}to{transform:none}}
-@media(min-width:769px) and (max-width:1024px){
+@media(min-width:601px) and (max-width:1024px){
   :root{--sidebar:160px}
 }
 </style>
@@ -1648,7 +1648,7 @@ function toggleExpand(id){
   }
   // Show mobile delete button only when expanded and on mobile
   const mbd=document.getElementById('mobile-delete-'+id);
-  if(mbd) mbd.style.display=!isOpen&&window.innerWidth<=768?'flex':'none';
+  if(mbd) mbd.style.display=!isOpen&&window.innerWidth<=600?'flex':'none';
 }
 function toggleTask(id){const td=today();DATA.tasks=DATA.tasks.map(t=>t.id===id?{...t,completed:!t.completed,completedDate:!t.completed?td:null}:t);scheduleSave();renderAll();}
 function deleteTask(id){
@@ -3280,7 +3280,7 @@ function renderReviewOutput(text){
 
 // ─── Swipe to complete (mobile) ───────────────────────────────────────────────
 function attachSwipeHandlers(){
-  if(window.innerWidth>768) return;
+  if(window.innerWidth>600) return;
   document.querySelectorAll('.task-item').forEach(el=>{
     if(el.dataset.swipe) return;
     el.dataset.swipe='1';

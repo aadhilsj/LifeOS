@@ -1080,29 +1080,30 @@ function showLoginScreen() {
 async function handleAuth() {
   const ok = await initSupabase();
   if (!ok) {
-    // Offline — skip auth, load from localStorage
     document.querySelector('.app').style.display = 'flex';
     loadData(null);
     return;
   }
 
-  // Handle OAuth callback
-  const { data: { session } } = await sb.auth.getSession();
-
-  if (!session) {
-    showLoginScreen();
-    document.getElementById('login-box').style.display = 'flex';
-    return;
-  }
-
-  currentUser = session.user;
-  document.getElementById('login-screen').style.display = 'none';
-  document.querySelector('.app').style.display = 'flex';
-  loadData(currentUser);
-
-  // Listen for auth changes (sign out etc)
+  // Listen for auth state — this fires on page load with existing session
+  // AND after OAuth redirect callback is processed
   sb.auth.onAuthStateChange((event, session) => {
-    if (event === 'SIGNED_OUT') {
+    if (event === 'SIGNED_IN' || event === 'INITIAL_SESSION') {
+      if (session?.user) {
+        currentUser = session.user;
+        document.getElementById('login-screen').style.display = 'none';
+        document.querySelector('.app').style.display = 'flex';
+        // Only load data once
+        if (!window._dataLoaded) {
+          window._dataLoaded = true;
+          loadData(currentUser);
+        }
+      } else {
+        showLoginScreen();
+        document.getElementById('login-box').style.display = 'flex';
+      }
+    } else if (event === 'SIGNED_OUT') {
+      window._dataLoaded = false;
       showLoginScreen();
     }
   });

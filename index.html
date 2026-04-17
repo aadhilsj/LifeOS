@@ -559,7 +559,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;heigh
   display:flex;flex-direction:column;align-items:center;gap:0;
   text-align:center;
 }
-.login-logo{width:52px;height:52px;margin-bottom:20px}
+.login-logo{width:64px;height:64px;margin-bottom:20px;border-radius:16px}
 .login-title{font-family:var(--font-serif);font-size:32px;color:var(--text);margin-bottom:8px;letter-spacing:-.5px}
 .login-sub{font-size:13px;color:var(--text-3);margin-bottom:40px;line-height:1.6}
 .login-google-btn{
@@ -641,16 +641,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;heigh
 <!-- ── Login Screen ── -->
 <div id="login-screen" class="login-screen" style="display:none">
   <div id="login-box" class="login-box">
-    <svg class="login-logo" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 30 30">
-      <rect width="30" height="30" rx="7" fill="#0d1117"/>
-      <circle cx="15" cy="15" r="11" fill="none" stroke="#ffffff" stroke-width="0.5" opacity="0.07"/>
-      <path d="M15,4 A11,11 0 1 1 5.5,19.5" fill="none" stroke="#c8392b" stroke-width="2.2" stroke-linecap="round"/>
-      <circle cx="15" cy="15" r="7.5" fill="none" stroke="#ffffff" stroke-width="0.5" opacity="0.05"/>
-      <path d="M15,7.5 A7.5,7.5 0 1 1 7.5,15" fill="none" stroke="#c9a84c" stroke-width="1.5" stroke-linecap="round"/>
-      <line x1="12.5" y1="9.5" x2="12.5" y2="20.5" stroke="#f0efe8" stroke-width="2" stroke-linecap="square"/>
-      <line x1="12.5" y1="9.5" x2="17.5" y2="9.5" stroke="#f0efe8" stroke-width="2" stroke-linecap="square"/>
-      <line x1="12.5" y1="15" x2="16.5" y2="15" stroke="#f0efe8" stroke-width="1.5" stroke-linecap="square"/>
-    </svg>
+    <img src="/icon-192.png" class="login-logo" alt="Kairo"/>
     <div class="login-title">Kairo</div>
     <div class="login-sub">Your personal operating system.<br>Sign in to get started.</div>
     <button class="login-google-btn" id="login-google-btn" onclick="signInWithGoogle()">
@@ -662,11 +653,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;heigh
 
   <!-- Name setup (shown after first login) -->
   <div id="name-setup-box" class="name-setup-box" style="display:none">
-    <svg class="login-logo" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 30 30">
-      <rect width="30" height="30" rx="7" fill="#0d1117"/>
-      <path d="M15,4 A11,11 0 1 1 5.5,19.5" fill="none" stroke="#c8392b" stroke-width="2.2" stroke-linecap="round"/>
-      <path d="M15,7.5 A7.5,7.5 0 1 1 7.5,15" fill="none" stroke="#c9a84c" stroke-width="1.5" stroke-linecap="round"/>
-    </svg>
+    <img src="/icon-192.png" class="login-logo" alt="Kairo"/>
     <h2>What should Kairo call you?</h2>
     <p>We pulled your name from Google — feel free to change it.</p>
     <input class="input" id="name-setup-input" type="text" placeholder="Your name" style="width:100%"/>

@@ -4103,6 +4103,12 @@ _script.src='https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supab
 _script.onload=()=>handleAuth();
 _script.onerror=()=>{setSyncStatus('error','Offline');document.querySelector('.app').style.display='flex';loadData(null);};
 document.head.appendChild(_script);
+
+// If browser restores this page from bfcache (back-forward cache),
+// the app state is stale — force a real reload instead.
+window.addEventListener('pageshow', e => {
+  if (e.persisted) window.location.reload();
+});
 </script>
 
 <!-- PWA Service Worker + Update Detection -->

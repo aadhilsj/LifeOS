@@ -4095,11 +4095,74 @@ _script.onerror=()=>{setSyncStatus('error','Offline');document.querySelector('.a
 document.head.appendChild(_script);
 </script>
 
-<!-- PWA Service Worker -->
+<!-- PWA Service Worker + Update Detection -->
 <script>
-  if('serviceWorker' in navigator){
-    window.addEventListener('load',()=>{navigator.serviceWorker.register('/sw.js');});
-  }
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', async () => {
+    try {
+      const reg = await navigator.serviceWorker.register('/sw.js');
+
+      // Poll for updates every 60s — catches long-running PWA sessions
+      setInterval(() => reg.update(), 60 * 1000);
+
+      // New SW found — watch for it to finish installing
+      reg.addEventListener('updatefound', () => {
+        const newWorker = reg.installing;
+        if (!newWorker) return;
+        newWorker.addEventListener('statechange', () => {
+          // Installed and waiting — old SW still in control
+          if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+            showUpdateBanner(newWorker);
+          }
+        });
+      });
+
+      // When controller changes (after skipWaiting), reload to get fresh app
+      let refreshing = false;
+      navigator.serviceWorker.addEventListener('controllerchange', () => {
+        if (!refreshing) { refreshing = true; window.location.reload(); }
+      });
+
+    } catch(e) {
+      console.warn('SW registration failed:', e);
+    }
+  });
+}
+
+function showUpdateBanner(newWorker) {
+  if (document.getElementById('kairo-update-banner')) return;
+  const banner = document.createElement('div');
+  banner.id = 'kairo-update-banner';
+  banner.style.cssText = `
+    position:fixed;bottom:22px;left:50%;transform:translateX(-50%);
+    z-index:9999;display:flex;align-items:center;gap:12px;
+    background:linear-gradient(135deg,#1a1c25,#141620);
+    border:1px solid #ffffff18;border-radius:12px;
+    padding:12px 16px;box-shadow:0 8px 32px rgba(0,0,0,.5);
+    font-family:'Geist',system-ui,sans-serif;font-size:13px;
+    color:#f0efe8;white-space:nowrap;animation:slideInR .25s ease;
+  `;
+  banner.innerHTML = `
+    <span style="font-size:16px">⚡</span>
+    <span style="color:#a09e97">Kairo has been updated</span>
+    <button onclick="window.__kairoUpdate()" style="
+      background:#c8392b;color:#fff;border:none;border-radius:7px;
+      padding:6px 13px;font-family:inherit;font-size:12px;font-weight:600;
+      cursor:pointer;white-space:nowrap;
+    ">Reload now</button>
+    <button onclick="this.parentElement.remove()" style="
+      background:none;border:none;color:#5c5a55;cursor:pointer;
+      font-size:16px;padding:0 2px;line-height:1;font-family:inherit;
+    ">✕</button>
+  `;
+  document.body.appendChild(banner);
+  window.__kairoUpdate = () => {
+    banner.remove();
+    newWorker.postMessage('SKIP_WAITING');
+  };
+  setTimeout(() => banner?.remove(), 30000);
+}
 </script>
+
 </body>
 </html>

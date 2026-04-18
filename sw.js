@@ -1,6 +1,6 @@
-// Cache version — bump this string manually on each deploy to bust old caches
+// Cache version — bump this string when you change icons or manifest.json
 const CACHE_VERSION = 'kairo-v1';
-const CACHE = CACHE_VERSION; // was: `kairo-${Date.now()}` — that was the bug
+const CACHE = CACHE_VERSION;
 
 // Static assets that are safe to cache long-term (icons, manifest)
 const STATIC_PRECACHE = [
@@ -11,8 +11,9 @@ const STATIC_PRECACHE = [
 
 // ── Install ───────────────────────────────────────────────────────────────────
 self.addEventListener('install', e => {
-  // Skip waiting immediately — don't let old SW block the new one
-  self.skipWaiting();
+  // Do NOT call skipWaiting() here — it triggers controllerchange → reload
+  // mid-activation, which causes a blank screen. The new SW will wait until
+  // the user clicks "Reload now" in the update banner, or opens a fresh tab.
   e.waitUntil(
     caches.open(CACHE).then(c => c.addAll(STATIC_PRECACHE))
   );
@@ -112,6 +113,7 @@ async function cacheFirst(request) {
 }
 
 // ── Message handler ───────────────────────────────────────────────────────────
+// skipWaiting is only triggered here — by the user clicking "Reload now"
 self.addEventListener('message', e => {
   if (e.data === 'SKIP_WAITING') self.skipWaiting();
   if (e.data === 'CLEAR_CACHE') {

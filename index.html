@@ -1194,6 +1194,8 @@ async function handleAuth() {
   // AND after OAuth redirect callback is processed
   sb.auth.onAuthStateChange(async (event, session) => {
     if (event === 'SIGNED_IN' || event === 'INITIAL_SESSION') {
+      // Strip the OAuth hash from URL so the SW never caches /#
+      if (window.location.hash) history.replaceState(null, '', window.location.pathname);
       await applyAuthSession(session);
     } else if (event === 'SIGNED_OUT') {
       await applyAuthSession(null);

@@ -1077,6 +1077,35 @@ function showLoginScreen() {
   document.querySelector('.app').style.display = 'none';
 }
 
+async function applyAuthSession(session) {
+  if (session?.user) {
+    currentUser = session.user;
+    const nextStorageKey = getStorageKey(currentUser);
+    const shouldReload = !window._dataLoaded || window._loadedUserId !== currentUser.id;
+    document.getElementById('login-screen').style.display = 'none';
+    document.querySelector('.app').style.display = 'none';
+    if (shouldReload) {
+      window._dataLoaded = true;
+      window._loadedUserId = currentUser.id;
+      currentStorageKey = nextStorageKey;
+      resetAppState();
+      await loadData(currentUser);
+    }
+    document.getElementById('login-screen').style.display = 'none';
+    document.querySelector('.app').style.display = 'flex';
+    return;
+  }
+
+  currentUser = null;
+  window._dataLoaded = false;
+  window._loadedUserId = null;
+  currentStorageKey = getStorageKey(null);
+  resetAppState();
+  showLoginScreen();
+  document.getElementById('login-box').style.display = 'flex';
+  document.getElementById('name-setup-box').style.display = 'none';
+}
+
 async function handleAuth() {
   const ok = await initSupabase();
   if (!ok) {
@@ -1089,36 +1118,20 @@ async function handleAuth() {
   // AND after OAuth redirect callback is processed
   sb.auth.onAuthStateChange(async (event, session) => {
     if (event === 'SIGNED_IN' || event === 'INITIAL_SESSION') {
-      if (session?.user) {
-        currentUser = session.user;
-        const nextStorageKey = getStorageKey(currentUser);
-        const shouldReload = !window._dataLoaded || window._loadedUserId !== currentUser.id;
-        document.getElementById('login-screen').style.display = 'none';
-        document.querySelector('.app').style.display = 'none';
-        if (shouldReload) {
-          window._dataLoaded = true;
-          window._loadedUserId = currentUser.id;
-          currentStorageKey = nextStorageKey;
-          resetAppState();
-          await loadData(currentUser);
-        }
-        document.getElementById('login-screen').style.display = 'none';
-        document.querySelector('.app').style.display = 'flex';
-      } else {
-        window._loadedUserId = null;
-        currentStorageKey = getStorageKey(null);
-        resetAppState();
-        showLoginScreen();
-        document.getElementById('login-box').style.display = 'flex';
-      }
+      await applyAuthSession(session);
     } else if (event === 'SIGNED_OUT') {
-      window._dataLoaded = false;
-      window._loadedUserId = null;
-      currentStorageKey = getStorageKey(null);
-      resetAppState();
-      showLoginScreen();
+      await applyAuthSession(null);
     }
   });
+
+  const { data, error } = await sb.auth.getSession();
+  if (error) {
+    console.error('Initial session load failed:', error);
+    showLoginScreen();
+    document.getElementById('login-box').style.display = 'flex';
+    return;
+  }
+  await applyAuthSession(data?.session || null);
 }
 
 // ─── State ────────────────────────────────────────────────────────────────────

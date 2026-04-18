@@ -1202,7 +1202,22 @@ async function handleAuth() {
     }
   });
 
+  // Fallback: if getSession hangs (Supabase deadlock), show app after 3s
+  const authTimeout = setTimeout(() => {
+    if (document.querySelector('.app').style.display === 'none') {
+      console.warn('[Kairo] Auth timeout — forcing app visible');
+      if (currentUser) {
+        document.querySelector('.app').style.display = 'flex';
+        document.getElementById('login-screen').style.display = 'none';
+      } else {
+        showLoginScreen();
+        document.getElementById('login-box').style.display = 'flex';
+      }
+    }
+  }, 3000);
+
   const { data, error } = await sb.auth.getSession();
+  clearTimeout(authTimeout);
   if (error) {
     console.error('Initial session load failed:', error);
     showLoginScreen();

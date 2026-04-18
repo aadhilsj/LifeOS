@@ -1095,7 +1095,6 @@ async function initSupabase() {
       auth: {
         persistSession: true,
         storageKey: 'kairo_auth',
-        storage: window.localStorage,
         autoRefreshToken: true,
         detectSessionInUrl: true,
       }

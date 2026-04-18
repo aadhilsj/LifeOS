@@ -399,6 +399,57 @@ input[type="date"].input,input[type="time"].input{color-scheme:dark}
   background:var(--accent);color:#fff;font-size:7px;font-weight:700;
   padding:1px 4px;border-radius:20px;min-width:13px;text-align:center;line-height:1.4}
 
+/* ── Circles ── */
+.circle-card{background:var(--glass);border:1px solid var(--glass-border);border-radius:var(--radius);
+  padding:18px 20px;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+  box-shadow:var(--shadow-sm);transition:border-color var(--transition);margin-bottom:12px;cursor:pointer}
+.circle-card:hover{border-color:var(--border-active)}
+.circle-card-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:10px}
+.circle-card-name{font-family:var(--font-serif);font-size:17px;color:var(--text);letter-spacing:-.2px}
+.circle-card-meta{font-size:11px;color:var(--text-3);margin-top:3px}
+.circle-members-row{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-top:10px}
+.circle-member-chip{display:inline-flex;align-items:center;gap:5px;padding:4px 9px;
+  border-radius:20px;background:var(--surface2);border:1px solid var(--border);font-size:11px;color:var(--text-2)}
+.circle-member-chip.you{background:var(--accent-soft);border-color:#c8392b22;color:var(--accent)}
+.circle-member-chip.pending{opacity:.55;font-style:italic}
+.circle-slot-empty{display:inline-flex;align-items:center;gap:4px;padding:4px 9px;
+  border-radius:20px;border:1px dashed var(--border);font-size:11px;color:var(--text-3)}
+.circles-empty{text-align:center;padding:48px 20px}
+.circles-empty-icon{font-size:32px;margin-bottom:12px;opacity:.4}
+.circles-empty-title{font-family:var(--font-serif);font-size:18px;color:var(--text);margin-bottom:6px}
+.circles-empty-sub{font-size:12px;color:var(--text-3);line-height:1.6;max-width:260px;margin:0 auto 20px}
+.circle-detail-name{font-family:var(--font-serif);font-size:22px;color:var(--text);letter-spacing:-.3px;margin-bottom:4px}
+.circle-member-row{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border)}
+.circle-member-row:last-child{border-bottom:none}
+.circle-member-avatar{width:32px;height:32px;border-radius:50%;background:var(--surface3);
+  display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;
+  color:var(--text-2);flex-shrink:0;border:1px solid var(--border)}
+.circle-member-info{flex:1;min-width:0}
+.circle-member-name{font-size:13px;font-weight:500;color:var(--text)}
+.circle-member-email{font-size:11px;color:var(--text-3);margin-top:1px}
+.circle-member-tag{font-size:10px;font-weight:600;padding:2px 7px;border-radius:20px;
+  background:var(--accent-soft);color:var(--accent);border:1px solid #c8392b20}
+.circle-member-tag.pending{background:var(--gold-soft);color:var(--gold);border-color:#c9a84c20}
+.invite-link-box{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);
+  padding:10px 12px;display:flex;align-items:center;gap:8px;margin-top:8px}
+.invite-link-text{flex:1;font-size:11px;color:var(--text-2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-family:monospace}
+.circles-cap-bar{display:flex;align-items:center;gap:5px}
+.circles-cap-dot{width:9px;height:9px;border-radius:50%;background:var(--green);border:1px solid #4a9e6e30}
+.circles-cap-dot.empty{background:var(--surface2);border-color:var(--border)}
+.circle-task-row{display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-bottom:1px solid var(--border)}
+.circle-task-row:last-child{border-bottom:none}
+.circle-task-check{width:18px;height:18px;border-radius:50%;border:1.5px solid var(--border-active);flex-shrink:0;
+  cursor:pointer;display:flex;align-items:center;justify-content:center;margin-top:2px;transition:all var(--transition)}
+.circle-task-check:hover{border-color:var(--green);background:var(--green-soft)}
+.circle-task-check.done{background:var(--green);border-color:var(--green);color:#fff}
+.circle-task-check.done::after{content:'✓';font-size:8px;font-weight:700}
+.circle-task-main{flex:1;min-width:0}
+.circle-task-title{font-size:13px;color:var(--text);line-height:1.45}
+.circle-task-title.done{text-decoration:line-through;color:var(--text-3)}
+.circle-task-meta{font-size:10.5px;color:var(--text-3);display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:4px}
+.circle-task-empty{font-size:12px;color:var(--text-3);line-height:1.6;padding:4px 0}
+.circle-task-add{display:grid;grid-template-columns:minmax(0,1fr) 130px auto;gap:8px}
+
 /* Utils */
 .flex{display:flex}.flex-col{flex-direction:column}
 .flex-between{display:flex;justify-content:space-between;align-items:center}
@@ -715,6 +766,13 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;heigh
       </div>
     </div>
 
+      <div class="nav-item" data-page="circles">
+        <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="7" r="3"/><circle cx="17" cy="7" r="3"/><path d="M3 21v-2a5 5 0 0 1 5-5h4a5 5 0 0 1 5 5v2"/><path d="M19 11a3 3 0 0 1 0 6"/></svg></span>
+        <span class="nav-label">Circles</span>
+        <span class="nav-badge" id="circles-badge" style="display:none">●</span>
+      </div>
+    </div>
+
     <div class="nav-section">
       <div class="nav-section-label">Tools</div>
       <div class="nav-item" data-page="capture">
@@ -891,6 +949,14 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;heigh
         <div id="habits-grid"></div>
       </div>
 
+      <!-- CIRCLES -->
+      <div class="page" id="page-circles">
+        <div id="circles-list-view">
+          <div id="circles-grid"></div>
+        </div>
+        <div id="circle-detail-view" style="display:none"></div>
+      </div>
+
       <!-- CAPTURE -->
       <div class="page" id="page-capture">
         <div class="card mb16">
@@ -996,6 +1062,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;heigh
 <div class="more-sheet" id="more-sheet">
   <div class="more-sheet-grid">
     <button type="button" class="more-sheet-btn" onclick="navigateMoreTo('habits')"><strong>Habits</strong><span>Track streaks and consistency</span></button>
+    <button type="button" class="more-sheet-btn" onclick="navigateMoreTo('circles')"><strong>Circles</strong><span>Shared spaces with trusted people</span></button>
     <button type="button" class="more-sheet-btn" onclick="navigateMoreTo('settings')"><strong>Settings</strong><span>Theme, profile, preferences</span></button>
     <button type="button" class="more-sheet-btn" onclick="navigateMoreTo('projects','review')"><strong>Review</strong><span>Weekly reflection and insights</span></button>
     <button type="button" class="more-sheet-btn" onclick="navigateMoreTo('projects','opportunities')"><strong>Opportunities</strong><span>Pipeline and next moves</span></button>
@@ -1051,6 +1118,7 @@ async function signInWithGoogle() {
 async function signOut() {
   if (!sb) return;
   await sb.auth.signOut();
+  teardownCircleTaskRealtime();
   const previousStorageKey = currentStorageKey;
   currentUser = null;
   window._dataLoaded = false;
@@ -1080,6 +1148,7 @@ function showLoginScreen() {
 async function applyAuthSession(session) {
   if (session?.user) {
     currentUser = session.user;
+    ensureCircleTaskRealtime();
     const nextStorageKey = getStorageKey(currentUser);
     const shouldReload = !window._dataLoaded || window._loadedUserId !== currentUser.id;
     document.getElementById('login-screen').style.display = 'none';
@@ -1097,6 +1166,7 @@ async function applyAuthSession(session) {
   }
 
   currentUser = null;
+  teardownCircleTaskRealtime();
   window._dataLoaded = false;
   window._loadedUserId = null;
   currentStorageKey = getStorageKey(null);
@@ -1349,6 +1419,8 @@ async function loadData(user) {
       renderAll();
       fetchCalendarData();
       maybeAutoGenerateReview();
+      loadCircles();
+      checkCircleInviteParam();
     } else {
       // First time user — check if name looks like an email/username
       const googleName = user.user_metadata?.full_name || user.user_metadata?.name || '';
@@ -1368,6 +1440,8 @@ async function loadData(user) {
         renderAll();
         fetchCalendarData();
         maybeAutoGenerateReview();
+        loadCircles();
+        checkCircleInviteParam();
       }
     }
   } catch(e){ console.error('Load error:',e); setSyncStatus('error','Offline'); renderAll(); }
@@ -1418,6 +1492,7 @@ function navigate(page) {
     habits:  ['Habits','Build consistency'],
     capture: ['Quick Capture','Dump ideas, sort later'],
     settings:['Settings','Personalise your dashboard'],
+    circles: ['Circles','Shared spaces with trusted people'],
   };
   const [title,sub]=meta[page]||['Kairo',''];
   document.getElementById('page-title').textContent=page==='home'?getGreeting():title;
@@ -1427,6 +1502,7 @@ function navigate(page) {
   if(page==='tasks')    ta.innerHTML=`<button class="btn btn-primary btn-sm" onclick="openAddTask()">+ New Task</button>`;
   if(page==='projects') ta.innerHTML=`<button class="btn btn-primary btn-sm" onclick="openAddProjectOrOpp()">+ New</button>`;
   if(page==='habits')   ta.innerHTML=`<button class="btn btn-primary btn-sm" onclick="openAddHabit()">+ New Habit</button>`;
+  if(page==='circles')  ta.innerHTML=`<button class="btn btn-primary btn-sm" onclick="openCreateCircle()">+ New Circle</button>`;
   if(page!=='projects'){
     projectDetailId=null;
     document.getElementById('projects-list-view').style.display='';
@@ -1515,6 +1591,7 @@ function renderPage(p){
   if(p==='habits')   renderHabits();
   if(p==='capture')  renderCapture();
   if(p==='settings') renderSettings();
+  if(p==='circles')  renderCircles();
 }
 
 function updateBadges(){
@@ -3330,6 +3407,644 @@ function renderReviewOutput(text){
   });
   const blocks=parsed.length?parsed:[{title:'WEEKLY REVIEW',content:text}];
   document.getElementById('review-output').innerHTML=blocks.map(b=>`<div class="review-block"><h4>${b.title}</h4><div class="review-text">${escHtml(b.content)}</div></div>`).join('');
+}
+
+// ─── Circles ──────────────────────────────────────────────────────────────────
+let CIRCLES_DATA = []; // [{circle, members, invites}]
+let circleDetailId = null;
+let circlesLoading = false;
+let CIRCLE_TASKS = {};
+let circleTasksLoading = {};
+let circleTasksChannel = null;
+
+function sortCircleTasks(tasks = []) {
+  return [...tasks].sort((a, b) => {
+    if (!!a.completed !== !!b.completed) return a.completed ? 1 : -1;
+    if (a.due_date && b.due_date && a.due_date !== b.due_date) return a.due_date.localeCompare(b.due_date);
+    if (a.due_date && !b.due_date) return -1;
+    if (!a.due_date && b.due_date) return 1;
+    return new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime();
+  });
+}
+
+async function loadCircleTasks(circleId, { silent = false } = {}) {
+  if (!sb || !currentUser || !circleId) return [];
+  if (!silent) {
+    circleTasksLoading[circleId] = true;
+    if (circleDetailId === circleId && currentPage === 'circles') renderCircleDetail(circleId);
+  }
+  try {
+    const { data, error } = await sb
+      .from('circle_tasks')
+      .select('*')
+      .eq('circle_id', circleId)
+      .order('completed', { ascending: true })
+      .order('due_date', { ascending: true, nullsFirst: false })
+      .order('created_at', { ascending: false });
+    if (error) throw error;
+    CIRCLE_TASKS[circleId] = sortCircleTasks(data || []);
+    return CIRCLE_TASKS[circleId];
+  } catch (e) {
+    console.error('Circle tasks load error:', e);
+    return CIRCLE_TASKS[circleId] || [];
+  } finally {
+    circleTasksLoading[circleId] = false;
+    if (circleDetailId === circleId && currentPage === 'circles') renderCircleDetail(circleId);
+  }
+}
+
+function getCircleTaskStatus(task) {
+  if (task.completed) return 'Completed';
+  if (!task.due_date) return 'Open';
+  if (task.due_date < today()) return `Overdue · ${formatDueLabel(task.due_date)}`;
+  if (task.due_date === today()) return 'Due today';
+  return `Due ${formatDueLabel(task.due_date)}`;
+}
+
+function renderCircleTasksSection(circleId) {
+  const tasks = CIRCLE_TASKS[circleId] || [];
+  const loading = !!circleTasksLoading[circleId];
+  const openCount = tasks.filter(t => !t.completed).length;
+  const rows = loading
+    ? `<div class="circle-task-empty">Loading shared tasks…</div>`
+    : tasks.length === 0
+      ? `<div class="circle-task-empty">No shared tasks yet. Add one to get this Circle moving.</div>`
+      : tasks.map(task => `
+        <div class="circle-task-row">
+          <div class="circle-task-check${task.completed ? ' done' : ''}" onclick="toggleCircleTask('${circleId}','${task.id}')"></div>
+          <div class="circle-task-main">
+            <div class="circle-task-title${task.completed ? ' done' : ''}">${escHtml(task.title)}</div>
+            <div class="circle-task-meta">
+              <span>${escHtml(getCircleTaskStatus(task))}</span>
+              ${task.completed_at ? `<span>Done ${new Date(task.completed_at).toLocaleDateString('en-GB',{day:'numeric',month:'short'})}</span>` : ''}
+            </div>
+          </div>
+          <button class="btn-icon" onclick="deleteCircleTask('${circleId}','${task.id}')" style="color:var(--accent)">✕</button>
+        </div>
+      `).join('');
+
+  return `
+    <div class="card mt14">
+      <div class="flex-between mb12">
+        <div class="card-title" style="margin:0">Shared Tasks</div>
+        <span class="text-xs text-dim">${openCount} open</span>
+      </div>
+      <div class="circle-task-add">
+        <input class="input" id="circle-task-title-${circleId}" placeholder="Add a shared task…" onkeydown="if(event.key==='Enter')addCircleTask('${circleId}')"/>
+        <input class="input" id="circle-task-due-${circleId}" type="date"/>
+        <button class="btn btn-primary btn-sm" onclick="addCircleTask('${circleId}')">Add</button>
+      </div>
+      <div style="margin-top:10px">${rows}</div>
+    </div>`;
+}
+
+async function addCircleTask(circleId) {
+  if (!sb || !currentUser) return;
+  const titleInput = document.getElementById(`circle-task-title-${circleId}`);
+  const dueInput = document.getElementById(`circle-task-due-${circleId}`);
+  const title = titleInput?.value.trim();
+  if (!title) { titleInput?.focus(); return; }
+  try {
+    const { error } = await sb.from('circle_tasks').insert({
+      circle_id: circleId,
+      title,
+      due_date: dueInput?.value || null,
+      created_by: currentUser.id,
+    });
+    if (error) throw error;
+    if (titleInput) titleInput.value = '';
+    if (dueInput) dueInput.value = '';
+    await loadCircleTasks(circleId, { silent: true });
+    renderCircleDetail(circleId);
+    toast('Shared task added', 'success');
+  } catch (e) {
+    console.error('Add circle task error:', e);
+    toast('Could not add shared task', 'error');
+  }
+}
+
+async function toggleCircleTask(circleId, taskId) {
+  if (!sb || !currentUser) return;
+  const task = (CIRCLE_TASKS[circleId] || []).find(t => t.id === taskId);
+  if (!task) return;
+  const nextCompleted = !task.completed;
+  try {
+    const { error } = await sb.from('circle_tasks')
+      .update({
+        completed: nextCompleted,
+        completed_by: nextCompleted ? currentUser.id : null,
+        completed_at: nextCompleted ? new Date().toISOString() : null,
+      })
+      .eq('id', taskId);
+    if (error) throw error;
+    CIRCLE_TASKS[circleId] = sortCircleTasks((CIRCLE_TASKS[circleId] || []).map(t => t.id === taskId ? {
+      ...t,
+      completed: nextCompleted,
+      completed_by: nextCompleted ? currentUser.id : null,
+      completed_at: nextCompleted ? new Date().toISOString() : null,
+    } : t));
+    renderCircleDetail(circleId);
+  } catch (e) {
+    console.error('Toggle circle task error:', e);
+    toast('Could not update shared task', 'error');
+  }
+}
+
+async function deleteCircleTask(circleId, taskId) {
+  if (!sb || !currentUser) return;
+  try {
+    const { error } = await sb.from('circle_tasks').delete().eq('id', taskId);
+    if (error) throw error;
+    CIRCLE_TASKS[circleId] = (CIRCLE_TASKS[circleId] || []).filter(t => t.id !== taskId);
+    renderCircleDetail(circleId);
+    toast('Shared task removed', 'info');
+  } catch (e) {
+    console.error('Delete circle task error:', e);
+    toast('Could not remove shared task', 'error');
+  }
+}
+
+function teardownCircleTaskRealtime() {
+  if (!sb || !circleTasksChannel) return;
+  sb.removeChannel(circleTasksChannel);
+  circleTasksChannel = null;
+}
+
+function ensureCircleTaskRealtime() {
+  if (!sb || !currentUser || circleTasksChannel) return;
+  circleTasksChannel = sb
+    .channel(`circle-tasks-${currentUser.id}`)
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'circle_tasks' }, async payload => {
+      const changedCircleId = payload.new?.circle_id || payload.old?.circle_id || null;
+      await loadCircles();
+      if (changedCircleId) await loadCircleTasks(changedCircleId, { silent: true });
+      if (circleDetailId && currentPage === 'circles') renderCircleDetail(circleDetailId);
+    })
+    .subscribe();
+}
+
+async function loadCircles() {
+  if (!sb || !currentUser) return;
+  circlesLoading = true;
+  try {
+    const { data: memberRows, error: mErr } = await sb
+      .from('circle_members')
+      .select('circle_id')
+      .eq('user_id', currentUser.id)
+      .eq('status', 'active');
+    if (mErr) throw mErr;
+
+    if (!memberRows || !memberRows.length) {
+      CIRCLES_DATA = [];
+      circlesLoading = false;
+      updateCirclesBadge();
+      if (currentPage === 'circles') renderCircles();
+      return;
+    }
+
+    const circleIds = memberRows.map(r => r.circle_id);
+
+    const { data: circleRows, error: cErr } = await sb
+      .from('circles').select('*').in('id', circleIds);
+    if (cErr) throw cErr;
+
+    const { data: allMembers, error: amErr } = await sb
+      .from('circle_members').select('*').in('circle_id', circleIds);
+    if (amErr) throw amErr;
+
+    const { data: allInvites, error: aiErr } = await sb
+      .from('circle_invites').select('*').in('circle_id', circleIds).is('accepted_at', null);
+    if (aiErr) throw aiErr;
+
+    CIRCLES_DATA = (circleRows || []).map(circle => ({
+      circle,
+      members: (allMembers || []).filter(m => m.circle_id === circle.id),
+      invites: (allInvites || []).filter(i => i.circle_id === circle.id),
+    }));
+
+    circlesLoading = false;
+    updateCirclesBadge();
+    if (currentPage === 'circles') renderCircles();
+  } catch(e) {
+    console.error('Circles load error:', e);
+    circlesLoading = false;
+  }
+}
+
+function updateCirclesBadge() {
+  const badge = document.getElementById('circles-badge');
+  if (!badge) return;
+  badge.style.display = CIRCLES_DATA.length > 0 ? '' : 'none';
+}
+
+function renderCircles() {
+  const listView = document.getElementById('circles-list-view');
+  const detailView = document.getElementById('circle-detail-view');
+  if (!listView || !detailView) return;
+
+  if (circleDetailId) {
+    listView.style.display = 'none';
+    detailView.style.display = '';
+    renderCircleDetail(circleDetailId);
+    return;
+  }
+
+  listView.style.display = '';
+  detailView.style.display = 'none';
+  const grid = document.getElementById('circles-grid');
+  if (!grid) return;
+
+  if (circlesLoading) {
+    grid.innerHTML = `<div class="empty"><div class="empty-icon" style="opacity:.35">◎</div><div class="text-dim text-sm">Loading circles…</div></div>`;
+    return;
+  }
+
+  if (!CIRCLES_DATA.length) {
+    grid.innerHTML = `
+      <div class="circles-empty">
+        <div class="circles-empty-icon">◎</div>
+        <div class="circles-empty-title">No Circles yet</div>
+        <div class="circles-empty-sub">Create a Circle to share tasks and projects with people you trust — flatmates, partners, close collaborators.</div>
+        <button class="btn btn-primary" onclick="openCreateCircle()">Create your first Circle</button>
+      </div>`;
+    return;
+  }
+
+  grid.innerHTML = CIRCLES_DATA.map(({ circle, members, invites }) => {
+    const activeMembers = members.filter(m => m.status === 'active');
+    const usedSlots = activeMembers.length + invites.length;
+    const emptySlots = Math.max(0, 5 - usedSlots);
+
+    const memberChips = activeMembers.map(m => {
+      const isYou = m.user_id === currentUser.id;
+      return `<span class="circle-member-chip${isYou ? ' you' : ''}">${isYou ? 'You' : '?'}</span>`;
+    }).join('');
+
+    const pendingChips = invites.map(() =>
+      `<span class="circle-member-chip pending">Invited…</span>`
+    ).join('');
+
+    const emptyChip = emptySlots > 0 ? `<span class="circle-slot-empty">+ Invite</span>` : '';
+
+    const dots = Array.from({length: 5}, (_, i) =>
+      `<div class="circles-cap-dot${i >= usedSlots ? ' empty' : ''}"></div>`
+    ).join('');
+
+    return `
+      <div class="circle-card" onclick="openCircleDetail('${circle.id}')">
+        <div class="circle-card-header">
+          <div>
+            <div class="circle-card-name">${escHtml(circle.name)}</div>
+            <div class="circle-card-meta">${activeMembers.length} member${activeMembers.length !== 1 ? 's' : ''}${invites.length ? ` · ${invites.length} pending` : ''}</div>
+          </div>
+          <div class="circles-cap-bar">${dots}</div>
+        </div>
+        <div class="circle-members-row">${memberChips}${pendingChips}${emptyChip}</div>
+      </div>`;
+  }).join('');
+}
+
+function openCircleDetail(id) {
+  circleDetailId = id;
+  document.getElementById('circles-list-view').style.display = 'none';
+  document.getElementById('circle-detail-view').style.display = '';
+  const ta = document.getElementById('topbar-actions');
+  if (ta) ta.innerHTML = `<button class="btn btn-ghost btn-sm" onclick="backToCircles()">← Circles</button>`;
+  renderCircleDetail(id);
+  loadCircleTasks(id);
+}
+
+function backToCircles() {
+  circleDetailId = null;
+  document.getElementById('circles-list-view').style.display = '';
+  document.getElementById('circle-detail-view').style.display = 'none';
+  const ta = document.getElementById('topbar-actions');
+  if (ta) ta.innerHTML = `<button class="btn btn-primary btn-sm" onclick="openCreateCircle()">+ New Circle</button>`;
+  renderCircles();
+}
+
+function renderCircleDetail(id) {
+  const entry = CIRCLES_DATA.find(e => e.circle.id === id);
+  const detail = document.getElementById('circle-detail-view');
+  if (!entry || !detail) return;
+
+  const { circle, members, invites } = entry;
+  const activeMembers = members.filter(m => m.status === 'active');
+  const usedSlots = activeMembers.length + invites.length;
+  const slotsLeft = 5 - usedSlots;
+  const isCreator = circle.created_by === currentUser.id;
+
+  const memberRows = activeMembers.map(m => {
+    const isYou = m.user_id === currentUser.id;
+    const initials = isYou ? (getUserName()[0] || 'Y').toUpperCase() : '?';
+    const displayName = isYou ? getUserName() + ' (you)' : 'Member';
+    const tag = isCreator && isYou
+      ? `<span class="circle-member-tag">Owner</span>`
+      : isYou ? `<span class="circle-member-tag">You</span>` : '';
+    return `
+      <div class="circle-member-row">
+        <div class="circle-member-avatar">${escHtml(initials)}</div>
+        <div class="circle-member-info">
+          <div class="circle-member-name">${escHtml(displayName)}</div>
+          <div class="circle-member-email">${isYou ? escHtml(currentUser.email || '') : 'Active member'}</div>
+        </div>
+        ${tag}
+      </div>`;
+  }).join('');
+
+  const inviteRows = invites.map(inv => `
+    <div class="circle-member-row">
+      <div class="circle-member-avatar" style="opacity:.45">?</div>
+      <div class="circle-member-info">
+        <div class="circle-member-name" style="color:var(--text-3)">${escHtml(inv.invited_email || 'Invite sent')}</div>
+        <div class="circle-member-email">Awaiting acceptance</div>
+      </div>
+      <span class="circle-member-tag pending">Pending</span>
+    </div>`).join('');
+
+  const inviteSection = slotsLeft > 0 ? `
+    <div class="card mt14">
+      <div class="card-title">Invite Someone</div>
+      <div class="text-sm text-dim mb12">${slotsLeft} slot${slotsLeft !== 1 ? 's' : ''} remaining · Max 5 members per Circle.</div>
+      <div class="form-row">
+        <label>Invite by email</label>
+        <div class="flex-gap">
+          <input class="input" id="circle-invite-email" type="email" placeholder="their@email.com" style="flex:1"
+            onkeydown="if(event.key==='Enter')sendCircleInvite('${circle.id}')"/>
+          <button class="btn btn-primary btn-sm" onclick="sendCircleInvite('${circle.id}')">Send Invite</button>
+        </div>
+      </div>
+      <div class="form-row mt8">
+        <label>Or share an invite link</label>
+        <div id="circle-invite-link-area-${circle.id}">
+          <button class="btn btn-ghost btn-sm" onclick="generateCircleInviteLink('${circle.id}')">Generate link</button>
+        </div>
+      </div>
+    </div>` : `
+    <div class="card mt14" style="opacity:.6">
+      <div class="card-title">Circle Full</div>
+      <div class="text-sm text-dim">This Circle has reached its 5-member limit.</div>
+    </div>`;
+
+  const dangerSection = isCreator
+    ? `<div class="mt14" style="padding-top:14px;border-top:1px solid var(--border)">
+        <button class="btn btn-danger btn-sm" onclick="confirmDeleteCircle('${circle.id}')">Delete Circle</button>
+      </div>`
+    : `<div class="mt14" style="padding-top:14px;border-top:1px solid var(--border)">
+        <button class="btn btn-danger btn-sm" onclick="confirmLeaveCircle('${circle.id}')">Leave Circle</button>
+      </div>`;
+
+  detail.innerHTML = `
+    <div class="mb20">
+      <div class="circle-detail-name">${escHtml(circle.name)}</div>
+      <div class="text-xs text-dim">Created ${new Date(circle.created_at).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'})}</div>
+    </div>
+    <div class="card">
+      <div class="card-title">Members (${usedSlots} / 5)</div>
+      ${memberRows}${inviteRows}
+    </div>
+    ${renderCircleTasksSection(circle.id)}
+    ${inviteSection}
+    ${dangerSection}`;
+}
+
+function openCreateCircle() {
+  document.getElementById('modal-content').innerHTML = `
+    <h3>New Circle</h3>
+    <div class="text-sm text-dim mb16" style="line-height:1.6">A Circle is a shared space for up to 5 people. Give it a name that fits what you'll use it for.</div>
+    <div class="form-row">
+      <label>Circle Name</label>
+      <input class="input" id="circle-name-input" placeholder="e.g. The Flat, Portugal Trip, Side Hustle…" maxlength="60"
+        onkeydown="if(event.key==='Enter')submitCreateCircle()"/>
+    </div>
+    <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:16px">
+      <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="submitCreateCircle()">Create Circle</button>
+    </div>`;
+  document.getElementById('modal-overlay').style.display = 'flex';
+  setTimeout(() => document.getElementById('circle-name-input')?.focus(), 80);
+}
+
+async function submitCreateCircle() {
+  const nameInput = document.getElementById('circle-name-input');
+  const name = nameInput?.value.trim();
+  if (!name) { nameInput?.focus(); return; }
+  if (!sb || !currentUser) return;
+  const btn = document.querySelector('#modal-content .btn-primary');
+  if (btn) { btn.disabled = true; btn.textContent = 'Creating…'; }
+  try {
+    const { data: circle, error: cErr } = await sb
+      .from('circles').insert({ name, created_by: currentUser.id }).select().single();
+    if (cErr) throw cErr;
+    const { error: mErr } = await sb
+      .from('circle_members').insert({ circle_id: circle.id, user_id: currentUser.id, status: 'active' });
+    if (mErr) throw mErr;
+    closeModal();
+    toast('Circle created', 'success');
+    await loadCircles();
+    openCircleDetail(circle.id);
+  } catch(e) {
+    console.error('Create circle error:', e);
+    toast('Something went wrong', 'error');
+    if (btn) { btn.disabled = false; btn.textContent = 'Create Circle'; }
+  }
+}
+
+async function sendCircleInvite(circleId) {
+  const emailInput = document.getElementById('circle-invite-email');
+  const email = emailInput?.value.trim().toLowerCase();
+  if (!email || !email.includes('@')) { toast('Enter a valid email', 'error'); return; }
+  if (!sb || !currentUser) return;
+  const btn = document.querySelector(`button[onclick="sendCircleInvite('${circleId}')"]`);
+  if (btn) { btn.disabled = true; btn.textContent = 'Sending…'; }
+  try {
+    const code = Math.random().toString(36).slice(2,10) + Math.random().toString(36).slice(2,6);
+    const expires = new Date(Date.now() + 7*24*60*60*1000).toISOString();
+    const { error } = await sb.from('circle_invites').insert({
+      circle_id: circleId, invited_by: currentUser.id,
+      invite_code: code, invited_email: email, expires_at: expires,
+    });
+    if (error) throw error;
+    if (emailInput) emailInput.value = '';
+    toast('Invite sent — share the link too!', 'success');
+    await loadCircles();
+    renderCircleDetail(circleId);
+  } catch(e) {
+    console.error('Invite error:', e);
+    if (e.code === '23505') toast('An invite for this email already exists', 'info');
+    else toast('Could not send invite', 'error');
+    if (btn) { btn.disabled = false; btn.textContent = 'Send Invite'; }
+  }
+}
+
+async function generateCircleInviteLink(circleId) {
+  if (!sb || !currentUser) return;
+  try {
+    const code = Math.random().toString(36).slice(2,10) + Math.random().toString(36).slice(2,6);
+    const expires = new Date(Date.now() + 7*24*60*60*1000).toISOString();
+    const { error } = await sb.from('circle_invites').insert({
+      circle_id: circleId, invited_by: currentUser.id,
+      invite_code: code, expires_at: expires,
+    });
+    if (error && error.code !== '23505') throw error;
+    const link = `${window.location.origin}?join=${code}`;
+    const area = document.getElementById(`circle-invite-link-area-${circleId}`);
+    if (area) {
+      area.innerHTML = `
+        <div class="invite-link-box">
+          <span class="invite-link-text">${escHtml(link)}</span>
+          <button class="btn btn-ghost btn-xs" onclick="copyCircleLink('${escHtml(link)}')">Copy</button>
+        </div>
+        <div class="text-xs text-dim mt4">Expires in 7 days</div>`;
+    }
+    await loadCircles();
+  } catch(e) {
+    console.error('Generate link error:', e);
+    toast('Could not generate link', 'error');
+  }
+}
+
+function copyCircleLink(link) {
+  navigator.clipboard.writeText(link)
+    .then(() => toast('Link copied', 'success'))
+    .catch(() => {
+      const el = document.createElement('textarea');
+      el.value = link; document.body.appendChild(el); el.select();
+      document.execCommand('copy'); document.body.removeChild(el);
+      toast('Link copied', 'success');
+    });
+}
+
+function confirmDeleteCircle(id) {
+  const entry = CIRCLES_DATA.find(e => e.circle.id === id);
+  if (!entry) return;
+  document.getElementById('modal-content').innerHTML = `
+    <h3>Delete "${escHtml(entry.circle.name)}"?</h3>
+    <div class="text-sm text-dim mb16" style="line-height:1.6">This will permanently delete the Circle and remove all members. This cannot be undone.</div>
+    <div style="display:flex;gap:8px;justify-content:flex-end">
+      <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-danger" onclick="deleteCircle('${id}')">Delete Circle</button>
+    </div>`;
+  document.getElementById('modal-overlay').style.display = 'flex';
+}
+
+async function deleteCircle(id) {
+  if (!sb || !currentUser) return;
+  try {
+    const { error } = await sb.from('circles').delete().eq('id', id);
+    if (error) throw error;
+    closeModal();
+    toast('Circle deleted', 'info');
+    circleDetailId = null;
+    await loadCircles();
+    navigate('circles');
+  } catch(e) {
+    console.error('Delete circle error:', e);
+    toast('Could not delete circle', 'error');
+  }
+}
+
+function confirmLeaveCircle(id) {
+  const entry = CIRCLES_DATA.find(e => e.circle.id === id);
+  if (!entry) return;
+  document.getElementById('modal-content').innerHTML = `
+    <h3>Leave "${escHtml(entry.circle.name)}"?</h3>
+    <div class="text-sm text-dim mb16" style="line-height:1.6">You'll lose access to shared tasks and projects in this Circle.</div>
+    <div style="display:flex;gap:8px;justify-content:flex-end">
+      <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-danger" onclick="leaveCircle('${id}')">Leave Circle</button>
+    </div>`;
+  document.getElementById('modal-overlay').style.display = 'flex';
+}
+
+async function leaveCircle(id) {
+  if (!sb || !currentUser) return;
+  try {
+    const { error } = await sb.from('circle_members')
+      .delete().eq('circle_id', id).eq('user_id', currentUser.id);
+    if (error) throw error;
+    closeModal();
+    toast('You left the Circle', 'info');
+    circleDetailId = null;
+    await loadCircles();
+    navigate('circles');
+  } catch(e) {
+    console.error('Leave circle error:', e);
+    toast('Could not leave circle', 'error');
+  }
+}
+
+async function checkCircleInviteParam() {
+  if (!sb || !currentUser) return;
+  const params = new URLSearchParams(window.location.search);
+  const code = params.get('join');
+  if (!code) return;
+  const url = new URL(window.location.href);
+  url.searchParams.delete('join');
+  window.history.replaceState({}, '', url.toString());
+  try {
+    const { data: inviteRows, error } = await sb
+      .rpc('get_circle_invite_by_code', { target_invite_code: code });
+    const invite = Array.isArray(inviteRows) ? inviteRows[0] : null;
+    if (error || !invite) { toast('Invite link is invalid or expired', 'error'); return; }
+
+    const { data: existing } = await sb
+      .from('circle_members')
+      .select('id')
+      .eq('circle_id', invite.circle_id)
+      .eq('user_id', currentUser.id)
+      .maybeSingle();
+    if (existing) { toast("You're already in this Circle", 'info'); return; }
+
+    let circleName = 'a Circle';
+    const circleEntry = CIRCLES_DATA.find(e => e.circle.id === invite.circle_id);
+    if (circleEntry?.circle?.name) circleName = circleEntry.circle.name;
+    else {
+      const { data: circleRow } = await sb
+        .from('circles')
+        .select('name')
+        .eq('id', invite.circle_id)
+        .maybeSingle();
+      if (circleRow?.name) circleName = circleRow.name;
+    }
+
+    document.getElementById('modal-content').innerHTML = `
+      <h3>You've been invited</h3>
+      <div class="text-sm text-dim mb16" style="line-height:1.6">You've been invited to join <strong style="color:var(--text)">${escHtml(circleName)}</strong> on Kairo.</div>
+      <div style="display:flex;gap:8px;justify-content:flex-end">
+        <button class="btn btn-ghost" onclick="closeModal()">Decline</button>
+        <button class="btn btn-primary" onclick="acceptCircleInvite('${invite.id}','${invite.circle_id}')">Join Circle</button>
+      </div>`;
+    document.getElementById('modal-overlay').style.display = 'flex';
+  } catch(e) {
+    console.error('Invite check error:', e);
+  }
+}
+
+async function acceptCircleInvite(inviteId, circleId) {
+  if (!sb || !currentUser) return;
+  const btn = document.querySelector('#modal-content .btn-primary');
+  if (btn) { btn.disabled = true; btn.textContent = 'Joining…'; }
+  try {
+    const { error: memberErr } = await sb.from('circle_members')
+      .insert({ circle_id: circleId, user_id: currentUser.id, status: 'active' });
+    if (memberErr) throw memberErr;
+
+    const { error: inviteErr } = await sb.from('circle_invites')
+      .update({ accepted_at: new Date().toISOString() }).eq('id', inviteId);
+    if (inviteErr) throw inviteErr;
+
+    closeModal();
+    toast('Welcome to the Circle!', 'success');
+    await loadCircles();
+    navigate('circles');
+    openCircleDetail(circleId);
+  } catch(e) {
+    console.error('Accept invite error:', e);
+    if (e.code === '23514') toast('Circle is full', 'error');
+    else toast('Could not join circle', 'error');
+    if (btn) { btn.disabled = false; btn.textContent = 'Join Circle'; }
+  }
 }
 
 // ─── Swipe to complete (mobile) ───────────────────────────────────────────────

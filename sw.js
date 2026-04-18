@@ -2,7 +2,6 @@
 const CACHE_VERSION = 'kairo-v1';
 const CACHE = CACHE_VERSION;
 
-// Static assets that are safe to cache long-term (icons, manifest)
 const STATIC_PRECACHE = [
   '/manifest.json',
   '/icon-192.png',
@@ -11,9 +10,9 @@ const STATIC_PRECACHE = [
 
 // ── Install ───────────────────────────────────────────────────────────────────
 self.addEventListener('install', e => {
-  // Do NOT call skipWaiting() here — it triggers controllerchange → reload
-  // mid-activation, which causes a blank screen. The new SW will wait until
-  // the user clicks "Reload now" in the update banner, or opens a fresh tab.
+  // skipWaiting() here is safe because index.html no longer auto-reloads on
+  // controllerchange — so taking over immediately can't cause a blank screen.
+  self.skipWaiting();
   e.waitUntil(
     caches.open(CACHE).then(c => c.addAll(STATIC_PRECACHE))
   );
@@ -41,25 +40,21 @@ self.addEventListener('fetch', e => {
 
   const url = new URL(e.request.url);
 
-  // Don't intercept cross-origin requests (Supabase, Google, fonts, CDN)
   if (url.origin !== location.origin) return;
 
   const isNavigation = e.request.mode === 'navigate' ||
     (e.request.headers.get('accept') || '').includes('text/html');
 
-  // HTML/navigation: always network-first, fall back to cache only if offline
   if (isNavigation) {
     e.respondWith(networkFirstHTML(e.request));
     return;
   }
 
-  // Static icons/manifest: cache-first (these rarely change)
   if (STATIC_PRECACHE.includes(url.pathname)) {
     e.respondWith(cacheFirst(e.request));
     return;
   }
 
-  // Everything else: network-first with cache fallback
   e.respondWith(networkFirst(e.request));
 });
 
@@ -67,9 +62,7 @@ self.addEventListener('fetch', e => {
 
 async function networkFirstHTML(request) {
   try {
-    const response = await fetch('/index.html', {
-      cache: 'no-store',
-    });
+    const response = await fetch('/index.html', { cache: 'no-store' });
     if (response && response.ok) {
       const clone = response.clone();
       caches.open(CACHE).then(c => c.put('/index.html', clone));
@@ -113,7 +106,6 @@ async function cacheFirst(request) {
 }
 
 // ── Message handler ───────────────────────────────────────────────────────────
-// skipWaiting is only triggered here — by the user clicking "Reload now"
 self.addEventListener('message', e => {
   if (e.data === 'SKIP_WAITING') self.skipWaiting();
   if (e.data === 'CLEAR_CACHE') {

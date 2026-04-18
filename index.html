@@ -1091,7 +1091,15 @@ async function initSupabase() {
     setSyncStatus('error','Offline mode'); return false;
   }
   try {
-    sb = supabase.createClient(SUPA_URL, SUPA_KEY);
+    sb = supabase.createClient(SUPA_URL, SUPA_KEY, {
+      auth: {
+        persistSession: true,
+        storageKey: 'kairo_auth',
+        storage: window.localStorage,
+        autoRefreshToken: true,
+        detectSessionInUrl: true,
+      }
+    });
     return true;
   } catch(e) {
     setSyncStatus('error','Offline mode'); return false;

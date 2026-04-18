@@ -1,7 +1,8 @@
 // Cache version — bump this string when you change icons or manifest.json
-const CACHE_VERSION = 'kairo-v1';
+const CACHE_VERSION = 'kairo-v2';
 const CACHE = CACHE_VERSION;
 
+// Only cache truly static assets — never HTML
 const STATIC_PRECACHE = [
   '/manifest.json',
   '/icon-192.png',
@@ -38,20 +39,20 @@ self.addEventListener('fetch', e => {
 
   const url = new URL(e.request.url);
 
-  // Don't intercept cross-origin requests (Supabase, Google, fonts, CDN)
+  // Don't intercept cross-origin requests
   if (url.origin !== location.origin) return;
 
   const isNavigation = e.request.mode === 'navigate' ||
     (e.request.headers.get('accept') || '').includes('text/html');
 
-  // HTML/navigation: always network-first, fall back to cache only if offline
-  // Use pathname only (strip hash) so /#token never gets cached separately
+  // HTML: ALWAYS go to network, NEVER serve from cache, NEVER cache the response
+  // This guarantees the browser always gets fresh HTML regardless of URL hash
   if (isNavigation) {
-    e.respondWith(networkFirstHTML());
+    e.respondWith(networkOnlyHTML());
     return;
   }
 
-  // Static icons/manifest: cache-first (these rarely change)
+  // Static icons/manifest: cache-first
   if (STATIC_PRECACHE.includes(url.pathname)) {
     e.respondWith(cacheFirst(e.request));
     return;
@@ -63,16 +64,12 @@ self.addEventListener('fetch', e => {
 
 // ── Strategies ────────────────────────────────────────────────────────────────
 
-// Always fetch /index.html directly — never cache /#hash variants
-async function networkFirstHTML() {
+// HTML is NEVER cached — always fetched fresh from network
+async function networkOnlyHTML() {
   try {
-    const response = await fetch('/index.html', { cache: 'no-store' });
-    if (response && response.ok) {
-      const clone = response.clone();
-      caches.open(CACHE).then(c => c.put('/index.html', clone));
-    }
-    return response;
+    return await fetch('/index.html', { cache: 'no-store' });
   } catch {
+    // Only fall back to cache if truly offline
     const cached = await caches.match('/index.html') || await caches.match('/');
     if (cached) return cached;
     return new Response('<h2>Kairo is offline</h2><p>Connect to the internet to load the app.</p>', {

@@ -10,8 +10,6 @@ const STATIC_PRECACHE = [
 
 // ── Install ───────────────────────────────────────────────────────────────────
 self.addEventListener('install', e => {
-  // skipWaiting() here is safe because index.html no longer auto-reloads on
-  // controllerchange — so taking over immediately can't cause a blank screen.
   self.skipWaiting();
   e.waitUntil(
     caches.open(CACHE).then(c => c.addAll(STATIC_PRECACHE))
@@ -40,27 +38,33 @@ self.addEventListener('fetch', e => {
 
   const url = new URL(e.request.url);
 
+  // Don't intercept cross-origin requests (Supabase, Google, fonts, CDN)
   if (url.origin !== location.origin) return;
 
   const isNavigation = e.request.mode === 'navigate' ||
     (e.request.headers.get('accept') || '').includes('text/html');
 
+  // HTML/navigation: always network-first, fall back to cache only if offline
+  // Use pathname only (strip hash) so /#token never gets cached separately
   if (isNavigation) {
-    e.respondWith(networkFirstHTML(e.request));
+    e.respondWith(networkFirstHTML());
     return;
   }
 
+  // Static icons/manifest: cache-first (these rarely change)
   if (STATIC_PRECACHE.includes(url.pathname)) {
     e.respondWith(cacheFirst(e.request));
     return;
   }
 
+  // Everything else: network-first with cache fallback
   e.respondWith(networkFirst(e.request));
 });
 
 // ── Strategies ────────────────────────────────────────────────────────────────
 
-async function networkFirstHTML(request) {
+// Always fetch /index.html directly — never cache /#hash variants
+async function networkFirstHTML() {
   try {
     const response = await fetch('/index.html', { cache: 'no-store' });
     if (response && response.ok) {

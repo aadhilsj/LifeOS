@@ -1,6 +1,6 @@
-// Cache version — update this timestamp on every deploy to bust old caches automatically
-const CACHE_VERSION = 'kairo-__DEPLOY_TIME__';
-const CACHE = `kairo-${Date.now()}`;
+// Cache version — bump this string manually on each deploy to bust old caches
+const CACHE_VERSION = 'kairo-v1';
+const CACHE = CACHE_VERSION; // was: `kairo-${Date.now()}` — that was the bug
 
 // Static assets that are safe to cache long-term (icons, manifest)
 const STATIC_PRECACHE = [
@@ -47,7 +47,6 @@ self.addEventListener('fetch', e => {
     (e.request.headers.get('accept') || '').includes('text/html');
 
   // HTML/navigation: always network-first, fall back to cache only if offline
-  // This means a fresh deploy is always picked up immediately
   if (isNavigation) {
     e.respondWith(networkFirstHTML(e.request));
     return;
@@ -65,11 +64,10 @@ self.addEventListener('fetch', e => {
 
 // ── Strategies ────────────────────────────────────────────────────────────────
 
-// Network-first for HTML — always tries network, caches result, falls back if offline
 async function networkFirstHTML(request) {
   try {
     const response = await fetch('/index.html', {
-      cache: 'no-store', // bypass browser HTTP cache too
+      cache: 'no-store',
     });
     if (response && response.ok) {
       const clone = response.clone();
@@ -77,7 +75,6 @@ async function networkFirstHTML(request) {
     }
     return response;
   } catch {
-    // Offline fallback
     const cached = await caches.match('/index.html') || await caches.match('/');
     if (cached) return cached;
     return new Response('<h2>Kairo is offline</h2><p>Connect to the internet to load the app.</p>', {
@@ -86,7 +83,6 @@ async function networkFirstHTML(request) {
   }
 }
 
-// Network-first for other assets
 async function networkFirst(request) {
   try {
     const response = await fetch(request);
@@ -100,7 +96,6 @@ async function networkFirst(request) {
   }
 }
 
-// Cache-first for static assets
 async function cacheFirst(request) {
   const cached = await caches.match(request);
   if (cached) return cached;
@@ -117,7 +112,6 @@ async function cacheFirst(request) {
 }
 
 // ── Message handler ───────────────────────────────────────────────────────────
-// Allows the app to force a cache clear programmatically if ever needed
 self.addEventListener('message', e => {
   if (e.data === 'SKIP_WAITING') self.skipWaiting();
   if (e.data === 'CLEAR_CACHE') {

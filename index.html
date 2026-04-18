@@ -9,9 +9,11 @@
 <meta name="apple-mobile-web-app-capable" content="yes"/>
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
 <meta name="apple-mobile-web-app-title" content="Kairo"/>
-<link rel="icon" type="image/x-icon" href="/favicon.ico"/>
-<link rel="icon" type="image/png" sizes="512x512" href="/icon-512.png"/>
-<link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png"/>
+<link rel="apple-touch-icon" href="/icon-192.png?v=2"/>
+<link rel="shortcut icon" href="/favicon.ico?v=2"/>
+<link rel="icon" type="image/x-icon" href="/favicon.ico?v=2"/>
+<link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png?v=2"/>
+<link rel="icon" type="image/png" sizes="512x512" href="/icon-512.png?v=2"/>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@300;400;500;600&display=swap" rel="stylesheet"/>
 <style>
@@ -793,10 +795,6 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;heigh
               </div>
               <div id="home-tasks-list"></div>
             </div>
-            <div class="card mt14">
-              <div class="card-title">Habits</div>
-              <div id="home-habits-list"></div>
-            </div>
           </div>
           <div id="home-col-right">
             <div class="card mb14">
@@ -812,6 +810,10 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;heigh
                 <span class="text-xs text-dim" style="cursor:pointer" onclick="event.stopPropagation();navigate('projects');setTimeout(()=>switchHub('projects'),50)">All →</span>
               </div>
               <div id="home-projects-list"></div>
+            </div>
+            <div class="card mt14">
+              <div class="card-title">Habits</div>
+              <div id="home-habits-list"></div>
             </div>
           </div>
         </div>
@@ -2610,7 +2612,7 @@ function formatFreeWindow(window){
 function connectGoogleCalendar(){
   const userId = currentUser?.id;
   if (!userId) return;
-  window.location.href=`/api/calendar/auth?userId=${encodeURIComponent(userId)}`;
+  window.location.href=`/api/calendar/auth?userId=${encodeURIComponent(userId)}&returnOrigin=${encodeURIComponent(window.location.origin)}`;
 }
 
 async function fetchCalendarData(){

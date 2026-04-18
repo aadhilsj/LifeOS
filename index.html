@@ -4125,11 +4125,9 @@ if ('serviceWorker' in navigator) {
         });
       });
 
-      // When controller changes (after skipWaiting), reload to get fresh app
-      let refreshing = false;
-      navigator.serviceWorker.addEventListener('controllerchange', () => {
-        if (!refreshing) { refreshing = true; window.location.reload(); }
-      });
+      // controllerchange intentionally not handled — auto-reload here caused
+      // blank screens when skipWaiting() fired mid-activation. The "Reload now"
+      // banner already handles reloads explicitly when the user opts in.
 
     } catch(e) {
       console.warn('SW registration failed:', e);

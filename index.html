@@ -1204,16 +1204,8 @@ async function handleAuth() {
     }
   });
 
-  // Safety net: only show login screen if NO auth event fires within 8s
-  // (SIGNED_IN can take a few seconds when restoring from localStorage)
-  setTimeout(() => {
-    if (document.querySelector('.app').style.display === 'none' &&
-        document.getElementById('login-screen').style.display === 'none') {
-      console.warn('[Kairo] Auth timeout — no auth event received, showing login');
-      showLoginScreen();
-      document.getElementById('login-box').style.display = 'flex';
-    }
-  }, 8000);
+  // No timeout needed — SIGNED_IN fires reliably on every load when a session
+  // exists in localStorage. Adding a timeout only causes race conditions.
 }
 
 // ─── State ────────────────────────────────────────────────────────────────────

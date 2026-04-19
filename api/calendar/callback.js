@@ -8,10 +8,11 @@ const {
   upsertCalendarConnection,
 } = require('./_lib');
 
-function buildReturnUrl(success, message) {
+function buildReturnUrl(success, message, returnOrigin = '') {
   const { appBaseUrl } = getConfig();
-  if (!appBaseUrl) return null;
-  const url = new URL('/', appBaseUrl.startsWith('http') ? appBaseUrl : `https://${appBaseUrl}`);
+  const base = returnOrigin || appBaseUrl;
+  if (!base) return null;
+  const url = new URL('/', base.startsWith('http') ? base : `https://${base}`);
   url.searchParams.set('calendar', success ? 'connected' : 'error');
   if (message) url.searchParams.set('message', message);
   return url.toString();
@@ -25,9 +26,10 @@ module.exports = async function handler(req, res) {
   const { code, error, state } = req.query;
   const authState = parseState(state);
   const userId = authState.userId || '';
+  const returnOrigin = authState.returnOrigin || '';
 
   if (error) {
-    const redirectUrl = buildReturnUrl(false, error);
+    const redirectUrl = buildReturnUrl(false, error, returnOrigin);
     if (redirectUrl) return res.redirect(redirectUrl);
     return res.status(400).json({ error: 'Google Calendar authorisation was denied', detail: error });
   }
@@ -43,7 +45,7 @@ module.exports = async function handler(req, res) {
     const nextIntegration = upsertCalendarConnection(currentIntegration, connection);
     await saveIntegrationState(nextIntegration, userId);
 
-    const redirectUrl = buildReturnUrl(true, 'google-calendar-connected');
+    const redirectUrl = buildReturnUrl(true, 'google-calendar-connected', returnOrigin);
     if (redirectUrl) return res.redirect(redirectUrl);
 
     return res.status(200).json({
@@ -51,7 +53,7 @@ module.exports = async function handler(req, res) {
       message: 'Google Calendar connected',
     });
   } catch (err) {
-    const redirectUrl = buildReturnUrl(false, 'google-calendar-connect-failed');
+    const redirectUrl = buildReturnUrl(false, 'google-calendar-connect-failed', returnOrigin);
     if (redirectUrl) return res.redirect(redirectUrl);
 
     return res.status(500).json({

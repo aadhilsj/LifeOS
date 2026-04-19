@@ -461,14 +461,18 @@ input[type="date"].input,input[type="time"].input{color-scheme:dark}
 .circle-assignee-chip{display:inline-flex;align-items:center;gap:4px;padding:3px 7px;border-radius:999px;background:var(--surface2);border:1px solid var(--border);font-size:10px;color:var(--text-2)}
 .circle-assignee-chip::before{content:"↗";font-size:9px;opacity:.65}
 .circle-project-status-row{display:flex;gap:6px;flex-wrap:wrap;margin-top:12px}
-.circle-status-btn{border:1px solid var(--border);background:var(--surface2);color:var(--text-2);border-radius:999px;padding:6px 10px;font-size:10.5px;font-weight:600;cursor:pointer;font-family:var(--font-sans);transition:all var(--transition)}
+.circle-status-btn{border:1px solid var(--border);background:var(--surface2);color:var(--text-2);border-radius:999px;padding:6px 14px;font-size:10.5px;font-weight:600;cursor:pointer;font-family:var(--font-sans);transition:all var(--transition)}
 .circle-status-btn:hover{border-color:var(--border-active);color:var(--text)}
-.circle-status-btn.active.status-active,.circle-status-btn.active.status-paused,.circle-status-btn.active.status-completed{box-shadow:none}
+.circle-status-btn.active.status-active{background:var(--green-soft);border-color:var(--green);color:var(--green)}
+.circle-status-btn.active.status-paused{background:var(--gold-soft);border-color:var(--gold);color:var(--gold)}
+.circle-status-btn.active.status-completed{background:var(--blue-soft);border-color:var(--blue);color:var(--blue)}
 .circle-project-add-row{display:flex;justify-content:flex-end;margin-top:12px}
 .circle-project-task-add{display:grid;grid-template-columns:minmax(0,1fr) 130px 140px auto;gap:8px}
 
 @media (max-width: 760px){
-  .circle-project-task-add{grid-template-columns:1fr 1fr}
+  .circle-project-task-add{display:flex;flex-direction:column;gap:6px}
+  .circle-project-task-add .input{width:100%;font-size:14px}
+  .circle-project-task-add .btn{width:100%;padding:10px;font-size:14px}
 }
 
 /* Utils */
@@ -4187,11 +4191,26 @@ async function updateCircleProjectStatus(circleId, projectId, status) {
   }
 }
 
-async function editCircleProjectNotes(circleId, projectId) {
+function editCircleProjectNotes(circleId, projectId) {
   const project = getCircleProject(circleId, projectId);
   if (!project) return;
-  const notes = prompt('Project notes:', project.notes || '');
-  if (notes === null) return;
+  document.getElementById('modal-content').innerHTML = `
+    <h3>Project Notes</h3>
+    <div class="form-row" style="margin-top:12px">
+      <textarea class="input" id="circle-project-notes-input" rows="6" placeholder="Add notes, context, or links for everyone in the Circle…" style="resize:vertical;line-height:1.6">${escHtml(project.notes || '')}</textarea>
+    </div>
+    <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:16px">
+      <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="saveCircleProjectNotes('${circleId}','${projectId}')">Save</button>
+    </div>`;
+  document.getElementById('modal-overlay').style.display = 'flex';
+  setTimeout(() => document.getElementById('circle-project-notes-input')?.focus(), 80);
+}
+
+async function saveCircleProjectNotes(circleId, projectId) {
+  const notes = document.getElementById('circle-project-notes-input')?.value.trim() || '';
+  const btn = document.querySelector('#modal-content .btn-primary');
+  if (btn) { btn.disabled = true; btn.textContent = 'Saving…'; }
   try {
     const { error } = await sb.from('circle_projects')
       .update({ notes, last_updated: new Date().toISOString() })
@@ -4200,11 +4219,13 @@ async function editCircleProjectNotes(circleId, projectId) {
     CIRCLE_PROJECTS[circleId] = sortCircleProjects((CIRCLE_PROJECTS[circleId] || []).map(entry =>
       entry.id === projectId ? { ...entry, notes, last_updated: new Date().toISOString() } : entry
     ));
+    closeModal();
     renderCircleDetail(circleId);
-    toast('Project notes updated', 'success');
+    toast('Notes saved', 'success');
   } catch (e) {
     console.error('Edit circle project notes error:', e);
-    toast('Could not update notes', 'error');
+    toast('Could not save notes', 'error');
+    if (btn) { btn.disabled = false; btn.textContent = 'Save'; }
   }
 }
 

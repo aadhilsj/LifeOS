@@ -4055,10 +4055,13 @@ function renderCircleDetail(id) {
     <div class="circle-member-row">
       <div class="circle-member-avatar" style="opacity:.45">?</div>
       <div class="circle-member-info">
-        <div class="circle-member-name" style="color:var(--text-3)">${escHtml(inv.invited_email || 'Invite sent')}</div>
+        <div class="circle-member-name" style="color:var(--text-3)">${escHtml(inv.invited_email || 'Link invite')}</div>
         <div class="circle-member-email">Awaiting acceptance</div>
       </div>
-      <span class="circle-member-tag pending">Pending</span>
+      <div style="display:flex;align-items:center;gap:8px">
+        <span class="circle-member-tag pending">Pending</span>
+        <button class="btn btn-ghost btn-xs" style="color:var(--text-3);font-size:11px" onclick="revokeCircleInvite('${inv.id}','${circle.id}')">Revoke</button>
+      </div>
     </div>`).join('');
 
   const inviteSection = slotsLeft > 0 ? `

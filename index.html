@@ -991,14 +991,14 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;heigh
         <div class="grid-2" style="gap:14px">
           <div id="home-col-left">
             <div class="dtn-card" id="home-dtn-card">
-              <div class="dtn-label">Do This Now</div>
+              <div class="dtn-label" id="home-dtn-label">Do This Now</div>
               <div class="dtn-sub" id="home-dtn-sub">What matters most right now</div>
               <div id="home-focus-list"></div>
             </div>
             <div class="card">
               <div class="flex-between mb12">
-                <div class="card-title" style="margin:0">Today's Tasks</div>
-                <span class="text-xs text-dim" style="cursor:pointer" onclick="navigate('tasks')">See all →</span>
+                <div class="card-title" style="margin:0" id="home-today-tasks-title">Today's Tasks</div>
+                <span class="text-xs text-dim" style="cursor:pointer" onclick="navigate('tasks')" id="home-today-tasks-all">See all →</span>
               </div>
               <div id="home-tasks-list"></div>
             </div>
@@ -1006,15 +1006,15 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;heigh
           <div id="home-col-right">
             <div class="card mb14">
               <div class="flex-between mb12">
-                <div class="card-title" style="margin:0">Today's Schedule</div>
+                <div class="card-title" style="margin:0" id="home-schedule-title">Today's Schedule</div>
                 <button class="btn btn-ghost btn-xs" id="calendar-connect-btn" onclick="connectGoogleCalendar()" style="display:none">Connect</button>
               </div>
               <div id="home-calendar-card"></div>
             </div>
             <div class="card" id="home-active-projects" style="cursor:pointer" onclick="navigate('projects');setTimeout(()=>switchHub('projects'),50)">
               <div class="flex-between mb12">
-                <div class="card-title" style="margin:0">Active Projects</div>
-                <span class="text-xs text-dim" style="cursor:pointer" onclick="event.stopPropagation();navigate('projects');setTimeout(()=>switchHub('projects'),50)">All →</span>
+                <div class="card-title" style="margin:0" id="home-active-projects-title">Active Projects</div>
+                <span class="text-xs text-dim" style="cursor:pointer" onclick="event.stopPropagation();navigate('projects');setTimeout(()=>switchHub('projects'),50)" id="home-active-projects-all">All →</span>
               </div>
               <div id="home-projects-list"></div>
             </div>
@@ -1058,9 +1058,9 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;heigh
       <!-- WORKSPACE HUB (Projects + Opportunities + Review — all accessible on mobile) -->
       <div class="page" id="page-projects">
         <div class="page-tabs" id="projects-hub-tabs">
-          <div class="page-tab active" data-hub="projects" onclick="switchHub('projects')">Projects</div>
-          <div class="page-tab" data-hub="opportunities" onclick="switchHub('opportunities')">Opportunities</div>
-          <div class="page-tab" data-hub="review" onclick="switchHub('review')">Review</div>
+          <div class="page-tab active" data-hub="projects" onclick="switchHub('projects')" id="hub-tab-projects">Projects</div>
+          <div class="page-tab" data-hub="opportunities" onclick="switchHub('opportunities')" id="hub-tab-opportunities">Opportunities</div>
+          <div class="page-tab" data-hub="review" onclick="switchHub('review')" id="hub-tab-review">Review</div>
         </div>
 
         <!-- Projects sub-view -->
@@ -1127,7 +1127,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;heigh
                 <line x1="8" y1="22" x2="16" y2="22"/>
               </svg>
             </button>
-            <button class="btn btn-primary" onclick="addCapture()">Capture</button>
+            <button class="btn btn-primary" onclick="addCapture()" id="capture-submit-btn">Capture</button>
           </div>
           <div class="voice-status" id="voice-status"></div>
         </div>
@@ -1554,10 +1554,147 @@ const I18N = {
       habitsTitle: 'Habits',
       circlesTitle: 'Circles',
       all: 'All →',
+      seeAll: 'See all →',
+      dtnTitle: 'Do This Now',
+      dtnPinned: 'Your starred priorities',
+      dtnSuggested: 'Suggested — star a task to pin it',
+      dtnEmpty: "Nothing pending — you're clear!",
+      noPending: 'No pending tasks.',
+      todayTasksTitle: "Today's Tasks",
+      todayTasksClear: 'All clear here!',
+      scheduleTitle: "Today's Schedule",
+      activeProjectsTitle: 'Active Projects',
+      captureInbox: 'item{{plural}} in capture inbox',
+      process: 'Process →',
+      weeklyReady: 'Your weekly review is ready',
+      view: 'View →',
+      weeklyTonight: 'Weekly review generates tonight at 8pm',
+      addAccount: 'Add account',
+      connect: 'Connect',
+      loadingSchedule: "Loading today's schedule…",
+      calendarUnavailable: 'Calendar unavailable.',
+      connectCalendar: "Connect Google Calendar to see today's events and free windows here.",
+      calendarsConnected: '{{count}} calendar{{plural}} connected.',
+      noEventsToday: 'No events on your calendar today.',
+      linked: 'Linked',
+      link: 'Link',
+      noActiveProjects: 'No active projects.',
+      pendingTasks: '{{count}} pending task{{plural}}',
+      todayShort: 'Today',
+      daysAgo: '{{count}}d ago',
+      allTasksDone: 'All tasks done',
+      habitsOnTrack: 'All habits on track',
+      habitsNeedAttention: '{{count}} habit{{plural}} need attention',
+      noHabits: 'No habits yet. Add one to start building rhythm.',
       commandLabel: 'What needs to happen today?',
       commandHint: 'Speak or type naturally —',
       commandHintEmphasis: 'Kairo will sort it into tasks',
       commandPlaceholder: 'e.g. Call dentist, pay rent…',
+    },
+    tasksPage: {
+      all: 'All',
+      allTasks: 'All Tasks',
+      pending: 'Pending',
+      completed: 'Completed',
+      dismissed: 'Dismissed',
+      nothingPending: 'Nothing pending here.',
+      subtasksDone: '{{done}}/{{total}} subtasks',
+      addSubtask: 'Add subtask… (Enter)',
+      add: 'Add',
+      restore: 'Restore',
+      dismiss: 'Dismiss',
+      delete: 'Delete',
+      edit: 'Edit',
+      showMore: 'Show more',
+      noDueDate: 'no due date',
+      dueToday: 'due today',
+      dueDate: 'due {{date}}',
+      overdueSince: 'overdue since {{date}}',
+      starToPin: 'Star to pin',
+    },
+    workspace: {
+      projectsTab: 'Projects',
+      opportunitiesTab: 'Opportunities',
+      reviewTab: 'Review',
+      noProjects: 'No projects yet.',
+      pendingTasks: '{{count}} pending task{{plural}}',
+      percentComplete: '{{count}}% complete',
+      backToProjects: '← Back to Projects',
+      updatedToday: 'Updated today',
+      lastUpdatedDays: 'Last updated {{count}}d ago',
+      progress: 'Progress (tasks + subtasks)',
+      tasksDone: '{{done}}/{{total}} tasks done',
+      notes: 'Notes',
+      clickToAddNotes: 'Click to add notes…',
+      linkedMeetings: 'Linked Meetings ({{count}})',
+      noLinkedMeetings: 'No calendar events linked yet.',
+      editLink: 'Edit Link',
+      tasks: 'Tasks ({{count}})',
+      noProjectTasks: 'No tasks yet.',
+      pipelineOverview: 'Pipeline Overview',
+      reviewAreaDistribution: 'Focus Area Distribution',
+      aiWeeklyReview: 'AI Weekly Review',
+      reviewWait: 'Your review generates automatically every Sunday at 8pm. Check back then.',
+      doneThisWeek: 'Done this week',
+      overdue: 'Overdue',
+      habitRateWeek: 'Habit rate this week',
+      tasksCountPct: '{{count}} tasks · {{pct}}%',
+      thisWeek: 'This week',
+      generated: 'Generated {{date}}',
+      weeklyReview: 'WEEKLY REVIEW',
+      reviewAnalysing: 'Analysing your week…',
+      reviewDeployNote: 'The AI review works once deployed to Vercel (requires the /api/review serverless function). All other features work fully in this HTML file.',
+    },
+    habitsPage: {
+      completions: '{{count}} completions',
+      consistency: '{{count}}% consistency',
+      noStreak: 'No streak',
+      streakDays: '{{count}}d streak',
+    },
+    capturePage: {
+      inbox: 'Inbox ({{count}})',
+      empty: 'Nothing captured yet. Brain dump here, sort later.',
+      assignProject: '→ Assign to project',
+      captured: 'Captured!',
+      addedAsTask: 'Added as task',
+      capturePlaceholder: "What's on your mind? Press Enter to capture.",
+      captureBtn: 'Capture',
+    },
+    circlesPage: {
+      loading: 'Loading circles…',
+      emptyTitle: 'No Circles yet',
+      emptySub: 'Create a Circle to share tasks and projects with people you trust — flatmates, partners, close collaborators.',
+      createFirst: 'Create your first Circle',
+      pending: '{{count}} pending',
+      members: '{{count}} member{{plural}}',
+      slotsUsed: '{{count}} / 5 members',
+      manage: 'Manage ›',
+      close: 'Close ‹',
+      backToCircles: '← Circles',
+      backToCircle: '← {{name}}',
+      created: 'Created {{date}}',
+      you: 'You',
+      owner: 'Owner',
+      member: 'Member',
+      activeMember: 'Active member',
+      pendingInvite: 'Pending',
+      awaitingAcceptance: 'Awaiting acceptance',
+      revoke: 'Revoke',
+      inviteByEmail: 'Invite by email',
+      inviteEmailPlaceholder: 'their@email.com',
+      sendInvite: 'Send Invite',
+      shareInviteLink: 'Or share an invite link',
+      generateLink: 'Generate link',
+      circleFull: 'Circle is full (5/5).',
+      settings: 'Circle Settings',
+      sharedTaskList: 'Shared task list',
+      sharedTaskListCopy: 'A simple shared list of tasks',
+      sharedProjects: 'Shared projects',
+      sharedProjectsCopy: 'Structured projects for trips, events, side hustles',
+      deleteCircle: 'Delete Circle',
+      leaveCircle: 'Leave Circle',
+      openTasks: 'open task{{plural}}',
+      activeProjects: 'active project{{plural}}',
     },
     settings: {
       profile: 'Profile',
@@ -1600,6 +1737,25 @@ const I18N = {
     },
     sync: {
       connecting: 'Connecting…',
+    },
+    labels: {
+      today: 'Today',
+      none: 'None',
+      unassigned: 'Unassigned',
+      you: 'You',
+      member: 'Member',
+    },
+    focusAreas: {
+      Career: 'Career',
+      Health: 'Health',
+      Personal: 'Personal',
+      'Life Admin': 'Life Admin',
+      Growth: 'Growth',
+    },
+    projectStatus: {
+      Active: 'Active',
+      Paused: 'Paused',
+      Completed: 'Completed',
     },
     actions: {
       newTask: '+ New Task',
@@ -1654,10 +1810,147 @@ const I18N = {
       habitsTitle: 'Habitudes',
       circlesTitle: 'Cercles',
       all: 'Tout →',
+      seeAll: 'Voir tout →',
+      dtnTitle: 'À faire maintenant',
+      dtnPinned: 'Vos priorités épinglées',
+      dtnSuggested: 'Suggestion — mettez une tâche en favori pour l’épingler',
+      dtnEmpty: 'Rien en attente — tout est clair.',
+      noPending: 'Aucune tâche en attente.',
+      todayTasksTitle: "Tâches d'aujourd'hui",
+      todayTasksClear: 'Tout est en ordre !',
+      scheduleTitle: "Planning d'aujourd'hui",
+      activeProjectsTitle: 'Projets actifs',
+      captureInbox: '{{count}} élément{{plural}} dans la capture',
+      process: 'Traiter →',
+      weeklyReady: 'Votre revue hebdomadaire est prête',
+      view: 'Voir →',
+      weeklyTonight: 'La revue hebdomadaire se génère ce soir à 20h',
+      addAccount: 'Ajouter un compte',
+      connect: 'Connecter',
+      loadingSchedule: "Chargement du planning d'aujourd'hui…",
+      calendarUnavailable: 'Calendrier indisponible.',
+      connectCalendar: "Connectez Google Calendar pour voir les événements d'aujourd'hui ici.",
+      calendarsConnected: '{{count}} calendrier{{plural}} connecté{{plural}}.',
+      noEventsToday: "Aucun événement dans votre calendrier aujourd'hui.",
+      linked: 'Lié',
+      link: 'Lier',
+      noActiveProjects: 'Aucun projet actif.',
+      pendingTasks: '{{count}} tâche{{plural}} en attente',
+      todayShort: "Aujourd'hui",
+      daysAgo: 'il y a {{count}} j',
+      allTasksDone: 'Toutes les tâches sont terminées',
+      habitsOnTrack: 'Toutes les habitudes sont sur la bonne voie',
+      habitsNeedAttention: '{{count}} habitude{{plural}} demandent de l’attention',
+      noHabits: "Aucune habitude pour l'instant. Ajoutez-en une pour créer un rythme.",
       commandLabel: "Qu'est-ce qui doit se passer aujourd'hui ?",
       commandHint: 'Parlez ou écrivez naturellement —',
       commandHintEmphasis: 'Kairo le transformera en tâches',
       commandPlaceholder: 'ex. Appeler le dentiste, payer le loyer…',
+    },
+    tasksPage: {
+      all: 'Tout',
+      allTasks: 'Toutes les tâches',
+      pending: 'En attente',
+      completed: 'Terminées',
+      dismissed: 'Écartées',
+      nothingPending: "Aucune tâche en attente ici.",
+      subtasksDone: '{{done}}/{{total}} sous-tâches',
+      addSubtask: 'Ajouter une sous-tâche… (Entrée)',
+      add: 'Ajouter',
+      restore: 'Restaurer',
+      dismiss: 'Écarter',
+      delete: 'Supprimer',
+      edit: 'Modifier',
+      showMore: 'Voir plus',
+      noDueDate: 'sans échéance',
+      dueToday: "à faire aujourd'hui",
+      dueDate: 'pour le {{date}}',
+      overdueSince: 'en retard depuis le {{date}}',
+      starToPin: 'Mettre en favori',
+    },
+    workspace: {
+      projectsTab: 'Projets',
+      opportunitiesTab: 'Opportunités',
+      reviewTab: 'Revue',
+      noProjects: 'Aucun projet pour le moment.',
+      pendingTasks: '{{count}} tâche{{plural}} en attente',
+      percentComplete: '{{count}}% terminé',
+      backToProjects: '← Retour aux projets',
+      updatedToday: "Mis à jour aujourd'hui",
+      lastUpdatedDays: 'Mis à jour il y a {{count}} j',
+      progress: 'Progression (tâches + sous-tâches)',
+      tasksDone: '{{done}}/{{total}} tâches terminées',
+      notes: 'Notes',
+      clickToAddNotes: 'Cliquer pour ajouter des notes…',
+      linkedMeetings: 'Réunions liées ({{count}})',
+      noLinkedMeetings: 'Aucun événement de calendrier lié pour le moment.',
+      editLink: 'Modifier le lien',
+      tasks: 'Tâches ({{count}})',
+      noProjectTasks: 'Aucune tâche pour le moment.',
+      pipelineOverview: 'Vue du pipeline',
+      reviewAreaDistribution: 'Répartition des domaines de focus',
+      aiWeeklyReview: 'Revue hebdomadaire IA',
+      reviewWait: 'Votre revue se génère automatiquement chaque dimanche à 20h. Revenez ensuite.',
+      doneThisWeek: 'Fait cette semaine',
+      overdue: 'En retard',
+      habitRateWeek: 'Taux des habitudes cette semaine',
+      tasksCountPct: '{{count}} tâches · {{pct}}%',
+      thisWeek: 'Cette semaine',
+      generated: 'Généré {{date}}',
+      weeklyReview: 'REVUE HEBDOMADAIRE',
+      reviewAnalysing: 'Analyse de votre semaine…',
+      reviewDeployNote: 'La revue IA fonctionne une fois déployée sur Vercel (fonction serverless /api/review requise). Toutes les autres fonctions marchent entièrement dans ce fichier HTML.',
+    },
+    habitsPage: {
+      completions: '{{count}} validations',
+      consistency: '{{count}}% de régularité',
+      noStreak: 'Aucune série',
+      streakDays: 'Série de {{count}} j',
+    },
+    capturePage: {
+      inbox: 'Boîte ({{count}})',
+      empty: "Rien dans la capture pour l'instant. Videz votre tête ici, triez plus tard.",
+      assignProject: '→ Assigner à un projet',
+      captured: 'Capturé !',
+      addedAsTask: 'Ajouté comme tâche',
+      capturePlaceholder: 'Que voulez-vous noter ? Appuyez sur Entrée pour capturer.',
+      captureBtn: 'Capturer',
+    },
+    circlesPage: {
+      loading: 'Chargement des cercles…',
+      emptyTitle: 'Aucun cercle pour le moment',
+      emptySub: 'Créez un cercle pour partager des tâches et des projets avec des personnes de confiance — colocataires, partenaires, proches collaborateurs.',
+      createFirst: 'Créer votre premier cercle',
+      pending: '{{count}} en attente',
+      members: '{{count}} membre{{plural}}',
+      slotsUsed: '{{count}} / 5 membres',
+      manage: 'Gérer ›',
+      close: 'Fermer ‹',
+      backToCircles: '← Cercles',
+      backToCircle: '← {{name}}',
+      created: 'Créé le {{date}}',
+      you: 'Vous',
+      owner: 'Créateur',
+      member: 'Membre',
+      activeMember: 'Membre actif',
+      pendingInvite: 'En attente',
+      awaitingAcceptance: "En attente d'acceptation",
+      revoke: 'Révoquer',
+      inviteByEmail: 'Inviter par e-mail',
+      inviteEmailPlaceholder: 'adresse@email.com',
+      sendInvite: 'Envoyer',
+      shareInviteLink: 'Ou partager un lien d’invitation',
+      generateLink: 'Générer le lien',
+      circleFull: 'Le cercle est complet (5/5).',
+      settings: 'Réglages du cercle',
+      sharedTaskList: 'Liste de tâches partagée',
+      sharedTaskListCopy: 'Une simple liste de tâches partagées',
+      sharedProjects: 'Projets partagés',
+      sharedProjectsCopy: 'Des projets structurés pour voyages, événements, activités',
+      deleteCircle: 'Supprimer le cercle',
+      leaveCircle: 'Quitter le cercle',
+      openTasks: 'tâche{{plural}} ouverte{{plural}}',
+      activeProjects: 'projet{{plural}} actif{{plural}}',
     },
     settings: {
       profile: 'Profil',
@@ -1700,6 +1993,25 @@ const I18N = {
     },
     sync: {
       connecting: 'Connexion…',
+    },
+    labels: {
+      today: "Aujourd'hui",
+      none: 'Aucun',
+      unassigned: 'Non assigné',
+      you: 'Vous',
+      member: 'Membre',
+    },
+    focusAreas: {
+      Career: 'Carrière',
+      Health: 'Santé',
+      Personal: 'Personnel',
+      'Life Admin': 'Admin perso',
+      Growth: 'Croissance',
+    },
+    projectStatus: {
+      Active: 'Actif',
+      Paused: 'En pause',
+      Completed: 'Terminé',
     },
     actions: {
       newTask: '+ Nouvelle tâche',
@@ -1861,6 +2173,18 @@ function t(key, vars = {}) {
   return template.replace(/\{\{(.*?)\}\}/g, (_, name) => String(vars[name.trim()] ?? ''));
 }
 
+function pluralSuffix(count) {
+  return Number(count) === 1 ? '' : 's';
+}
+
+function labelFocusArea(area) {
+  return t(`focusAreas.${area}`) === `focusAreas.${area}` ? area : t(`focusAreas.${area}`);
+}
+
+function labelProjectStatus(status) {
+  return t(`projectStatus.${status}`) === `projectStatus.${status}` ? status : t(`projectStatus.${status}`);
+}
+
 function getGreeting() {
   const h = new Date().getHours();
   const period = h < 12 ? 'morning' : h < 17 ? 'afternoon' : 'evening';
@@ -1895,6 +2219,15 @@ function applyStaticTranslations() {
   setText('home-command-label', t('home.commandLabel'));
   setText('home-command-hint-prefix', t('home.commandHint'));
   setText('home-command-hint-emphasis', t('home.commandHintEmphasis'));
+  setText('home-dtn-label', t('home.dtnTitle'));
+  setText('home-today-tasks-title', t('home.todayTasksTitle'));
+  setText('home-today-tasks-all', t('home.seeAll'));
+  setText('home-schedule-title', t('home.scheduleTitle'));
+  setText('home-active-projects-title', t('home.activeProjectsTitle'));
+  setText('home-active-projects-all', t('home.all'));
+  setText('hub-tab-projects', t('workspace.projectsTab'));
+  setText('hub-tab-opportunities', t('workspace.opportunitiesTab'));
+  setText('hub-tab-review', t('workspace.reviewTab'));
   setText('settings-profile-title', t('settings.profile'));
   setText('settings-name-label', t('settings.name'));
   setText('settings-name-copy', t('settings.nameCopy'));
@@ -1914,6 +2247,7 @@ function applyStaticTranslations() {
   setText('bottom-nav-capture', t('nav.capture'));
   setText('bottom-nav-workspace', t('nav.workspace'));
   setText('bottom-nav-more', t('nav.more'));
+  setText('capture-submit-btn', t('capturePage.captureBtn'));
   setText('more-habits-title', t('more.habitsTitle'));
   setText('more-habits-copy', t('more.habitsCopy'));
   setText('more-circles-title', t('more.circlesTitle'));
@@ -1929,6 +2263,8 @@ function applyStaticTranslations() {
   if (commandInput) commandInput.placeholder = t('home.commandPlaceholder');
   const settingsNameInput = document.getElementById('settings-name');
   if (settingsNameInput) settingsNameInput.placeholder = t('settings.namePlaceholder');
+  const captureInput = document.getElementById('capture-input');
+  if (captureInput) captureInput.placeholder = t('capturePage.capturePlaceholder');
   const syncLabel = document.getElementById('sync-label');
   if (syncLabel && syncLabel.textContent.trim() === 'Connecting…') {
     syncLabel.textContent = t('sync.connecting');
@@ -1948,7 +2284,7 @@ function setLanguage(language) {
 function formatDue(task) {
   if (!task.dueDate) return '';
   const td=today(), isToday=task.dueDate===td, over=isOverdue(task);
-  let label = isToday ? 'Today' : new Date(task.dueDate+'T12:00:00').toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short'});
+  let label = isToday ? t('labels.today') : new Date(task.dueDate+'T12:00:00').toLocaleDateString(getCurrentLocale(),{weekday:'short',day:'numeric',month:'short'});
   if (task.dueTime) {
     const [h,m]=task.dueTime.split(':').map(Number);
     label += ' · '+(h%12||12)+':'+String(m).padStart(2,'0')+(h>=12?' PM':' AM');
@@ -2234,9 +2570,9 @@ function updateModuleVisibility(){
 // ─── Tasks ────────────────────────────────────────────────────────────────────
 function renderTasks(){
   document.getElementById('tasks-tabs').innerHTML=['All',...FOCUS_AREAS].map(a=>
-    `<div class="tab${taskFilter===a?' active':''}" onclick="setTaskFilter('${a}')">${a}</div>`).join('');
+    `<div class="tab${taskFilter===a?' active':''}" onclick="setTaskFilter('${a}')">${a==='All'?t('tasksPage.all'):labelFocusArea(a)}</div>`).join('');
   const sel=document.getElementById('tasks-project-filter'), cur=sel.value;
-  sel.innerHTML=`<option value="">All Tasks</option>`+DATA.projects.map(p=>`<option value="${p.id}"${p.id===cur?' selected':''}>${escHtml(p.title)}</option>`).join('');
+  sel.innerHTML=`<option value="">${t('tasksPage.allTasks')}</option>`+DATA.projects.map(p=>`<option value="${p.id}"${p.id===cur?' selected':''}>${escHtml(p.title)}</option>`).join('');
   const pf=sel.value;
   const filtered=DATA.tasks.filter(t=>{
     if(taskFilter!=='All'&&t.focusArea!==taskFilter) return false;
@@ -2256,17 +2592,17 @@ function renderTasks(){
     if(!a.dueTime) return 1; if(!b.dueTime) return -1;
     return a.dueTime.localeCompare(b.dueTime);
   });
-  document.getElementById('tasks-pending-title').textContent=`Pending (${pending.length})`;
+  document.getElementById('tasks-pending-title').textContent=`${t('tasksPage.pending')} (${pending.length})`;
   document.getElementById('tasks-pending-list').innerHTML=pending.length===0
-    ?`<div class="empty"><div class="empty-icon">🎉</div>Nothing pending here.</div>`
+    ?`<div class="empty"><div class="empty-icon">🎉</div>${t('tasksPage.nothingPending')}</div>`
     :pending.map(t=>taskHTML(t,DATA.focusTasks.includes(t.id))).join('');
   const dc=document.getElementById('tasks-done-card');
-  if(done.length>0){dc.style.display='';document.getElementById('tasks-done-title').textContent=`Completed (${done.length})`;document.getElementById('tasks-done-list').innerHTML=done.map(t=>taskHTML(t,false)).join('');}
+  if(done.length>0){dc.style.display='';document.getElementById('tasks-done-title').textContent=`${t('tasksPage.completed')} (${done.length})`;document.getElementById('tasks-done-list').innerHTML=done.map(t=>taskHTML(t,false)).join('');}
   else dc.style.display='none';
   const dim=document.getElementById('tasks-dismissed-card');
   if(dismissed.length>0){
     dim.style.display='';
-    document.getElementById('tasks-dismissed-title').textContent=`Dismissed (${dismissed.length})`;
+    document.getElementById('tasks-dismissed-title').textContent=`${t('tasksPage.dismissed')} (${dismissed.length})`;
     document.getElementById('tasks-dismissed-list').innerHTML=dismissed.map(t=>taskHTML(t,false)).join('');
   } else dim.style.display='none';
 }
@@ -2289,17 +2625,17 @@ function taskHTML(task,isFocus){
         </div>
         <div class="task-actions flex-gap-sm">
           <button class="focus-btn${isFocus?' active':''}" onclick="toggleFocus('${task.id}')" title="Toggle focus" data-tip="${isFocus?'Unstar focus':'Star as focus'}">★</button>
-          <button class="dismiss-btn" onclick="dismissTask('${task.id}')" title="${task.dismissed?'Restore':'Dismiss'}" data-tip="${task.dismissed?'Restore task':'Dismiss task'}">${task.dismissed?'↺':'↷'}</button>
-          <button class="btn-icon" onclick="openEditTask('${task.id}')" title="Edit" data-tip="Edit task">✎</button>
-          <button class="btn-icon delete-btn" onclick="deleteTask('${task.id}')" title="Delete" data-tip="Delete task" style="color:var(--accent)">🗑</button>
+          <button class="dismiss-btn" onclick="dismissTask('${task.id}')" title="${task.dismissed?t('tasksPage.restore'):t('tasksPage.dismiss')}" data-tip="${task.dismissed?t('tasksPage.restore'):t('tasksPage.dismiss')}">${task.dismissed?'↺':'↷'}</button>
+          <button class="btn-icon" onclick="openEditTask('${task.id}')" title="${t('tasksPage.edit')}" data-tip="${t('tasksPage.edit')}">✎</button>
+          <button class="btn-icon delete-btn" onclick="deleteTask('${task.id}')" title="${t('tasksPage.delete')}" data-tip="${t('tasksPage.delete')}" style="color:var(--accent)">🗑</button>
         </div>
       </div>
       <div class="task-meta">
         ${isFocus?'<span class="badge badge-focus">★</span>':''}
-        <span class="badge ${focusAreaClass(fa)}">${fa}</span>
+        <span class="badge ${focusAreaClass(fa)}">${labelFocusArea(fa)}</span>
         ${dueChip}
         ${proj?`<span class="badge badge-other">${escHtml(proj.title)}</span>`:''}
-        ${subtasks.length?`<span class="text-xs text-dim">${sdone}/${subtasks.length} subtasks</span>`:''}
+        ${subtasks.length?`<span class="text-xs text-dim">${t('tasksPage.subtasksDone',{done:sdone,total:subtasks.length})}</span>`:''}
       </div>
       <div id="expand-${task.id}" style="display:none">
         ${task.notes?`<div class="note-block">${escHtml(task.notes)}</div>`:''}
@@ -2310,13 +2646,13 @@ function taskHTML(task,isFocus){
             <button class="btn-icon" onclick="deleteSubtask('${task.id}','${s.id}')" style="color:var(--accent);font-size:10px">✕</button>
           </div>`).join('')}</div>`:''}
         <div class="add-subtask-row mt8">
-          <input class="input" id="sti-${task.id}" placeholder="Add subtask… (Enter)" style="font-size:12px;flex:1"
+          <input class="input" id="sti-${task.id}" placeholder="${t('tasksPage.addSubtask')}" style="font-size:12px;flex:1"
             onkeydown="if(event.key==='Enter')addSubtask('${task.id}')"/>
-          <button class="btn btn-ghost btn-xs" onclick="addSubtask('${task.id}')">Add</button>
+          <button class="btn btn-ghost btn-xs" onclick="addSubtask('${task.id}')">${t('tasksPage.add')}</button>
         </div>
         <div class="mt8 flex-gap" style="display:none" id="mobile-delete-${task.id}">
-          <button class="btn btn-ghost btn-xs" onclick="dismissTask('${task.id}')">${task.dismissed?'Restore':'Dismiss'}</button>
-          <button class="btn btn-danger btn-xs" onclick="deleteTask('${task.id}')">Delete</button>
+          <button class="btn btn-ghost btn-xs" onclick="dismissTask('${task.id}')">${task.dismissed?t('tasksPage.restore'):t('tasksPage.dismiss')}</button>
+          <button class="btn btn-danger btn-xs" onclick="deleteTask('${task.id}')">${t('tasksPage.delete')}</button>
         </div>
       </div>
     </div>
@@ -2331,21 +2667,21 @@ function projectTaskHTML(task){
       <div class="flex-between">
         <span class="task-title-text${task.completed?' done':''}">${escHtml(task.title)}</span>
         <div class="task-actions flex-gap-sm">
-          <button class="btn-icon" onclick="openEditTask('${task.id}')" title="Edit" data-tip="Edit task">✎</button>
-          <button class="btn-icon" onclick="deleteTask('${task.id}')" title="Delete" data-tip="Delete task" style="color:var(--accent)">✕</button>
+          <button class="btn-icon" onclick="openEditTask('${task.id}')" title="${t('tasksPage.edit')}" data-tip="${t('tasksPage.edit')}">✎</button>
+          <button class="btn-icon" onclick="deleteTask('${task.id}')" title="${t('tasksPage.delete')}" data-tip="${t('tasksPage.delete')}" style="color:var(--accent)">✕</button>
         </div>
       </div>
       <div class="task-meta">${dueChip}</div>
       ${task.notes?`<div class="note-block" style="margin-top:5px">${escHtml(task.notes)}</div>`:''}
       ${subtasks.length?`<div class="subtask-list mt8">
-        <div class="text-xs text-dim" style="margin-bottom:6px">${sdone}/${subtasks.length} subtasks done</div>
+        <div class="text-xs text-dim" style="margin-bottom:6px">${t('tasksPage.subtasksDone',{done:sdone,total:subtasks.length})}</div>
         ${subtasks.map(s=>`<div class="subtask-item">
           <div class="subtask-check${s.done?' done':''}" onclick="toggleSubtask('${task.id}','${s.id}')"></div>
           <span class="subtask-title${s.done?' done':''}">${escHtml(s.title)}</span>
           <button class="btn-icon" onclick="deleteSubtask('${task.id}','${s.id}')" style="color:var(--accent);font-size:10px">✕</button>
         </div>`).join('')}</div>`:''}
       <div class="add-subtask-row mt8">
-        <input class="input" id="sti-${task.id}" placeholder="+ Add subtask… (Enter)"
+        <input class="input" id="sti-${task.id}" placeholder="+ ${t('tasksPage.addSubtask')}"
           style="font-size:12px;flex:1;background:var(--surface2);border-color:transparent"
           onkeydown="if(event.key==='Enter')addSubtask('${task.id}')"/>
       </div>
@@ -2422,11 +2758,11 @@ function deleteSubtask(tid,sid){DATA.tasks=DATA.tasks.map(t=>t.id===tid?{...t,su
 function renderProjects(){
   if(projectDetailId){renderProjectDetail(projectDetailId);return;}
   const grid=document.getElementById('projects-grid');
-  if(!DATA.projects.length){grid.innerHTML=`<div class="empty" style="grid-column:1/-1"><div class="empty-icon">◈</div>No projects yet.</div>`;return;}
+  if(!DATA.projects.length){grid.innerHTML=`<div class="empty" style="grid-column:1/-1"><div class="empty-icon">◈</div>${t('workspace.noProjects')}</div>`;return;}
   grid.innerHTML=PROJ_STATUS.flatMap(status=>{
     const projs=DATA.projects.filter(p=>p.status===status);
     if(!projs.length) return [];
-    return [`<div style="grid-column:1/-1;margin-top:4px"><div class="text-xs text-dim mb8" style="letter-spacing:.09em;text-transform:uppercase;font-weight:600">${status}</div></div>`,
+    return [`<div style="grid-column:1/-1;margin-top:4px"><div class="text-xs text-dim mb8" style="letter-spacing:.09em;text-transform:uppercase;font-weight:600">${labelProjectStatus(status)}</div></div>`,
       ...projs.map(p=>{
         const pct=calcProjectProgress(p.id),pending=DATA.tasks.filter(t=>t.projectId===p.id&&!t.completed).length;
         const daysAgo=Math.floor((Date.now()-new Date(p.lastUpdated))/86400000);
@@ -2434,17 +2770,17 @@ function renderProjects(){
           <div class="flex-between mb8">
             <div class="project-card-title">${escHtml(p.title)}</div>
             <div class="flex-gap" onclick="event.stopPropagation()">
-              <span class="badge ${statusClass(p.status)}">${p.status}</span>
+              <span class="badge ${statusClass(p.status)}">${labelProjectStatus(p.status)}</span>
               <button class="btn-icon" onclick="deleteProject('${p.id}')" style="color:var(--accent)">✕</button>
             </div>
           </div>
           <div class="project-card-desc">${escHtml(p.description||'')}</div>
           <div class="flex-between text-xs text-dim">
-            <span>${pending} pending tasks</span>
-            <span style="color:${daysAgo>7?'var(--accent)':'var(--text-3)'}">${daysAgo===0?'Today':`${daysAgo}d ago`}</span>
+            <span>${t('workspace.pendingTasks',{count:pending,plural:pluralSuffix(pending)})}</span>
+            <span style="color:${daysAgo>7?'var(--accent)':'var(--text-3)'}">${daysAgo===0?t('home.todayShort'):t('home.daysAgo',{count:daysAgo})}</span>
           </div>
           <div class="progress-track mt8"><div class="progress-fill" style="width:${pct}%"></div></div>
-          <div class="text-xs text-dim mt4">${pct}% complete</div>
+          <div class="text-xs text-dim mt4">${t('workspace.percentComplete',{count:pct})}</div>
         </div>`;
       })
     ];
@@ -2465,54 +2801,54 @@ function renderProjectDetail(id){
   const daysAgo=Math.floor((Date.now()-new Date(p.lastUpdated))/86400000);
   const linkedMeetings = CALENDAR_STATE.events.filter(event=>getCalendarLinkedProject(event)?.id===id);
   document.getElementById('project-detail-view').innerHTML=`
-    <button class="btn btn-ghost btn-sm mb16" onclick="backToProjects()">← Back to Projects</button>
+    <button class="btn btn-ghost btn-sm mb16" onclick="backToProjects()">${t('workspace.backToProjects')}</button>
     <div class="flex-between mb20">
       <div>
         <h2 class="font-serif" style="font-size:23px;margin-bottom:6px">${escHtml(p.title)}</h2>
         <div class="flex-gap">
-          <span class="badge ${statusClass(p.status)}">${p.status}</span>
-          <span class="text-xs text-dim">${escHtml(p.focusArea||p.lifeArea||'')}</span>
-          <span class="text-xs" style="color:${daysAgo>7?'var(--accent)':'var(--text-3)'}">${daysAgo===0?'Updated today':`Last updated ${daysAgo}d ago`}</span>
+          <span class="badge ${statusClass(p.status)}">${labelProjectStatus(p.status)}</span>
+          <span class="text-xs text-dim">${escHtml(labelFocusArea(p.focusArea||p.lifeArea||''))}</span>
+          <span class="text-xs" style="color:${daysAgo>7?'var(--accent)':'var(--text-3)'}">${daysAgo===0?t('workspace.updatedToday'):t('workspace.lastUpdatedDays',{count:daysAgo})}</span>
         </div>
       </div>
       <div class="flex-gap">
         <select class="input" style="width:120px" onchange="updateProjectStatus('${id}',this.value)">
-          ${PROJ_STATUS.map(s=>`<option${p.status===s?' selected':''}>${s}</option>`).join('')}
+          ${PROJ_STATUS.map(s=>`<option${p.status===s?' selected':''} value="${s}">${labelProjectStatus(s)}</option>`).join('')}
         </select>
-        <button class="btn btn-primary btn-sm" onclick="openAddProjectTask('${id}')">+ Task</button>
+        <button class="btn btn-primary btn-sm" onclick="openAddProjectTask('${id}')">${t('actions.newTask')}</button>
       </div>
     </div>
     <div class="grid-2 mb14">
       <div class="card">
-        <div class="card-title">Progress (tasks + subtasks)</div>
+        <div class="card-title">${t('workspace.progress')}</div>
         <div class="flex-between">
           <span class="font-serif" style="font-size:26px;color:var(--green)">${pct}%</span>
-          <span class="text-sm text-dim">${projTasks.filter(t=>t.completed).length}/${projTasks.length} tasks done</span>
+          <span class="text-sm text-dim">${t('workspace.tasksDone',{done:projTasks.filter(t=>t.completed).length,total:projTasks.length})}</span>
         </div>
         <div class="progress-track" style="height:6px;margin-top:10px"><div class="progress-fill" style="width:${pct}%"></div></div>
       </div>
       <div class="card">
-        <div class="card-title">Notes</div>
+        <div class="card-title">${t('workspace.notes')}</div>
         <div class="note-block" onclick="editProjectNotes('${id}')" style="cursor:pointer;min-height:36px">
-          ${p.notes?escHtml(p.notes):'<span class="text-dim">Click to add notes…</span>'}
+          ${p.notes?escHtml(p.notes):`<span class="text-dim">${t('workspace.clickToAddNotes')}</span>`}
         </div>
       </div>
     </div>
     <div class="card mb14">
-      <div class="card-title">Linked Meetings (${linkedMeetings.length})</div>
-      ${!linkedMeetings.length?'<div class="text-dim text-sm">No calendar events linked yet.</div>':linkedMeetings.map(event=>`
+      <div class="card-title">${t('workspace.linkedMeetings',{count:linkedMeetings.length})}</div>
+      ${!linkedMeetings.length?`<div class="text-dim text-sm">${t('workspace.noLinkedMeetings')}</div>`:linkedMeetings.map(event=>`
         <div class="calendar-item">
           <div class="calendar-item-head">
             <div class="calendar-item-title">${escHtml(event.summary)}</div>
-            <button class="calendar-link-btn" onclick="openCalendarLinkModal('${getCalendarEventKey(event)}')">Edit Link</button>
+            <button class="calendar-link-btn" onclick="openCalendarLinkModal('${getCalendarEventKey(event)}')">${t('workspace.editLink')}</button>
           </div>
           <div class="calendar-item-meta">${formatCalendarTime(event.start,event.isAllDay)}${event.end&&!event.isAllDay?` - ${formatCalendarTime(event.end,false)}`:''}${event.location?` · ${escHtml(event.location)}`:''}${event.sourceLabel?` · ${escHtml(event.sourceLabel)}`:''}</div>
         </div>
       `).join('')}
     </div>
     <div class="card">
-      <div class="card-title">Tasks (${projTasks.length})</div>
-      ${!projTasks.length?'<div class="empty">No tasks yet.</div>':''}
+      <div class="card-title">${t('workspace.tasks',{count:projTasks.length})}</div>
+      ${!projTasks.length?`<div class="empty">${t('workspace.noProjectTasks')}</div>`:''}
       ${pending.map(t=>projectTaskHTML(t)).join('')}
       ${done.map(t=>projectTaskHTML(t)).join('')}
     </div>`;
@@ -2599,9 +2935,9 @@ function renderHabits(){
           <div>
             <div style="font-weight:500;font-size:14px">${escHtml(h.label)}</div>
             <div class="text-xs text-dim" style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
-              <span class="badge ${focusAreaClass(h.focusArea)}">${h.focusArea}</span>
+              <span class="badge ${focusAreaClass(h.focusArea)}">${labelFocusArea(h.focusArea)}</span>
               <span>${getHabitFrequencyLabel(h)}</span>
-              <span>${total} completions</span>
+              <span>${t('habitsPage.completions',{count:total})}</span>
             </div>
           </div>
         </div>
@@ -2613,7 +2949,7 @@ function renderHabits(){
       </div>
       <div class="flex-between" style="margin-top:12px;margin-bottom:10px">
         <div class="text-xs text-dim">${escHtml(info.statusLabel)}</div>
-        <div class="text-xs text-dim">${consistency}% consistency · ${streak>0?`${streak}d streak`:'No streak'}</div>
+        <div class="text-xs text-dim">${t('habitsPage.consistency',{count:consistency})} · ${streak>0?t('habitsPage.streakDays',{count:streak}):t('habitsPage.noStreak')}</div>
       </div>
       ${renderHabitHistoryGrid(h)}
     </div>`;
@@ -2630,28 +2966,28 @@ function deleteHabit(id){if(!confirm('Delete this habit?')) return;DATA.habitDef
 
 // ─── Capture ──────────────────────────────────────────────────────────────────
 function renderCapture(){
-  document.getElementById('capture-inbox-title').textContent=`Inbox (${DATA.captures.length})`;
+  document.getElementById('capture-inbox-title').textContent=t('capturePage.inbox',{count:DATA.captures.length});
   const list=document.getElementById('capture-list');
-  if(!DATA.captures.length){list.innerHTML=`<div class="empty"><div class="empty-icon">💡</div>Nothing captured yet. Brain dump here, sort later.</div>`;return;}
+  if(!DATA.captures.length){list.innerHTML=`<div class="empty"><div class="empty-icon">💡</div>${t('capturePage.empty')}</div>`;return;}
   list.innerHTML=DATA.captures.map(c=>`
     <div class="capture-item">
       <div style="flex:1"><div style="font-size:13px">${escHtml(c.text)}</div><div class="text-xs text-dim mt4">${c.createdAt}</div></div>
       <div class="flex-gap">
         <select class="input" style="width:150px;font-size:12px;padding:4px 8px" onchange="if(this.value)assignCapture('${c.id}',this.value);this.value=''">
-          <option value="">→ Assign to project</option>
+          <option value="">${t('capturePage.assignProject')}</option>
           ${DATA.projects.map(p=>`<option value="${p.id}">${escHtml(p.title)}</option>`).join('')}
         </select>
         <button class="btn btn-danger btn-xs" onclick="deleteCapture('${c.id}')">✕</button>
       </div>
     </div>`).join('');
 }
-function addCapture(){const inp=document.getElementById('capture-input');if(!inp.value.trim()) return;DATA.captures.unshift({id:uid(),text:inp.value.trim(),createdAt:today()});inp.value='';scheduleSave();renderAll();toast('Captured!','success');}
+function addCapture(){const inp=document.getElementById('capture-input');if(!inp.value.trim()) return;DATA.captures.unshift({id:uid(),text:inp.value.trim(),createdAt:today()});inp.value='';scheduleSave();renderAll();toast(t('capturePage.captured'),'success');}
 function deleteCapture(id){DATA.captures=DATA.captures.filter(c=>c.id!==id);scheduleSave();renderAll();}
 function assignCapture(id,projectId){
   const c=DATA.captures.find(x=>x.id===id);if(!c) return;
   DATA.tasks.unshift({id:uid(),title:c.text,focusArea:'Career',projectId,dueDate:today(),completed:false,notes:'',subtasks:[],createdAt:today()});
   DATA.captures=DATA.captures.filter(x=>x.id!==id);
-  scheduleSave();renderAll();toast('Added as task','success');
+  scheduleSave();renderAll();toast(t('capturePage.addedAsTask'),'success');
 }
 
 // ─── Settings ─────────────────────────────────────────────────────────────────
@@ -3635,7 +3971,7 @@ function renderHomeCirclesCard() {
 
   const totalCount = CIRCLES_DATA.length;
   const titleEl = document.getElementById('home-circles-title');
-  if (titleEl) titleEl.textContent = totalCount > 1 ? `Circles (${totalCount})` : 'Circles';
+  if (titleEl) titleEl.textContent = totalCount > 1 ? `${t('home.circlesTitle')} (${totalCount})` : t('home.circlesTitle');
 
   // Sort by latest_activity_at desc, cap at 2
   const sortedSummaries = [...CIRCLE_SUMMARIES].sort((a, b) =>
@@ -3667,11 +4003,11 @@ function renderHomeCirclesCard() {
         }).join('');
 
         const taskChip = tasksOn && s.open_task_count > 0
-          ? `<div class="circles-home-stat"><span class="circles-home-count${s.open_task_count === 0 ? ' dim' : ''}">${s.open_task_count}</span><span class="circles-home-label">open task${s.open_task_count !== 1 ? 's' : ''}</span></div>`
-          : (tasksOn ? `<div class="circles-home-stat"><span class="circles-home-count dim">0</span><span class="circles-home-label">open tasks</span></div>` : '');
+          ? `<div class="circles-home-stat"><span class="circles-home-count${s.open_task_count === 0 ? ' dim' : ''}">${s.open_task_count}</span><span class="circles-home-label">${t('circlesPage.openTasks',{plural:pluralSuffix(s.open_task_count)})}</span></div>`
+          : (tasksOn ? `<div class="circles-home-stat"><span class="circles-home-count dim">0</span><span class="circles-home-label">${t('circlesPage.openTasks',{plural:pluralSuffix(0)})}</span></div>` : '');
 
         const projectChip = projectsOn
-          ? `<div class="circles-home-stat"><span class="circles-home-count${s.active_project_count === 0 ? ' dim' : ''}">${s.active_project_count}</span><span class="circles-home-label">active project${s.active_project_count !== 1 ? 's' : ''}</span></div>`
+          ? `<div class="circles-home-stat"><span class="circles-home-count${s.active_project_count === 0 ? ' dim' : ''}">${s.active_project_count}</span><span class="circles-home-label">${t('circlesPage.activeProjects',{plural:pluralSuffix(s.active_project_count)})}</span></div>`
           : '';
 
         return `
@@ -3725,7 +4061,7 @@ function renderHome(){
   if(nudge){
     if(DATA.captures.length>0){
       nudge.style.display='flex';
-      nudge.innerHTML=`<div class="flex-gap"><span style="font-size:14px">💡</span><span style="font-size:12.5px;color:var(--gold);font-weight:500">${DATA.captures.length} item${DATA.captures.length>1?'s':''} in capture inbox</span></div><span class="text-xs text-dim">Process →</span>`;
+      nudge.innerHTML=`<div class="flex-gap"><span style="font-size:14px">💡</span><span style="font-size:12.5px;color:var(--gold);font-weight:500">${t('home.captureInbox',{count:DATA.captures.length,plural:pluralSuffix(DATA.captures.length)})}</span></div><span class="text-xs text-dim">${t('home.process')}</span>`;
     } else nudge.style.display='none';
   }
 
@@ -3748,7 +4084,7 @@ function renderHome(){
 
     if(hasThisWeek&&!dismissed){
       reviewNudge.style.display='flex';
-      reviewNudge.innerHTML=`<div class="flex-gap"><span style="font-size:14px">📋</span><span style="font-size:12.5px;color:var(--blue);font-weight:500">Your weekly review is ready</span></div><span class="text-xs text-dim">View →</span>`;
+      reviewNudge.innerHTML=`<div class="flex-gap"><span style="font-size:14px">📋</span><span style="font-size:12.5px;color:var(--blue);font-weight:500">${t('home.weeklyReady')}</span></div><span class="text-xs text-dim">${t('home.view')}</span>`;
       reviewNudge.onclick=()=>{
         DATA.dismissedReviewWeek=thisWeekStr;
         scheduleSave();
@@ -3757,7 +4093,7 @@ function renderHome(){
       };
     } else if(!hasThisWeek&&isSundayBeforeReview){
       reviewNudge.style.display='flex';
-      reviewNudge.innerHTML=`<div class="flex-gap"><span style="font-size:14px">📅</span><span style="font-size:12.5px;color:var(--text-3)">Weekly review generates tonight at 8pm</span></div>`;
+      reviewNudge.innerHTML=`<div class="flex-gap"><span style="font-size:14px">📅</span><span style="font-size:12.5px;color:var(--text-3)">${t('home.weeklyTonight')}</span></div>`;
       reviewNudge.onclick=null;
       reviewNudge.style.cursor='default';
     } else {
@@ -3769,26 +4105,27 @@ function renderHome(){
   const calendarBtn=document.getElementById('calendar-connect-btn');
   if(calendarEl && calendarBtn){
     calendarBtn.style.display='';
-    calendarBtn.textContent=CALENDAR_STATE.connected?'Add account':'Connect';
+    calendarBtn.textContent=CALENDAR_STATE.connected?t('home.addAccount'):t('home.connect');
     if(CALENDAR_STATE.status==='loading'){
-      calendarEl.innerHTML=`<div class="calendar-empty">Loading today's schedule…</div>`;
+      calendarEl.innerHTML=`<div class="calendar-empty">${t('home.loadingSchedule')}</div>`;
     } else if(CALENDAR_STATE.status==='error'){
-      calendarEl.innerHTML=`<div class="calendar-empty">${escHtml(CALENDAR_STATE.error||'Calendar unavailable.')}</div>`;
+      calendarEl.innerHTML=`<div class="calendar-empty">${escHtml(CALENDAR_STATE.error||t('home.calendarUnavailable'))}</div>`;
     } else if(!CALENDAR_STATE.connected){
-      calendarEl.innerHTML=`<div class="calendar-empty">Connect Google Calendar to see today's events and free windows here.</div>`;
+      calendarEl.innerHTML=`<div class="calendar-empty">${t('home.connectCalendar')}</div>`;
     } else if(!CALENDAR_STATE.events.length){
-      calendarEl.innerHTML=`<div class="calendar-empty">${CALENDAR_STATE.connectedCount||1} calendar${(CALENDAR_STATE.connectedCount||1)>1?'s':''} connected. No events on your calendar today.</div>`;
+      const count = CALENDAR_STATE.connectedCount||1;
+      calendarEl.innerHTML=`<div class="calendar-empty">${t('home.calendarsConnected',{count,plural:pluralSuffix(count)})} ${t('home.noEventsToday')}</div>`;
     } else {
       const nextEvents = CALENDAR_STATE.events.slice(0,3);
       calendarEl.innerHTML=
-        `<div class="calendar-empty" style="margin-bottom:8px">${CALENDAR_STATE.connectedCount||1} calendar${(CALENDAR_STATE.connectedCount||1)>1?'s':''} connected.</div>`+
+        `<div class="calendar-empty" style="margin-bottom:8px">${t('home.calendarsConnected',{count:CALENDAR_STATE.connectedCount||1,plural:pluralSuffix(CALENDAR_STATE.connectedCount||1)})}</div>`+
         nextEvents.map(event=>{
           const linkedProject = getCalendarLinkedProject(event);
           return `
           <div class="calendar-item">
             <div class="calendar-item-head">
               <div class="calendar-item-title">${escHtml(event.summary)}</div>
-              <button class="calendar-link-btn" onclick="openCalendarLinkModal('${getCalendarEventKey(event)}')">${linkedProject?'Linked':'Link'}</button>
+              <button class="calendar-link-btn" onclick="openCalendarLinkModal('${getCalendarEventKey(event)}')">${linkedProject?t('home.linked'):t('home.link')}</button>
             </div>
             <div class="calendar-item-meta">${formatCalendarTime(event.start,event.isAllDay)}${event.end&&!event.isAllDay?` - ${formatCalendarTime(event.end,false)}`:''}${event.location?` · ${escHtml(event.location)}`:''}${event.sourceLabel?` · ${escHtml(event.sourceLabel)}`:''}</div>
             ${linkedProject?`<div class="calendar-project-badge">${escHtml(linkedProject.title)}</div>`:''}
@@ -3808,27 +4145,27 @@ function renderHome(){
   }
   const dtnSubEl=document.getElementById('home-dtn-sub');
   if(dtnSubEl){
-    if(dtnMode==='pinned') dtnSubEl.textContent='Your starred priorities';
-    else if(dtnMode==='auto') dtnSubEl.textContent='Suggested — star a task to pin it';
-    else dtnSubEl.textContent="Nothing pending — you're clear!";
+    if(dtnMode==='pinned') dtnSubEl.textContent=t('home.dtnPinned');
+    else if(dtnMode==='auto') dtnSubEl.textContent=t('home.dtnSuggested');
+    else dtnSubEl.textContent=t('home.dtnEmpty');
   }
   const dtnIds=new Set(dtnTasks.map(t=>t.id));
   document.getElementById('home-focus-list').innerHTML=dtnMode==='empty'
-    ?`<div class="text-dim text-sm" style="padding:6px 0">🎉 No pending tasks.</div>`
+    ?`<div class="text-dim text-sm" style="padding:6px 0">🎉 ${t('home.noPending')}</div>`
     :dtnTasks.map(t=>{
         const isFocus=DATA.focusTasks.includes(t.id);
         const over=isOverdue(t);
-        const label=over?`overdue since ${formatDueLabel(t.dueDate)}`:t.dueDate===td?'due today':t.dueDate?`due ${formatDueLabel(t.dueDate)}`:'no due date';
+        const label=over?t('tasksPage.overdueSince',{date:formatDueLabel(t.dueDate)}):t.dueDate===td?t('tasksPage.dueToday'):t.dueDate?t('tasksPage.dueDate',{date:formatDueLabel(t.dueDate)}):t('tasksPage.noDueDate');
         const labelColor=over?'#e57373':t.dueDate===td?'var(--gold)':t.dueDate?'var(--text-2)':'var(--text-3)';
         return taskHTML(t,isFocus)+(dtnMode==='auto'
-          ?`<div style="font-size:10.5px;color:var(--text-3);margin:3px 0 8px 25px;display:flex;align-items:center;gap:5px;line-height:1.35"><span style="opacity:.4">↑</span> Star to pin · <span style="color:${labelColor};font-weight:600">${label}</span></div>`
+          ?`<div style="font-size:10.5px;color:var(--text-3);margin:3px 0 8px 25px;display:flex;align-items:center;gap:5px;line-height:1.35"><span style="opacity:.4">↑</span> ${t('tasksPage.starToPin')} · <span style="color:${labelColor};font-weight:600">${label}</span></div>`
           :'');
       }).join('');
 
   // Today's Tasks — exclude DTN tasks
   const nonDtn=[...overdueTasks,...todayTasks].filter(t=>!dtnIds.has(t.id)&&!DATA.focusTasks.includes(t.id)).slice(0,6);
   document.getElementById('home-tasks-list').innerHTML=nonDtn.length===0
-    ?`<div class="empty" style="padding:10px 0"><div class="empty-icon">✅</div>All clear here!</div>`
+    ?`<div class="empty" style="padding:10px 0"><div class="empty-icon">✅</div>${t('home.todayTasksClear')}</div>`
     :nonDtn.map(t=>taskHTML(t,false)).join('');
 
   // Habits
@@ -3836,7 +4173,7 @@ function renderHome(){
   const habitsOnTrack=habitStatus.filter(entry=>entry.info.isComplete).length;
   const attentionCount=habitStatus.length-habitsOnTrack;
   const habitsSummary=`<div class="home-habits-summary ${attentionCount===0?'good':'attention'}">
-    ${attentionCount===0?'✓ All habits on track':`${attentionCount} habit${attentionCount>1?'s':''} need attention`}
+    ${attentionCount===0?`✓ ${t('home.habitsOnTrack')}`:t('home.habitsNeedAttention',{count:attentionCount,plural:pluralSuffix(attentionCount)})}
   </div>`;
   const habitRows=habitStatus.slice(0,4).map(({habit:h,info,consistency})=>{
     const doneToday=getHabitCompletionCount(h.id, td)>0;
@@ -3847,7 +4184,7 @@ function renderHome(){
           <div>
             <div style="font-size:13px;font-weight:500">${escHtml(h.label)}</div>
             <div class="text-xs text-dim" style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
-              <span class="badge ${focusAreaClass(h.focusArea)}">${h.focusArea}</span>
+              <span class="badge ${focusAreaClass(h.focusArea)}">${labelFocusArea(h.focusArea)}</span>
               <span>${getHabitFrequencyLabel(h)}</span>
             </div>
           </div>
@@ -3856,11 +4193,11 @@ function renderHome(){
       </div>
       <div class="flex-between" style="margin-top:8px">
         <div class="text-xs text-dim">${escHtml(info.statusLabel)}</div>
-        <div class="text-xs text-dim">${consistency}% consistency</div>
+        <div class="text-xs text-dim">${t('habitsPage.consistency',{count:consistency})}</div>
       </div>
     </div>`;
   }).join('');
-  document.getElementById('home-habits-list').innerHTML=habitStatus.length?habitsSummary+habitRows:`<div class="empty" style="padding:10px 0"><div class="empty-icon">↺</div>No habits yet. Add one to start building rhythm.</div>`;
+  document.getElementById('home-habits-list').innerHTML=habitStatus.length?habitsSummary+habitRows:`<div class="empty" style="padding:10px 0"><div class="empty-icon">↺</div>${t('home.noHabits')}</div>`;
 
   // Circles card
   renderHomeCirclesCard();
@@ -3868,13 +4205,13 @@ function renderHome(){
   // Projects
   const active=DATA.projects.filter(p=>p.status==='Active').slice(0,3);
   document.getElementById('home-projects-list').innerHTML=active.length===0
-    ?`<div class="text-dim text-sm">No active projects.</div>`
+    ?`<div class="text-dim text-sm">${t('home.noActiveProjects')}</div>`
     :active.map(p=>{
         const pct=calcProjectProgress(p.id);
         const nextTask=DATA.tasks.find(t=>t.projectId===p.id&&!t.completed);
         return `<div style="margin-bottom:13px;cursor:pointer" onclick="navigate('projects');setTimeout(()=>switchHub('projects'),50)">
           <div class="flex-between"><span style="font-size:13px;font-weight:500">${escHtml(p.title)}</span><span class="text-xs text-dim">${pct}%</span></div>
-          ${nextTask?`<div class="project-next">↳ <span>${escHtml(nextTask.title)}</span></div>`:'<div class="project-next" style="color:var(--green)">↳ All tasks done</div>'}
+          ${nextTask?`<div class="project-next">↳ <span>${escHtml(nextTask.title)}</span></div>`:`<div class="project-next" style="color:var(--green)">↳ ${t('home.allTasksDone')}</div>`}
           <div class="progress-track"><div class="progress-fill" style="width:${pct}%"></div></div>
         </div>`;
       }).join('');
@@ -4062,9 +4399,9 @@ function renderReview(){
   const habitColor=habitPct===null?'var(--text-3)':habitPct>=80?'var(--green)':habitPct>=50?'var(--gold)':'var(--accent)';
 
   document.getElementById('review-stats').innerHTML=[
-    {val:doneThisWeek,label:'Done this week',color:'var(--green)'},
-    {val:overdue,label:'Overdue',color:overdue>0?'var(--accent)':'var(--text-3)'},
-    {val:habitVal,label:'Habit rate this week',color:habitColor},
+    {val:doneThisWeek,label:t('workspace.doneThisWeek'),color:'var(--green)'},
+    {val:overdue,label:t('workspace.overdue'),color:overdue>0?'var(--accent)':'var(--text-3)'},
+    {val:habitVal,label:t('workspace.habitRateWeek'),color:habitColor},
   ].map(s=>`<div class="stat-card"><div class="stat-value" style="color:${s.color}">${s.val}</div><div class="stat-label">${s.label}</div></div>`).join('');
 
   const allCompleted=DATA.tasks.filter(t=>t.completed).length;
@@ -4074,7 +4411,7 @@ function renderReview(){
     const count=DATA.tasks.filter(t=>t.completed&&t.focusArea===area).length;
     const pct=Math.round(count/total*100);
     return `<div style="margin-bottom:10px">
-      <div class="flex-between text-sm"><span>${area}</span><span class="text-dim">${count} tasks · ${pct}%</span></div>
+      <div class="flex-between text-sm"><span>${labelFocusArea(area)}</span><span class="text-dim">${t('workspace.tasksCountPct',{count,pct})}</span></div>
       <div class="progress-track"><div class="progress-fill" style="width:${pct}%;background:${areaColors[area]||'var(--green)'}"></div></div>
     </div>`;
   }).join('');
@@ -4090,7 +4427,7 @@ function renderReview(){
   if (!weekKeys.length) {
     if (tabsEl) tabsEl.innerHTML = '';
     if (lastEl) lastEl.textContent = '';
-    if (outputEl) outputEl.innerHTML = `<div class="empty"><div class="empty-icon">📅</div>Your review generates automatically every Sunday at 8pm. Check back then.</div>`;
+    if (outputEl) outputEl.innerHTML = `<div class="empty"><div class="empty-icon">📅</div>${t('workspace.reviewWait')}</div>`;
     return;
   }
 
@@ -4103,7 +4440,7 @@ function renderReview(){
   if (tabsEl) {
     tabsEl.innerHTML = weekKeys.map(k => {
       const d = new Date(k + 'T12:00:00');
-      const label = k === wStr ? 'This week' : d.toLocaleDateString('en-GB', {day:'numeric', month:'short'});
+      const label = k === wStr ? t('workspace.thisWeek') : d.toLocaleDateString(getCurrentLocale(), {day:'numeric', month:'short'});
       const active = k === window._reviewActiveWeek;
       return `<button onclick="selectReviewWeek('${k}')" style="font-size:11px;padding:4px 10px;border-radius:20px;border:1px solid ${active?'var(--border-active)':'var(--border)'};background:${active?'var(--surface3)':'transparent'};color:${active?'var(--text)':'var(--text-3)'};cursor:pointer;font-family:var(--font-sans);transition:all var(--transition)">${label}</button>`;
     }).join('');
@@ -4111,7 +4448,7 @@ function renderReview(){
 
   // Render selected week's review
   const selected = reviews[window._reviewActiveWeek];
-  if (lastEl) lastEl.textContent = `Generated ${selected.date||'recently'}`;
+  if (lastEl) lastEl.textContent = t('workspace.generated',{date:selected.date||'recently'});
   renderReviewOutput(selected.text);
 }
 
@@ -4122,7 +4459,7 @@ function selectReviewWeek(weekKey) {
 
 async function generateReview(){
   // Legacy — kept for internal use only, not exposed in UI
-  document.getElementById('review-output').innerHTML=`<div class="empty"><div class="empty-icon" style="animation:spin 1.5s linear infinite">◌</div>Analysing your week…</div>`;
+  document.getElementById('review-output').innerHTML=`<div class="empty"><div class="empty-icon" style="animation:spin 1.5s linear infinite">◌</div>${t('workspace.reviewAnalysing')}</div>`;
   const wStart=new Date(); wStart.setDate(wStart.getDate()-wStart.getDay());
   const thisWeekStr=wStart.toISOString().split('T')[0];
   try{
@@ -4137,7 +4474,7 @@ async function generateReview(){
     scheduleSave();
     renderReview();
   }catch(e){
-    document.getElementById('review-output').innerHTML=`<div style="color:var(--gold);font-size:13px;padding:12px 14px;background:var(--gold-soft);border-radius:8px;line-height:1.6">ℹ The AI review works once deployed to Vercel (requires the <code>/api/review</code> serverless function).<br>All other features work fully in this HTML file.</div>`;
+    document.getElementById('review-output').innerHTML=`<div style="color:var(--gold);font-size:13px;padding:12px 14px;background:var(--gold-soft);border-radius:8px;line-height:1.6">ℹ ${t('workspace.reviewDeployNote')}</div>`;
   }
 }
 
@@ -4148,7 +4485,7 @@ function renderReviewOutput(text){
     const re=new RegExp(s.replace(/[&]/g,'\\&')+'[:\\s\\n]+([\\s\\S]*?)(?='+((sections[i+1]||'').replace(/[&]/g,'\\&')||'$')+'|$)','i');
     const m=text.match(re);if(m)parsed.push({title:s,content:m[1].trim()});
   });
-  const blocks=parsed.length?parsed:[{title:'WEEKLY REVIEW',content:text}];
+  const blocks=parsed.length?parsed:[{title:t('workspace.weeklyReview'),content:text}];
   document.getElementById('review-output').innerHTML=blocks.map(b=>`<div class="review-block"><h4>${b.title}</h4><div class="review-text">${escHtml(b.content)}</div></div>`).join('');
 }
 
@@ -4192,13 +4529,13 @@ function getCircleProject(circleId, projectId) {
 }
 
 function getCircleMemberLabel(circleId, userId, members = null) {
-  if (!userId) return 'Unassigned';
-  if (userId === currentUser?.id) return 'You';
+  if (!userId) return t('labels.unassigned');
+  if (userId === currentUser?.id) return t('labels.you');
   if (CIRCLE_MEMBER_NAMES[userId]) return CIRCLE_MEMBER_NAMES[userId];
   const entry = getCircleEntry(circleId);
   const activeMembers = (members || entry?.members || []).filter(m => m.status === 'active');
   const idx = activeMembers.findIndex(m => m.user_id === userId);
-  return idx >= 0 ? `Member ${idx + 1}` : 'Member';
+  return idx >= 0 ? `${t('labels.member')} ${idx + 1}` : t('labels.member');
 }
 
 function getCircleProjectTasks(circleId, projectId) {
@@ -4633,8 +4970,8 @@ function renderCircles() {
     const ta = document.getElementById('topbar-actions');
     if (ta) {
       ta.innerHTML = circleProjectDetailId
-        ? `<button class="btn btn-ghost btn-sm" onclick="backToCircleOverview()">← ${escHtml(getCircleEntry(circleDetailId)?.circle?.name || 'Circle')}</button>`
-        : `<button class="btn btn-ghost btn-sm" onclick="backToCircles()">← Circles</button>`;
+        ? `<button class="btn btn-ghost btn-sm" onclick="backToCircleOverview()">${t('circlesPage.backToCircle',{name:escHtml(getCircleEntry(circleDetailId)?.circle?.name || 'Circle')})}</button>`
+        : `<button class="btn btn-ghost btn-sm" onclick="backToCircles()">${t('circlesPage.backToCircles')}</button>`;
     }
     renderCircleDetail(circleDetailId);
     return;
@@ -4646,17 +4983,17 @@ function renderCircles() {
   if (!grid) return;
 
   if (circlesLoading) {
-    grid.innerHTML = `<div class="empty"><div class="empty-icon" style="opacity:.35">◎</div><div class="text-dim text-sm">Loading circles…</div></div>`;
+    grid.innerHTML = `<div class="empty"><div class="empty-icon" style="opacity:.35">◎</div><div class="text-dim text-sm">${t('circlesPage.loading')}</div></div>`;
     return;
   }
 
   if (!CIRCLES_DATA.length) {
     grid.innerHTML = `
-      <div class="circles-empty">
+        <div class="circles-empty">
         <div class="circles-empty-icon">◎</div>
-        <div class="circles-empty-title">No Circles yet</div>
-        <div class="circles-empty-sub">Create a Circle to share tasks and projects with people you trust — flatmates, partners, close collaborators.</div>
-        <button class="btn btn-primary" onclick="openCreateCircle()">Create your first Circle</button>
+        <div class="circles-empty-title">${t('circlesPage.emptyTitle')}</div>
+        <div class="circles-empty-sub">${t('circlesPage.emptySub')}</div>
+        <button class="btn btn-primary" onclick="openCreateCircle()">${t('circlesPage.createFirst')}</button>
       </div>`;
     return;
   }
@@ -4682,7 +5019,7 @@ function renderCircles() {
         <div class="circle-card-header">
           <div>
             <div class="circle-card-name">${escHtml(circle.name)}</div>
-            <div class="circle-card-meta">${activeMembers.length} member${activeMembers.length !== 1 ? 's' : ''}${invites.length ? ` · ${invites.length} pending` : ''}</div>
+            <div class="circle-card-meta">${t('circlesPage.members',{count:activeMembers.length,plural:pluralSuffix(activeMembers.length)})}${invites.length ? ` · ${t('circlesPage.pending',{count:invites.length})}` : ''}</div>
           </div>
         </div>
         <div class="circle-members-row">${memberChips}${pendingChips}${emptyChip}</div>
@@ -4696,7 +5033,7 @@ function openCircleDetail(id) {
   document.getElementById('circles-list-view').style.display = 'none';
   document.getElementById('circle-detail-view').style.display = '';
   const ta = document.getElementById('topbar-actions');
-  if (ta) ta.innerHTML = `<button class="btn btn-ghost btn-sm" onclick="backToCircles()">← Circles</button>`;
+  if (ta) ta.innerHTML = `<button class="btn btn-ghost btn-sm" onclick="backToCircles()">${t('circlesPage.backToCircles')}</button>`;
   renderCircleDetail(id);
   loadCircleTasks(id);
   loadCircleProjects(id);
@@ -4728,7 +5065,7 @@ function backToCircles() {
   document.getElementById('circles-list-view').style.display = '';
   document.getElementById('circle-detail-view').style.display = 'none';
   const ta = document.getElementById('topbar-actions');
-  if (ta) ta.innerHTML = `<button class="btn btn-primary btn-sm" onclick="openCreateCircle()">+ New Circle</button>`;
+  if (ta) ta.innerHTML = `<button class="btn btn-primary btn-sm" onclick="openCreateCircle()">${t('actions.newCircle')}</button>`;
   renderCircles();
 }
 
@@ -4736,14 +5073,14 @@ function openCircleProjectDetail(circleId, projectId) {
   circleDetailId = circleId;
   circleProjectDetailId = projectId;
   const ta = document.getElementById('topbar-actions');
-  if (ta) ta.innerHTML = `<button class="btn btn-ghost btn-sm" onclick="backToCircleOverview()">← ${escHtml(getCircleEntry(circleId)?.circle?.name || 'Circle')}</button>`;
+  if (ta) ta.innerHTML = `<button class="btn btn-ghost btn-sm" onclick="backToCircleOverview()">${t('circlesPage.backToCircle',{name:escHtml(getCircleEntry(circleId)?.circle?.name || 'Circle')})}</button>`;
   renderCircleDetail(circleId);
 }
 
 function backToCircleOverview() {
   circleProjectDetailId = null;
   const ta = document.getElementById('topbar-actions');
-  if (ta) ta.innerHTML = `<button class="btn btn-ghost btn-sm" onclick="backToCircles()">← Circles</button>`;
+  if (ta) ta.innerHTML = `<button class="btn btn-ghost btn-sm" onclick="backToCircles()">${t('circlesPage.backToCircles')}</button>`;
   if (circleDetailId) renderCircleDetail(circleDetailId);
 }
 
@@ -4774,16 +5111,16 @@ function renderCircleDetail(id) {
   const memberRows = activeMembers.map(m => {
     const isYou = m.user_id === currentUser.id;
     const initials = isYou ? (getUserName()[0] || 'Y').toUpperCase() : '?';
-    const displayName = isYou ? getUserName() + ' (you)' : 'Member';
+    const displayName = isYou ? `${getUserName()} (${t('circlesPage.you').toLowerCase()})` : t('circlesPage.member');
     const tag = isCreator && isYou
-      ? `<span class="circle-member-tag">Owner</span>`
-      : isYou ? `<span class="circle-member-tag">You</span>` : '';
+      ? `<span class="circle-member-tag">${t('circlesPage.owner')}</span>`
+      : isYou ? `<span class="circle-member-tag">${t('circlesPage.you')}</span>` : '';
     return `
       <div class="circle-member-row">
         <div class="circle-member-avatar">${escHtml(initials)}</div>
         <div class="circle-member-info">
           <div class="circle-member-name">${escHtml(displayName)}</div>
-          <div class="circle-member-email">${isYou ? escHtml(currentUser.email || '') : 'Active member'}</div>
+          <div class="circle-member-email">${isYou ? escHtml(currentUser.email || '') : t('circlesPage.activeMember')}</div>
         </div>
         ${tag}
       </div>`;
@@ -4794,38 +5131,38 @@ function renderCircleDetail(id) {
       <div class="circle-member-avatar" style="opacity:.45">?</div>
       <div class="circle-member-info">
         <div class="circle-member-name" style="color:var(--text-3)">${escHtml(inv.invited_email || 'Link invite')}</div>
-        <div class="circle-member-email">Awaiting acceptance</div>
+        <div class="circle-member-email">${t('circlesPage.awaitingAcceptance')}</div>
       </div>
       <div style="display:flex;align-items:center;gap:8px">
-        <span class="circle-member-tag pending">Pending</span>
-        <button class="btn btn-ghost btn-xs" style="color:var(--text-3);font-size:11px" onclick="revokeCircleInvite('${inv.id}','${circle.id}')">Revoke</button>
+        <span class="circle-member-tag pending">${t('circlesPage.pendingInvite')}</span>
+        <button class="btn btn-ghost btn-xs" style="color:var(--text-3);font-size:11px" onclick="revokeCircleInvite('${inv.id}','${circle.id}')">${t('circlesPage.revoke')}</button>
       </div>
     </div>`).join('');
 
   const inviteForm = slotsLeft > 0 ? `
     <div class="form-row mt14">
-      <label>Invite by email</label>
+      <label>${t('circlesPage.inviteByEmail')}</label>
       <div class="flex-gap">
-        <input class="input" id="circle-invite-email" type="email" placeholder="their@email.com" style="flex:1"
+        <input class="input" id="circle-invite-email" type="email" placeholder="${t('circlesPage.inviteEmailPlaceholder')}" style="flex:1"
           onkeydown="if(event.key==='Enter')sendCircleInvite('${circle.id}')"/>
-        <button class="btn btn-primary btn-sm" onclick="sendCircleInvite('${circle.id}')">Send Invite</button>
+        <button class="btn btn-primary btn-sm" onclick="sendCircleInvite('${circle.id}')">${t('circlesPage.sendInvite')}</button>
       </div>
     </div>
     <div class="form-row mt8">
-      <label>Or share an invite link</label>
+      <label>${t('circlesPage.shareInviteLink')}</label>
       <div id="circle-invite-link-area-${circle.id}">
-        <button class="btn btn-ghost btn-sm" onclick="generateCircleInviteLink('${circle.id}')">Generate link</button>
+        <button class="btn btn-ghost btn-sm" onclick="generateCircleInviteLink('${circle.id}')">${t('circlesPage.generateLink')}</button>
       </div>
-    </div>` : `<div class="text-sm text-dim mt12">Circle is full (5/5).</div>`;
+    </div>` : `<div class="text-sm text-dim mt12">${t('circlesPage.circleFull')}</div>`;
 
   // Circle settings panel — feature flags + danger
   const settingsSection = `
     <div class="card mt14">
-      <div class="card-title mb12">Circle Settings</div>
+      <div class="card-title mb12">${t('circlesPage.settings')}</div>
       <div class="circle-feature-toggle-row" style="border-top:none">
         <div>
-          <div style="font-size:13px;font-weight:500">Shared task list</div>
-          <div class="text-xs text-dim mt4">A simple shared list of tasks</div>
+          <div style="font-size:13px;font-weight:500">${t('circlesPage.sharedTaskList')}</div>
+          <div class="text-xs text-dim mt4">${t('circlesPage.sharedTaskListCopy')}</div>
         </div>
         <label class="toggle-switch">
           <input type="checkbox" id="settings-tasks-enabled" ${tasksOn ? 'checked' : ''}
@@ -4835,8 +5172,8 @@ function renderCircleDetail(id) {
       </div>
       <div class="circle-feature-toggle-row">
         <div>
-          <div style="font-size:13px;font-weight:500">Shared projects</div>
-          <div class="text-xs text-dim mt4">Structured projects for trips, events, side hustles</div>
+          <div style="font-size:13px;font-weight:500">${t('circlesPage.sharedProjects')}</div>
+          <div class="text-xs text-dim mt4">${t('circlesPage.sharedProjectsCopy')}</div>
         </div>
         <label class="toggle-switch">
           <input type="checkbox" id="settings-projects-enabled" ${projectsOn ? 'checked' : ''}
@@ -4846,8 +5183,8 @@ function renderCircleDetail(id) {
       </div>
       <div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--border)">
         ${isCreator
-          ? `<button class="btn btn-danger btn-sm" onclick="confirmDeleteCircle('${circle.id}')">Delete Circle</button>`
-          : `<button class="btn btn-danger btn-sm" onclick="confirmLeaveCircle('${circle.id}')">Leave Circle</button>`}
+          ? `<button class="btn btn-danger btn-sm" onclick="confirmDeleteCircle('${circle.id}')">${t('circlesPage.deleteCircle')}</button>`
+          : `<button class="btn btn-danger btn-sm" onclick="confirmLeaveCircle('${circle.id}')">${t('circlesPage.leaveCircle')}</button>`}
       </div>
     </div>`;
 
@@ -4859,16 +5196,16 @@ function renderCircleDetail(id) {
   detail.innerHTML = `
     <div class="mb20">
       <div class="circle-detail-name">${escHtml(circle.name)}</div>
-      <div class="text-xs text-dim">Created ${new Date(circle.created_at).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'})}</div>
+      <div class="text-xs text-dim">${t('circlesPage.created',{date:new Date(circle.created_at).toLocaleDateString(getCurrentLocale(),{day:'numeric',month:'short',year:'numeric'})})}</div>
     </div>
 
     <div class="card">
       <div class="circle-members-bar" onclick="toggleCircleMembersExpand('${circle.id}')">
         <div class="circle-members-compact">
           <div class="circle-avatar-strip">${avatarStrip}</div>
-          <span class="text-xs text-dim" style="margin-left:8px">${usedSlots} / 5 members</span>
+          <span class="text-xs text-dim" style="margin-left:8px">${t('circlesPage.slotsUsed',{count:usedSlots})}</span>
         </div>
-        <span class="manage-link">Manage ›</span>
+        <span class="manage-link">${t('circlesPage.manage')}</span>
       </div>
       <div id="circle-members-expanded-${circle.id}" style="display:none">
         ${memberRows}${inviteRows}
@@ -4887,7 +5224,7 @@ function toggleCircleMembersExpand(circleId) {
   const isOpen = el.style.display !== 'none';
   el.style.display = isOpen ? 'none' : '';
   const bar = el.previousElementSibling;
-  if (bar) bar.querySelector('.manage-link').textContent = isOpen ? 'Manage ›' : 'Close ‹';
+  if (bar) bar.querySelector('.manage-link').textContent = isOpen ? t('circlesPage.manage') : t('circlesPage.close');
 }
 
 async function updateCircleFeatureFlag(circleId, flag, value) {

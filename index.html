@@ -884,54 +884,54 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;heigh
     </div>
 
     <div class="nav-section">
-      <div class="nav-section-label">Overview</div>
+      <div class="nav-section-label" id="nav-section-overview">Overview</div>
       <div class="nav-item active" data-page="home">
         <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9.5z"/><path d="M9 21V12h6v9"/></svg></span>
-        <span class="nav-label">Home</span>
+        <span class="nav-label" id="nav-label-home">Home</span>
       </div>
     </div>
 
     <div class="nav-section">
-      <div class="nav-section-label">Manage</div>
+      <div class="nav-section-label" id="nav-section-manage">Manage</div>
       <div class="nav-item" data-page="tasks">
         <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></span>
-        <span class="nav-label">Tasks</span>
+        <span class="nav-label" id="nav-label-tasks">Tasks</span>
         <span class="nav-badge" id="tasks-badge" style="display:none">0</span>
       </div>
       <div class="nav-item" data-page="projects">
         <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></span>
-        <span class="nav-label">Workspace</span>
+        <span class="nav-label" id="nav-label-workspace">Workspace</span>
       </div>
       <div class="nav-sub-item" id="nav-sub-projects" onclick="navigate('projects');setTimeout(()=>switchHub('projects'),50)">
-        <span class="nav-sub-dot"></span>Projects
+        <span class="nav-sub-dot"></span><span id="nav-sub-projects-label">Projects</span>
       </div>
       <div class="nav-sub-item" id="nav-sub-opportunities" onclick="navigate('projects');setTimeout(()=>switchHub('opportunities'),50)">
-        <span class="nav-sub-dot"></span>Opportunities
+        <span class="nav-sub-dot"></span><span id="nav-sub-opportunities-label">Opportunities</span>
       </div>
       <div class="nav-sub-item" id="nav-sub-review" onclick="navigate('projects');setTimeout(()=>switchHub('review'),50)">
-        <span class="nav-sub-dot"></span>Review
+        <span class="nav-sub-dot"></span><span id="nav-sub-review-label">Review</span>
       </div>
       <div class="nav-item" data-page="habits">
         <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg></span>
-        <span class="nav-label">Habits</span>
+        <span class="nav-label" id="nav-label-habits">Habits</span>
       </div>
       <div class="nav-item" data-page="circles">
         <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="7" r="3"/><circle cx="17" cy="7" r="3"/><path d="M3 21v-2a5 5 0 0 1 5-5h4a5 5 0 0 1 5 5v2"/><path d="M19 11a3 3 0 0 1 0 6"/></svg></span>
-        <span class="nav-label">Circles</span>
+        <span class="nav-label" id="nav-label-circles">Circles</span>
         <span class="nav-badge" id="circles-badge" style="display:none">●</span>
       </div>
     </div>
 
     <div class="nav-section">
-      <div class="nav-section-label">Tools</div>
+      <div class="nav-section-label" id="nav-section-tools">Tools</div>
       <div class="nav-item" data-page="capture">
         <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><polyline points="13 2 13 9 20 9"/><line x1="12" y1="13" x2="12" y2="17"/><line x1="10" y1="15" x2="14" y2="15"/></svg></span>
-        <span class="nav-label">Quick Capture</span>
+        <span class="nav-label" id="nav-label-capture">Quick Capture</span>
         <span class="nav-badge" id="capture-badge" style="display:none">0</span>
       </div>
       <div class="nav-item" data-page="settings">
         <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06A2 2 0 1 1 4.37 16.9l.06-.06A1.65 1.65 0 0 0 4.76 15a1.65 1.65 0 0 0-1.51-1H3.16a2 2 0 1 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06A2 2 0 1 1 7.2 4.29l.06.06A1.65 1.65 0 0 0 9.08 4a1.65 1.65 0 0 0 1-1.51V2.4a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06A2 2 0 1 1 19.79 7.1l-.06.06a1.65 1.65 0 0 0-.33 1.82 1.65 1.65 0 0 0 1.51 1h.09a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></span>
-        <span class="nav-label">Settings</span>
+        <span class="nav-label" id="nav-label-settings">Settings</span>
       </div>
     </div>
 
@@ -941,7 +941,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;heigh
         <span class="sync-label" id="sync-label">Connecting…</span>
       </div>
       <div style="padding:6px 8px 0">
-        <button onclick="signOut()" style="width:100%;padding:6px 10px;border-radius:var(--radius-sm);border:1px solid var(--border);background:transparent;color:var(--text-3);font-family:var(--font-sans);font-size:11px;cursor:pointer;transition:all var(--transition);text-align:left" onmouseover="this.style.color='var(--text-2)'" onmouseout="this.style.color='var(--text-3)'">Sign out</button>
+        <button id="sidebar-signout-btn" onclick="signOut()" style="width:100%;padding:6px 10px;border-radius:var(--radius-sm);border:1px solid var(--border);background:transparent;color:var(--text-3);font-family:var(--font-sans);font-size:11px;cursor:pointer;transition:all var(--transition);text-align:left" onmouseover="this.style.color='var(--text-2)'" onmouseout="this.style.color='var(--text-3)'">Sign out</button>
       </div>
     </div>
   </nav>
@@ -967,7 +967,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;heigh
       <div class="page active" id="page-home">
         <!-- Command Bar -->
         <div class="command-bar">
-          <div class="command-bar-label">What needs to happen today?</div>
+          <div class="command-bar-label" id="home-command-label">What needs to happen today?</div>
           <div class="command-bar-input-row">
             <input class="command-bar-input" id="command-input"
               placeholder="e.g. Call dentist, pay rent…"
@@ -983,7 +983,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;heigh
             <button class="btn btn-primary btn-sm" onclick="submitCommand()">Go</button>
           </div>
           <div class="voice-status" id="home-voice-status"></div>
-          <div class="command-bar-hint">Speak or type naturally — <span>Kairo will sort it into tasks</span></div>
+          <div class="command-bar-hint"><span id="home-command-hint-prefix">Speak or type naturally —</span> <span id="home-command-hint-emphasis">Kairo will sort it into tasks</span></div>
         </div>
         <div id="home-context-bar"></div>
         <div class="capture-nudge mb14" id="home-capture-nudge" style="display:none" onclick="navigate('capture')"></div>
@@ -1026,7 +1026,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;heigh
               <div id="home-circles-list"></div>
             </div>
             <div class="card mt14">
-              <div class="card-title">Habits</div>
+              <div class="card-title" id="home-habits-title">Habits</div>
               <div id="home-habits-list"></div>
             </div>
           </div>
@@ -1142,44 +1142,50 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;heigh
         <div class="settings-grid">
           <div class="settings-stack">
             <div class="card">
-              <div class="card-title">Profile</div>
+              <div class="card-title" id="settings-profile-title">Profile</div>
               <div class="form-row">
-                <label>Name</label>
+                <label id="settings-name-label">Name</label>
                 <input class="input" id="settings-name" placeholder="What should Kairo call you?" oninput="updateSettingName(this.value)"/>
               </div>
-              <div class="text-xs text-dim">This updates your greeting and weekly review context.</div>
+              <div class="text-xs text-dim" id="settings-name-copy">This updates your greeting and weekly review context.</div>
             </div>
 
             <div class="card">
-              <div class="card-title">Look & Feel</div>
-              <div class="text-sm text-muted mb12">Pick a small accent palette for the whole dashboard.</div>
+              <div class="card-title" id="settings-look-title">Look & Feel</div>
+              <div class="text-sm text-muted mb12" id="settings-look-copy">Pick a small accent palette for the whole dashboard.</div>
               <div class="theme-grid" id="theme-options"></div>
             </div>
 
             <div class="card">
-              <div class="card-title">Mode</div>
-              <div class="text-sm text-muted mb12">Switch between dark and light.</div>
+              <div class="card-title" id="settings-mode-title">Mode</div>
+              <div class="text-sm text-muted mb12" id="settings-mode-copy">Switch between dark and light.</div>
               <div id="color-mode-options"></div>
+            </div>
+
+            <div class="card">
+              <div class="card-title" id="settings-language-title">Language</div>
+              <div class="text-sm text-muted mb12" id="settings-language-copy">Choose the language Kairo uses across the interface.</div>
+              <div id="language-options"></div>
             </div>
           </div>
 
           <div class="settings-stack">
             <div class="card">
-              <div class="card-title">Preferences</div>
+              <div class="card-title" id="settings-preferences-title">Preferences</div>
               <div id="settings-preferences"></div>
             </div>
 
             <div class="card">
-              <div class="card-title">Product Controls</div>
-              <div class="text-sm text-muted" style="line-height:1.6">
+              <div class="card-title" id="settings-controls-title">Product Controls</div>
+              <div class="text-sm text-muted" style="line-height:1.6" id="settings-controls-copy">
                 These switches are intentionally lightweight for now, so we can grow the product without hardcoding every choice.
               </div>
             </div>
 
             <div class="card">
-              <div class="card-title">Account</div>
+              <div class="card-title" id="settings-account-title">Account</div>
               <div class="text-sm text-muted mb12" id="settings-account-email"></div>
-              <button onclick="signOut()" class="btn btn-ghost btn-sm" style="color:#e57373;border-color:#c8392b30">Sign out</button>
+              <button onclick="signOut()" class="btn btn-ghost btn-sm" id="settings-signout-btn" style="color:#e57373;border-color:#c8392b30">Sign out</button>
             </div>
           </div>
         </div>
@@ -1198,36 +1204,36 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;heigh
   <div class="bottom-nav-inner">
     <button class="bottom-nav-item active" data-page="home" onclick="navigate('home')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9.5z"/><path d="M9 21V12h6v9"/></svg>
-      <span>Home</span>
+      <span id="bottom-nav-home">Home</span>
     </button>
     <button class="bottom-nav-item" data-page="tasks" onclick="navigate('tasks')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
-      <span>Tasks</span>
+      <span id="bottom-nav-tasks">Tasks</span>
       <span class="bottom-nav-badge" id="tasks-badge-mob" style="display:none">0</span>
     </button>
     <button class="bottom-nav-item" data-page="capture" onclick="navigate('capture')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
-      <span>Capture</span>
+      <span id="bottom-nav-capture">Capture</span>
       <span class="bottom-nav-badge" id="capture-badge-mob" style="display:none">0</span>
     </button>
     <button class="bottom-nav-item" data-page="projects" onclick="navigate('projects')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
-      <span>Workspace</span>
+      <span id="bottom-nav-workspace">Workspace</span>
     </button>
     <button class="bottom-nav-item" id="more-nav-btn" type="button" onclick="toggleMoreMenu()">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/></svg>
-      <span>More</span>
+      <span id="bottom-nav-more">More</span>
     </button>
   </div>
 </nav>
 <div class="more-sheet-overlay" id="more-sheet-overlay" onclick="closeMoreMenu()"></div>
 <div class="more-sheet" id="more-sheet">
   <div class="more-sheet-grid">
-    <button type="button" class="more-sheet-btn" onclick="navigateMoreTo('habits')"><strong>Habits</strong><span>Track streaks and consistency</span></button>
-    <button type="button" class="more-sheet-btn" onclick="navigateMoreTo('circles')"><strong>Circles</strong><span>Shared spaces with trusted people</span></button>
-    <button type="button" class="more-sheet-btn" onclick="navigateMoreTo('settings')"><strong>Settings</strong><span>Theme, profile, preferences</span></button>
-    <button type="button" class="more-sheet-btn" onclick="navigateMoreTo('projects','review')"><strong>Review</strong><span>Weekly reflection and insights</span></button>
-    <button type="button" class="more-sheet-btn" onclick="navigateMoreTo('projects','opportunities')"><strong>Opportunities</strong><span>Pipeline and next moves</span></button>
+    <button type="button" class="more-sheet-btn" onclick="navigateMoreTo('habits')"><strong id="more-habits-title">Habits</strong><span id="more-habits-copy">Track streaks and consistency</span></button>
+    <button type="button" class="more-sheet-btn" onclick="navigateMoreTo('circles')"><strong id="more-circles-title">Circles</strong><span id="more-circles-copy">Shared spaces with trusted people</span></button>
+    <button type="button" class="more-sheet-btn" onclick="navigateMoreTo('settings')"><strong id="more-settings-title">Settings</strong><span id="more-settings-copy">Theme, profile, preferences</span></button>
+    <button type="button" class="more-sheet-btn" onclick="navigateMoreTo('projects','review')"><strong id="more-review-title">Review</strong><span id="more-review-copy">Weekly reflection and insights</span></button>
+    <button type="button" class="more-sheet-btn" onclick="navigateMoreTo('projects','opportunities')"><strong id="more-opps-title">Opportunities</strong><span id="more-opps-copy">Pipeline and next moves</span></button>
   </div>
 </div>
 
@@ -1466,6 +1472,7 @@ function createDefaultData() {
       name:'',
       accentTheme:'red',
       colorMode:'dark',
+      language:'en',
       notifications:{weeklyReview:true,overdueNudge:true},
       modules:{opportunities:true},
     },
@@ -1498,6 +1505,212 @@ const OPP_STAGES   = ['Exploring','Contacted','In Progress','Won','Dropped'];
 const OPP_TYPES    = ['Job','Business','Personal','Other'];
 const JOB_STAGES   = OPP_STAGES; // backward compat alias
 const PROJ_STATUS  = ['Active','Paused','Completed'];
+const LANGUAGES = {
+  en: { label: 'English', locale: 'en-US' },
+  fr: { label: 'Français', locale: 'fr-FR' },
+};
+const I18N = {
+  en: {
+    nav: {
+      overview: 'Overview',
+      manage: 'Manage',
+      tools: 'Tools',
+      home: 'Home',
+      tasks: 'Tasks',
+      workspace: 'Workspace',
+      projects: 'Projects',
+      opportunities: 'Opportunities',
+      review: 'Review',
+      habits: 'Habits',
+      circles: 'Circles',
+      capture: 'Quick Capture',
+      settings: 'Settings',
+      signOut: 'Sign out',
+      more: 'More',
+    },
+    page: {
+      home: 'Home',
+      tasks: 'Tasks',
+      workspace: 'Workspace',
+      habits: 'Habits',
+      capture: 'Quick Capture',
+      settings: 'Settings',
+      circles: 'Circles',
+    },
+    pageSub: {
+      tasks: 'Manage your to-dos',
+      workspace: 'Projects, opportunities and review',
+      habits: 'Build consistency',
+      capture: 'Dump ideas, sort later',
+      settings: 'Personalise your dashboard',
+      circles: 'Shared spaces with trusted people',
+    },
+    greeting: {
+      morning: 'Good morning, {{name}}.',
+      afternoon: 'Good afternoon, {{name}}.',
+      evening: 'Good evening, {{name}}.',
+    },
+    home: {
+      habitsTitle: 'Habits',
+      circlesTitle: 'Circles',
+      all: 'All →',
+      commandLabel: 'What needs to happen today?',
+      commandHint: 'Speak or type naturally —',
+      commandHintEmphasis: 'Kairo will sort it into tasks',
+      commandPlaceholder: 'e.g. Call dentist, pay rent…',
+    },
+    settings: {
+      profile: 'Profile',
+      name: 'Name',
+      namePlaceholder: 'What should Kairo call you?',
+      nameCopy: 'This updates your greeting and weekly review context.',
+      lookTitle: 'Look & Feel',
+      lookCopy: 'Pick a small accent palette for the whole dashboard.',
+      modeTitle: 'Mode',
+      modeCopy: 'Switch between dark and light.',
+      languageTitle: 'Language',
+      languageCopy: 'Choose the language Kairo uses across the interface.',
+      preferences: 'Preferences',
+      controlsTitle: 'Product Controls',
+      controlsCopy: 'These switches are intentionally lightweight for now, so we can grow the product without hardcoding every choice.',
+      account: 'Account',
+      signOut: 'Sign out',
+      dark: 'Dark',
+      light: 'Light',
+      prefWeeklyReview: 'Weekly review reminder',
+      prefWeeklyReviewCopy: 'Keep the Sunday review reminder enabled as we build the actual notification system.',
+      prefOverdue: 'Overdue task nudge',
+      prefOverdueCopy: 'Store your preference now so daily reminders are ready when notifications go live.',
+      prefOpps: 'Show Opportunities',
+      prefOppsCopy: 'Hide or show the Opportunities section in navigation while the product is evolving.',
+      on: 'On',
+      off: 'Off',
+    },
+    more: {
+      habitsTitle: 'Habits',
+      habitsCopy: 'Track streaks and consistency',
+      circlesTitle: 'Circles',
+      circlesCopy: 'Shared spaces with trusted people',
+      settingsTitle: 'Settings',
+      settingsCopy: 'Theme, profile, preferences',
+      reviewTitle: 'Review',
+      reviewCopy: 'Weekly reflection and insights',
+      oppsTitle: 'Opportunities',
+      oppsCopy: 'Pipeline and next moves',
+    },
+    sync: {
+      connecting: 'Connecting…',
+    },
+    actions: {
+      newTask: '+ New Task',
+      newWorkspace: '+ New',
+      newHabit: '+ New Habit',
+      newCircle: '+ New Circle',
+      newProject: '+ New Project',
+      addOpportunity: '+ Add Opportunity',
+    },
+  },
+  fr: {
+    nav: {
+      overview: 'Aperçu',
+      manage: 'Gérer',
+      tools: 'Outils',
+      home: 'Accueil',
+      tasks: 'Tâches',
+      workspace: 'Espace',
+      projects: 'Projets',
+      opportunities: 'Opportunités',
+      review: 'Revue',
+      habits: 'Habitudes',
+      circles: 'Cercles',
+      capture: 'Capture rapide',
+      settings: 'Réglages',
+      signOut: 'Se déconnecter',
+      more: 'Plus',
+    },
+    page: {
+      home: 'Accueil',
+      tasks: 'Tâches',
+      workspace: 'Espace',
+      habits: 'Habitudes',
+      capture: 'Capture rapide',
+      settings: 'Réglages',
+      circles: 'Cercles',
+    },
+    pageSub: {
+      tasks: 'Gérez vos tâches',
+      workspace: 'Projets, opportunités et revue',
+      habits: 'Construire de la régularité',
+      capture: 'Déposez vos idées, triez plus tard',
+      settings: 'Personnalisez votre tableau de bord',
+      circles: 'Espaces partagés avec des personnes de confiance',
+    },
+    greeting: {
+      morning: 'Bonjour, {{name}}.',
+      afternoon: 'Bon après-midi, {{name}}.',
+      evening: 'Bonsoir, {{name}}.',
+    },
+    home: {
+      habitsTitle: 'Habitudes',
+      circlesTitle: 'Cercles',
+      all: 'Tout →',
+      commandLabel: "Qu'est-ce qui doit se passer aujourd'hui ?",
+      commandHint: 'Parlez ou écrivez naturellement —',
+      commandHintEmphasis: 'Kairo le transformera en tâches',
+      commandPlaceholder: 'ex. Appeler le dentiste, payer le loyer…',
+    },
+    settings: {
+      profile: 'Profil',
+      name: 'Nom',
+      namePlaceholder: 'Comment Kairo doit-il vous appeler ?',
+      nameCopy: 'Cela met à jour votre salutation et le contexte de la revue hebdomadaire.',
+      lookTitle: 'Style',
+      lookCopy: "Choisissez une petite palette d'accent pour tout le tableau de bord.",
+      modeTitle: 'Mode',
+      modeCopy: 'Basculer entre sombre et clair.',
+      languageTitle: 'Langue',
+      languageCopy: "Choisissez la langue utilisée par Kairo dans l'interface.",
+      preferences: 'Préférences',
+      controlsTitle: 'Contrôles produit',
+      controlsCopy: "Ces interrupteurs restent volontairement légers pour l'instant, afin de faire évoluer le produit sans tout figer.",
+      account: 'Compte',
+      signOut: 'Se déconnecter',
+      dark: 'Sombre',
+      light: 'Clair',
+      prefWeeklyReview: 'Rappel de revue hebdomadaire',
+      prefWeeklyReviewCopy: 'Gardez le rappel du dimanche activé pendant que nous construisons le vrai système de notifications.',
+      prefOverdue: 'Rappel des tâches en retard',
+      prefOverdueCopy: 'Enregistrez votre préférence maintenant pour que les rappels quotidiens soient prêts quand les notifications arriveront.',
+      prefOpps: 'Afficher les opportunités',
+      prefOppsCopy: "Masquez ou affichez la section Opportunités dans la navigation pendant que le produit évolue.",
+      on: 'Activé',
+      off: 'Désactivé',
+    },
+    more: {
+      habitsTitle: 'Habitudes',
+      habitsCopy: 'Suivez vos séries et votre régularité',
+      circlesTitle: 'Cercles',
+      circlesCopy: 'Espaces partagés avec des personnes de confiance',
+      settingsTitle: 'Réglages',
+      settingsCopy: 'Thème, profil, préférences',
+      reviewTitle: 'Revue',
+      reviewCopy: 'Réflexion et insights hebdomadaires',
+      oppsTitle: 'Opportunités',
+      oppsCopy: 'Pipeline et prochaines actions',
+    },
+    sync: {
+      connecting: 'Connexion…',
+    },
+    actions: {
+      newTask: '+ Nouvelle tâche',
+      newWorkspace: '+ Nouveau',
+      newHabit: '+ Nouvelle habitude',
+      newCircle: '+ Nouveau cercle',
+      newProject: '+ Nouveau projet',
+      addOpportunity: '+ Ajouter une opportunité',
+    },
+  },
+};
 const THEME_PRESETS = {
   red:    {label:'Red',accent:'#c8392b',rgb:'200,57,43'},
   blue:   {label:'Blue',accent:'#3b82f6',rgb:'59,130,246'},
@@ -1548,6 +1761,7 @@ function ensureSettingsShape() {
   DATA.settings.name = (DATA.settings.name || '').trim();
   DATA.settings.accentTheme = THEME_PRESETS[DATA.settings.accentTheme] ? DATA.settings.accentTheme : 'red';
   DATA.settings.colorMode = ['dark','light'].includes(DATA.settings.colorMode) ? DATA.settings.colorMode : 'dark';
+  DATA.settings.language = LANGUAGES[DATA.settings.language] ? DATA.settings.language : 'en';
   DATA.settings.notifications = {
     weeklyReview: DATA.settings.notifications?.weeklyReview !== false,
     overdueNudge: DATA.settings.notifications?.overdueNudge !== false,
@@ -1628,12 +1842,106 @@ function setColorMode(mode) {
   renderSettings();
 }
 
+function getCurrentLanguage() {
+  ensureSettingsShape();
+  return LANGUAGES[DATA.settings.language] ? DATA.settings.language : 'en';
+}
+
+function getCurrentLocale() {
+  return LANGUAGES[getCurrentLanguage()]?.locale || 'en-US';
+}
+
+function t(key, vars = {}) {
+  const lang = getCurrentLanguage();
+  const resolve = (source, path) => path.split('.').reduce((acc, part) => acc?.[part], source);
+  let template = resolve(I18N[lang], key);
+  if (template == null) template = resolve(I18N.en, key);
+  if (template == null) return key;
+  if (typeof template !== 'string') return template;
+  return template.replace(/\{\{(.*?)\}\}/g, (_, name) => String(vars[name.trim()] ?? ''));
+}
+
 function getGreeting() {
-  const h=new Date().getHours();
-  return (h<12?'Good morning':h<17?'Good afternoon':'Good evening')+', '+getUserName()+'.';
+  const h = new Date().getHours();
+  const period = h < 12 ? 'morning' : h < 17 ? 'afternoon' : 'evening';
+  return t(`greeting.${period}`, { name: getUserName() });
 }
 function todayLong() {
-  return new Date().toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'});
+  return new Date().toLocaleDateString(getCurrentLocale(),{weekday:'long',month:'long',day:'numeric'});
+}
+
+function applyStaticTranslations() {
+  const setText = (id, value) => {
+    const el = document.getElementById(id);
+    if (el) el.textContent = value;
+  };
+
+  setText('nav-section-overview', t('nav.overview'));
+  setText('nav-section-manage', t('nav.manage'));
+  setText('nav-section-tools', t('nav.tools'));
+  setText('nav-label-home', t('nav.home'));
+  setText('nav-label-tasks', t('nav.tasks'));
+  setText('nav-label-workspace', t('nav.workspace'));
+  setText('nav-label-habits', t('nav.habits'));
+  setText('nav-label-circles', t('nav.circles'));
+  setText('nav-label-capture', t('nav.capture'));
+  setText('nav-label-settings', t('nav.settings'));
+  setText('nav-sub-projects-label', t('nav.projects'));
+  setText('nav-sub-opportunities-label', t('nav.opportunities'));
+  setText('nav-sub-review-label', t('nav.review'));
+  setText('sidebar-signout-btn', t('nav.signOut'));
+  setText('home-habits-title', t('home.habitsTitle'));
+  setText('home-circles-title', t('home.circlesTitle'));
+  setText('home-command-label', t('home.commandLabel'));
+  setText('home-command-hint-prefix', t('home.commandHint'));
+  setText('home-command-hint-emphasis', t('home.commandHintEmphasis'));
+  setText('settings-profile-title', t('settings.profile'));
+  setText('settings-name-label', t('settings.name'));
+  setText('settings-name-copy', t('settings.nameCopy'));
+  setText('settings-look-title', t('settings.lookTitle'));
+  setText('settings-look-copy', t('settings.lookCopy'));
+  setText('settings-mode-title', t('settings.modeTitle'));
+  setText('settings-mode-copy', t('settings.modeCopy'));
+  setText('settings-language-title', t('settings.languageTitle'));
+  setText('settings-language-copy', t('settings.languageCopy'));
+  setText('settings-preferences-title', t('settings.preferences'));
+  setText('settings-controls-title', t('settings.controlsTitle'));
+  setText('settings-controls-copy', t('settings.controlsCopy'));
+  setText('settings-account-title', t('settings.account'));
+  setText('settings-signout-btn', t('settings.signOut'));
+  setText('bottom-nav-home', t('nav.home'));
+  setText('bottom-nav-tasks', t('nav.tasks'));
+  setText('bottom-nav-capture', t('nav.capture'));
+  setText('bottom-nav-workspace', t('nav.workspace'));
+  setText('bottom-nav-more', t('nav.more'));
+  setText('more-habits-title', t('more.habitsTitle'));
+  setText('more-habits-copy', t('more.habitsCopy'));
+  setText('more-circles-title', t('more.circlesTitle'));
+  setText('more-circles-copy', t('more.circlesCopy'));
+  setText('more-settings-title', t('more.settingsTitle'));
+  setText('more-settings-copy', t('more.settingsCopy'));
+  setText('more-review-title', t('more.reviewTitle'));
+  setText('more-review-copy', t('more.reviewCopy'));
+  setText('more-opps-title', t('more.oppsTitle'));
+  setText('more-opps-copy', t('more.oppsCopy'));
+
+  const commandInput = document.getElementById('command-input');
+  if (commandInput) commandInput.placeholder = t('home.commandPlaceholder');
+  const settingsNameInput = document.getElementById('settings-name');
+  if (settingsNameInput) settingsNameInput.placeholder = t('settings.namePlaceholder');
+  const syncLabel = document.getElementById('sync-label');
+  if (syncLabel && syncLabel.textContent.trim() === 'Connecting…') {
+    syncLabel.textContent = t('sync.connecting');
+  }
+}
+
+function setLanguage(language) {
+  if (!LANGUAGES[language]) return;
+  DATA.settings.language = language;
+  scheduleSave();
+  applyStaticTranslations();
+  renderSettings();
+  renderAll();
 }
 
 // Format due date+time chip for task cards
@@ -1746,30 +2054,44 @@ function setSyncStatus(state,label) {
 }
 
 // ─── Navigation ───────────────────────────────────────────────────────────────
+function updateTopbarActions(page = currentPage) {
+  const ta = document.getElementById('topbar-actions');
+  if (!ta) return;
+  ta.innerHTML = '';
+  if(page==='tasks')    ta.innerHTML=`<button class="btn btn-primary btn-sm" onclick="openAddTask()">${t('actions.newTask')}</button>`;
+  if(page==='projects') {
+    if(currentHub==='projects') ta.innerHTML=`<button class="btn btn-primary btn-sm" onclick="openAddProject()">${t('actions.newProject')}</button>`;
+    else if(currentHub==='opportunities') ta.innerHTML=`<button class="btn btn-primary btn-sm" onclick="openAddJob()">${t('actions.addOpportunity')}</button>`;
+    else ta.innerHTML='';
+  }
+  if(page==='habits')   ta.innerHTML=`<button class="btn btn-primary btn-sm" onclick="openAddHabit()">${t('actions.newHabit')}</button>`;
+  if(page==='circles')  ta.innerHTML=`<button class="btn btn-primary btn-sm" onclick="openCreateCircle()">${t('actions.newCircle')}</button>`;
+}
+
+function updatePageChrome(page = currentPage) {
+  const meta={
+    home:    [t('page.home'),''],
+    tasks:   [t('page.tasks'),t('pageSub.tasks')],
+    projects:[t('page.workspace'),t('pageSub.workspace')],
+    habits:  [t('page.habits'),t('pageSub.habits')],
+    capture: [t('page.capture'),t('pageSub.capture')],
+    settings:[t('page.settings'),t('pageSub.settings')],
+    circles: [t('page.circles'),t('pageSub.circles')],
+  };
+  const [title,sub]=meta[page]||['Kairo',''];
+  document.getElementById('page-title').textContent=page==='home'?getGreeting():title;
+  document.getElementById('page-sub').textContent=page==='home'?todayLong():sub;
+  document.getElementById('bc-current').textContent=title;
+}
+
 function navigate(page) {
   ensureSettingsShape();
   currentPage=page;
   document.querySelectorAll('.nav-item').forEach(el=>el.classList.toggle('active',el.dataset.page===page));
   document.querySelectorAll('.bottom-nav-item').forEach(el=>el.classList.toggle('active',el.dataset.page===page));
   document.querySelectorAll('.page').forEach(el=>el.classList.toggle('active',el.id==='page-'+page));
-  const meta={
-    home:    ['Home',''],
-    tasks:   ['Tasks','Manage your to-dos'],
-    projects:['Workspace','Projects, opportunities and review'],
-    habits:  ['Habits','Build consistency'],
-    capture: ['Quick Capture','Dump ideas, sort later'],
-    settings:['Settings','Personalise your dashboard'],
-    circles: ['Circles','Shared spaces with trusted people'],
-  };
-  const [title,sub]=meta[page]||['Kairo',''];
-  document.getElementById('page-title').textContent=page==='home'?getGreeting():title;
-  document.getElementById('page-sub').textContent=page==='home'?todayLong():sub;
-  document.getElementById('bc-current').textContent=title;
-  const ta=document.getElementById('topbar-actions'); ta.innerHTML='';
-  if(page==='tasks')    ta.innerHTML=`<button class="btn btn-primary btn-sm" onclick="openAddTask()">+ New Task</button>`;
-  if(page==='projects') ta.innerHTML=`<button class="btn btn-primary btn-sm" onclick="openAddProjectOrOpp()">+ New</button>`;
-  if(page==='habits')   ta.innerHTML=`<button class="btn btn-primary btn-sm" onclick="openAddHabit()">+ New Habit</button>`;
-  if(page==='circles')  ta.innerHTML=`<button class="btn btn-primary btn-sm" onclick="openCreateCircle()">+ New Circle</button>`;
+  updatePageChrome(page);
+  updateTopbarActions(page);
   if(page!=='projects'){
     projectDetailId=null;
     document.getElementById('projects-list-view').style.display='';
@@ -1833,8 +2155,8 @@ function switchHub(hub) {
   // Update topbar action button
   const ta = document.getElementById('topbar-actions');
   if(ta) {
-    if(hub==='projects')           ta.innerHTML=`<button class="btn btn-primary btn-sm" onclick="openAddProject()">+ New Project</button>`;
-    else if(hub==='opportunities') ta.innerHTML=`<button class="btn btn-primary btn-sm" onclick="openAddJob()">+ Add Opportunity</button>`;
+    if(hub==='projects')           ta.innerHTML=`<button class="btn btn-primary btn-sm" onclick="openAddProject()">${t('actions.newProject')}</button>`;
+    else if(hub==='opportunities') ta.innerHTML=`<button class="btn btn-primary btn-sm" onclick="openAddJob()">${t('actions.addOpportunity')}</button>`;
     else                           ta.innerHTML='';
   }
   if(hub==='projects')      renderProjects();
@@ -1846,12 +2168,10 @@ function switchHub(hub) {
 function renderAll(){
   ensureSettingsShape();
   applyTheme();
+  applyStaticTranslations();
   updateModuleVisibility();
-  if(currentPage==='home'){
-    document.getElementById('page-title').textContent=getGreeting();
-    document.getElementById('page-sub').textContent=todayLong();
-    document.getElementById('bc-current').textContent='Home';
-  }
+  updatePageChrome(currentPage);
+  updateTopbarActions(currentPage);
   renderPage(currentPage);
   updateBadges();
   requestAnimationFrame(attachSwipeHandlers);
@@ -2360,12 +2680,27 @@ function renderSettings(){
       <div style="display:flex;gap:8px">
         <button type="button" class="theme-option${isDark?' active':''}" onclick="setColorMode('dark')" style="flex:1;flex-direction:row;gap:8px;justify-content:flex-start;padding:10px 12px">
           <span style="font-size:16px">🌙</span>
-          <div class="theme-label" style="font-size:12px">Dark</div>
+          <div class="theme-label" style="font-size:12px">${t('settings.dark')}</div>
         </button>
         <button type="button" class="theme-option${!isDark?' active':''}" onclick="setColorMode('light')" style="flex:1;flex-direction:row;gap:8px;justify-content:flex-start;padding:10px 12px">
           <span style="font-size:16px">☀️</span>
-          <div class="theme-label" style="font-size:12px">Light</div>
+          <div class="theme-label" style="font-size:12px">${t('settings.light')}</div>
         </button>
+      </div>
+    `;
+  }
+
+  const languageEl = document.getElementById('language-options');
+  if(languageEl) {
+    const currentLanguage = getCurrentLanguage();
+    languageEl.innerHTML = `
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        ${Object.entries(LANGUAGES).map(([key, language]) => `
+          <button type="button" class="theme-option${currentLanguage===key?' active':''}" onclick="setLanguage('${key}')" style="min-width:140px;flex:1;flex-direction:row;gap:8px;justify-content:flex-start;padding:10px 12px">
+            <span style="font-size:16px">${key === 'fr' ? 'FR' : 'EN'}</span>
+            <div class="theme-label" style="font-size:12px">${language.label}</div>
+          </button>
+        `).join('')}
       </div>
     `;
   }
@@ -2376,22 +2711,22 @@ function renderSettings(){
       {
         key:'weeklyReview',
         group:'notifications',
-        title:'Weekly review reminder',
-        copy:'Keep the Sunday review reminder enabled as we build the actual notification system.',
+        title:t('settings.prefWeeklyReview'),
+        copy:t('settings.prefWeeklyReviewCopy'),
         enabled:DATA.settings.notifications.weeklyReview,
       },
       {
         key:'overdueNudge',
         group:'notifications',
-        title:'Overdue task nudge',
-        copy:'Store your preference now so daily reminders are ready when notifications go live.',
+        title:t('settings.prefOverdue'),
+        copy:t('settings.prefOverdueCopy'),
         enabled:DATA.settings.notifications.overdueNudge,
       },
       {
         key:'opportunities',
         group:'modules',
-        title:'Show Opportunities',
-        copy:'Hide or show the Opportunities section in navigation while the product is evolving.',
+        title:t('settings.prefOpps'),
+        copy:t('settings.prefOppsCopy'),
         enabled:DATA.settings.modules.opportunities,
       },
     ];
@@ -2402,7 +2737,7 @@ function renderSettings(){
           <strong>${row.title}</strong>
           <span>${row.copy}</span>
         </div>
-        <button type="button" class="toggle${row.enabled?' active':''}" onclick="toggleSetting('${row.group}','${row.key}')">${row.enabled?'On':'Off'}</button>
+        <button type="button" class="toggle${row.enabled?' active':''}" onclick="toggleSetting('${row.group}','${row.key}')">${row.enabled?t('settings.on'):t('settings.off')}</button>
       </div>
     `).join('');
   }
@@ -5074,6 +5409,7 @@ document.addEventListener('keydown',e=>{
     closeMoreMenu();
   }
 });
+applyStaticTranslations();
 document.getElementById('page-title').textContent=getGreeting();
 document.getElementById('page-sub').textContent=todayLong();
 // Hide app until auth confirmed

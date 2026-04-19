@@ -511,6 +511,7 @@ input[type="date"].input,input[type="time"].input{color-scheme:var(--date-color-
 .circles-home-count.dim{color:var(--text-3)}
 .circles-home-label{font-size:10px;color:var(--text-3);margin-top:1px;white-space:nowrap}
 .circles-home-divider{width:1px;height:24px;background:var(--border)}
+.circles-new-dot{width:7px;height:7px;border-radius:50%;background:var(--accent);flex-shrink:0}
 .circle-members-bar{display:flex;align-items:center;justify-content:space-between;padding:12px 0;cursor:pointer;user-select:none}
 .circle-members-bar:hover .manage-link{color:var(--text-2)}
 .manage-link{font-size:11px;color:var(--text-3);transition:color var(--transition);white-space:nowrap}
@@ -547,9 +548,6 @@ input[type="date"].input,input[type="time"].input{color-scheme:var(--date-color-
 .invite-link-box{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);
   padding:10px 12px;display:flex;align-items:center;gap:8px;margin-top:8px}
 .invite-link-text{flex:1;font-size:11px;color:var(--text-2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-family:monospace}
-.circles-cap-bar{display:flex;align-items:center;gap:5px}
-.circles-cap-dot{width:9px;height:9px;border-radius:50%;background:var(--green);border:1px solid #4a9e6e30}
-.circles-cap-dot.empty{background:var(--surface2);border-color:var(--border)}
 .circle-task-row{display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-bottom:1px solid var(--border)}
 .circle-task-row:last-child{border-bottom:none}
 .circle-task-check{width:18px;height:18px;border-radius:50%;border:1.5px solid var(--border-active);flex-shrink:0;
@@ -3322,6 +3320,11 @@ function renderHomeCirclesCard() {
         const tasksOn = circle.tasks_enabled !== false;
         const projectsOn = circle.projects_enabled === true;
 
+        // "new activity" dot: latest_activity_at > my last_seen_circles_at
+        const myMember = members.find(m => m.user_id === currentUser?.id);
+        const lastSeen = myMember?.last_seen_circles_at;
+        const hasNew = s.latest_activity_at && (!lastSeen || s.latest_activity_at > lastSeen);
+
         const avatars = activeMembers.slice(0, 4).map(m => {
           const isYou = m.user_id === currentUser?.id;
           const init = isYou ? (getUserName()[0] || 'Y').toUpperCase() : '?';
@@ -3339,6 +3342,7 @@ function renderHomeCirclesCard() {
         return `
           <div class="circles-home-row" onclick="navigate('circles');setTimeout(()=>openCircleDetail('${circle.id}'),60)">
             <div class="circles-home-left">
+              ${hasNew ? '<div class="circles-new-dot"></div>' : ''}
               <div class="circle-avatar-strip">${avatars}</div>
               <div class="circles-home-name">${escHtml(circle.name)}</div>
             </div>
@@ -4338,10 +4342,6 @@ function renderCircles() {
 
     const emptyChip = emptySlots > 0 ? `<span class="circle-slot-empty">+ Invite</span>` : '';
 
-    const dots = Array.from({length: 5}, (_, i) =>
-      `<div class="circles-cap-dot${i >= usedSlots ? ' empty' : ''}"></div>`
-    ).join('');
-
     return `
       <div class="circle-card" onclick="openCircleDetail('${circle.id}')">
         <div class="circle-card-header">
@@ -4349,7 +4349,6 @@ function renderCircles() {
             <div class="circle-card-name">${escHtml(circle.name)}</div>
             <div class="circle-card-meta">${activeMembers.length} member${activeMembers.length !== 1 ? 's' : ''}${invites.length ? ` · ${invites.length} pending` : ''}</div>
           </div>
-          <div class="circles-cap-bar">${dots}</div>
         </div>
         <div class="circle-members-row">${memberChips}${pendingChips}${emptyChip}</div>
       </div>`;

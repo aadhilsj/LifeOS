@@ -4112,6 +4112,13 @@ document.getElementById('page-title').textContent=getGreeting();
 document.getElementById('page-sub').textContent=todayLong();
 // Hide app until auth confirmed
 document.querySelector('.app').style.display='none';
+
+// Strip any leftover OAuth hash BEFORE Supabase loads — if it sees a stale
+// #access_token with no valid token it deadlocks internally on second load.
+if (window.location.hash && !window.location.hash.includes('access_token')) {
+  history.replaceState(null, '', window.location.pathname);
+}
+
 const _script=document.createElement('script');
 _script.src='https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.0/dist/umd/supabase.js';
 _script.onload=()=>handleAuth();

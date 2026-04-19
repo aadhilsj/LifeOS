@@ -1260,7 +1260,7 @@ let authEventProcessing = false;
 
 async function initSupabase() {
   if (typeof supabase === 'undefined') {
-    setSyncStatus('error','Offline mode'); return false;
+    setSyncStatus('error',t('status.offlineMode')); return false;
   }
   try {
     sb = supabase.createClient(SUPA_URL, SUPA_KEY, {
@@ -1273,7 +1273,7 @@ async function initSupabase() {
     });
     return true;
   } catch(e) {
-    setSyncStatus('error','Offline mode'); return false;
+    setSyncStatus('error',t('status.offlineMode')); return false;
   }
 }
 
@@ -1426,7 +1426,7 @@ async function processAuthEventQueue() {
     }
   } catch (error) {
     console.error('[Kairo] auth handling failed:', error);
-    setSyncStatus('error', 'Auth failed');
+    setSyncStatus('error', t('status.authFailed'));
     showLoginScreen();
     document.getElementById('login-box').style.display = 'flex';
     document.getElementById('name-setup-box').style.display = 'none';
@@ -1723,6 +1723,136 @@ const I18N = {
       on: 'On',
       off: 'Off',
     },
+    common: {
+      cancel: 'Cancel',
+      save: 'Save',
+      create: 'Create',
+      add: 'Add',
+      delete: 'Delete',
+      continue: 'Continue',
+      areYouSure: 'Are you sure?',
+      optional: '(optional)',
+      none: 'None',
+      edit: 'Edit',
+      copy: 'Copy',
+      send: 'Send',
+      decline: 'Decline',
+      loading: 'Loading…',
+      saving: 'Saving…',
+      creating: 'Creating…',
+      sending: 'Sending…',
+      joining: 'Joining…',
+    },
+    toast: {
+      taskDeleted: 'Task deleted',
+      taskDismissed: 'Task dismissed',
+      taskRestored: 'Task restored',
+      projectDeleted: 'Project deleted',
+      habitDeleted: 'Habit deleted',
+      projectCreated: 'Project created',
+      saved: 'Saved',
+      habitSaved: 'Habit saved',
+      taskUpdated: 'Task updated',
+      taskAdded: 'Task added',
+      removed: 'Removed',
+      undo: 'Undo',
+      featureEnabled: 'Feature enabled',
+      featureHidden: 'Feature hidden',
+      notesSaved: 'Notes saved',
+      sharedProjectCreated: 'Shared project created',
+      sharedProjectDeleted: 'Shared project deleted',
+      circleCreated: 'Circle created',
+      circleDeleted: 'Circle deleted',
+      circleLeft: 'You left the Circle',
+      welcomeCircle: 'Welcome to the Circle!',
+      inviteSent: 'Invite sent — share the link too!',
+      inviteExists: 'An invite for this email already exists',
+      inviteRevoked: 'Invite revoked',
+      linkCopied: 'Link copied',
+      invalidEmail: 'Enter a valid email',
+      invalidInvite: 'Invite link is invalid or expired',
+      alreadyInCircle: "You're already in this Circle",
+      somethingWrong: 'Something went wrong',
+      couldNotUpdateSetting: 'Could not update setting',
+      couldNotCreateSharedProject: 'Could not create shared project',
+      couldNotUpdateProjectStatus: 'Could not update project status',
+      couldNotSaveNotes: 'Could not save notes',
+      couldNotDeleteProject: 'Could not delete project',
+      couldNotAddSharedTask: 'Could not add shared task',
+      couldNotAddProjectTask: 'Could not add project task',
+      couldNotUpdateSharedTask: 'Could not update shared task',
+      couldNotRemoveSharedTask: 'Could not remove shared task',
+      couldNotSendInvite: 'Could not send invite',
+      couldNotGenerateLink: 'Could not generate link',
+      couldNotRevokeInvite: 'Could not revoke invite',
+      couldNotDeleteCircle: 'Could not delete circle',
+      couldNotLeaveCircle: 'Could not leave circle',
+      couldNotJoinCircle: 'Could not join circle',
+      circleFull: 'Circle is full',
+    },
+    status: {
+      syncing: 'Syncing…',
+      synced: 'Synced',
+      offline: 'Offline',
+      offlineMode: 'Offline mode',
+      saveFailed: 'Save failed',
+      authFailed: 'Auth failed',
+    },
+    forms: {
+      newTask: 'New Task',
+      editTask: 'Edit Task',
+      title: 'Title',
+      whatNeedsDone: 'What needs to be done?',
+      focusArea: 'Focus Area',
+      dueDate: 'Due Date',
+      dueTime: 'Due Time',
+      project: 'Project',
+      notes: 'Notes',
+      optionalPlaceholder: 'Optional…',
+      addTask: 'Add Task',
+      newProject: 'New Project',
+      description: 'Description',
+      status: 'Status',
+      createProject: 'Create',
+      editOpportunity: 'Edit Opportunity',
+      newOpportunity: 'New Opportunity',
+      name: 'Name',
+      type: 'Type',
+      link: 'Link',
+      deadline: 'Deadline',
+      newHabit: 'New Habit',
+      editHabit: 'Edit Habit',
+      frequency: 'Frequency',
+      daily: 'Daily',
+      weekly: 'Weekly',
+      monthly: 'Monthly',
+      timesPerWeek: 'Times per week',
+      timesPerMonth: 'Times per month',
+      iconEmoji: 'Icon (emoji)',
+      projectNotesPrompt: 'Project notes:',
+      deleteTaskTitle: 'Delete Task',
+      deleteTaskMessage: 'Delete "{{title}}"? This removes it completely.',
+      deleteProjectConfirm: 'Delete this project?',
+      deleteHabitConfirm: 'Delete this habit?',
+      deleteLabel: 'Delete',
+      viewHistory: 'View history',
+      hideHistory: 'Hide history',
+    },
+    voice: {
+      micNotSupported: 'Microphone not supported',
+      micNotSupportedBrowser: 'Microphone not supported on this browser.',
+      listeningTapStop: 'Listening… tap again to stop',
+      listeningTapToStop: 'Listening… tap to stop',
+      micDenied: 'Microphone access denied',
+      micDeniedPeriod: 'Microphone access denied.',
+      processing: 'Processing…',
+    },
+    reviewMeta: {
+      coachPromptIntro: 'You are a direct, honest personal productivity coach. Weekly review for {{name}}.',
+      completedThisWeek: 'COMPLETED THIS WEEK',
+      overdue: 'OVERDUE',
+      none: 'None',
+    },
     more: {
       habitsTitle: 'Habits',
       habitsCopy: 'Track streaks and consistency',
@@ -1978,6 +2108,136 @@ const I18N = {
       prefOppsCopy: "Masquez ou affichez la section Opportunités dans la navigation pendant que le produit évolue.",
       on: 'Activé',
       off: 'Désactivé',
+    },
+    common: {
+      cancel: 'Annuler',
+      save: 'Enregistrer',
+      create: 'Créer',
+      add: 'Ajouter',
+      delete: 'Supprimer',
+      continue: 'Continuer',
+      areYouSure: 'Êtes-vous sûr ?',
+      optional: '(optionnel)',
+      none: 'Aucun',
+      edit: 'Modifier',
+      copy: 'Copier',
+      send: 'Envoyer',
+      decline: 'Refuser',
+      loading: 'Chargement…',
+      saving: 'Enregistrement…',
+      creating: 'Création…',
+      sending: 'Envoi…',
+      joining: 'Connexion…',
+    },
+    toast: {
+      taskDeleted: 'Tâche supprimée',
+      taskDismissed: 'Tâche écartée',
+      taskRestored: 'Tâche restaurée',
+      projectDeleted: 'Projet supprimé',
+      habitDeleted: 'Habitude supprimée',
+      projectCreated: 'Projet créé',
+      saved: 'Enregistré',
+      habitSaved: 'Habitude enregistrée',
+      taskUpdated: 'Tâche mise à jour',
+      taskAdded: 'Tâche ajoutée',
+      removed: 'Supprimé',
+      undo: 'Annuler',
+      featureEnabled: 'Fonction activée',
+      featureHidden: 'Fonction masquée',
+      notesSaved: 'Notes enregistrées',
+      sharedProjectCreated: 'Projet partagé créé',
+      sharedProjectDeleted: 'Projet partagé supprimé',
+      circleCreated: 'Cercle créé',
+      circleDeleted: 'Cercle supprimé',
+      circleLeft: 'Vous avez quitté le cercle',
+      welcomeCircle: 'Bienvenue dans le cercle !',
+      inviteSent: 'Invitation envoyée — partagez aussi le lien !',
+      inviteExists: 'Une invitation existe déjà pour cet e-mail',
+      inviteRevoked: 'Invitation révoquée',
+      linkCopied: 'Lien copié',
+      invalidEmail: 'Entrez un e-mail valide',
+      invalidInvite: 'Le lien d’invitation est invalide ou expiré',
+      alreadyInCircle: 'Vous êtes déjà dans ce cercle',
+      somethingWrong: 'Une erreur est survenue',
+      couldNotUpdateSetting: 'Impossible de mettre à jour le réglage',
+      couldNotCreateSharedProject: 'Impossible de créer le projet partagé',
+      couldNotUpdateProjectStatus: 'Impossible de mettre à jour le statut du projet',
+      couldNotSaveNotes: 'Impossible d’enregistrer les notes',
+      couldNotDeleteProject: 'Impossible de supprimer le projet',
+      couldNotAddSharedTask: 'Impossible d’ajouter la tâche partagée',
+      couldNotAddProjectTask: 'Impossible d’ajouter la tâche du projet',
+      couldNotUpdateSharedTask: 'Impossible de mettre à jour la tâche partagée',
+      couldNotRemoveSharedTask: 'Impossible de supprimer la tâche partagée',
+      couldNotSendInvite: 'Impossible d’envoyer l’invitation',
+      couldNotGenerateLink: 'Impossible de générer le lien',
+      couldNotRevokeInvite: 'Impossible de révoquer l’invitation',
+      couldNotDeleteCircle: 'Impossible de supprimer le cercle',
+      couldNotLeaveCircle: 'Impossible de quitter le cercle',
+      couldNotJoinCircle: 'Impossible de rejoindre le cercle',
+      circleFull: 'Le cercle est complet',
+    },
+    status: {
+      syncing: 'Synchronisation…',
+      synced: 'Synchronisé',
+      offline: 'Hors ligne',
+      offlineMode: 'Mode hors ligne',
+      saveFailed: 'Échec de l’enregistrement',
+      authFailed: 'Échec de l’authentification',
+    },
+    forms: {
+      newTask: 'Nouvelle tâche',
+      editTask: 'Modifier la tâche',
+      title: 'Titre',
+      whatNeedsDone: 'Que faut-il faire ?',
+      focusArea: 'Domaine',
+      dueDate: 'Date limite',
+      dueTime: 'Heure limite',
+      project: 'Projet',
+      notes: 'Notes',
+      optionalPlaceholder: 'Optionnel…',
+      addTask: 'Ajouter la tâche',
+      newProject: 'Nouveau projet',
+      description: 'Description',
+      status: 'Statut',
+      createProject: 'Créer',
+      editOpportunity: 'Modifier l’opportunité',
+      newOpportunity: 'Nouvelle opportunité',
+      name: 'Nom',
+      type: 'Type',
+      link: 'Lien',
+      deadline: 'Date limite',
+      newHabit: 'Nouvelle habitude',
+      editHabit: 'Modifier l’habitude',
+      frequency: 'Fréquence',
+      daily: 'Quotidien',
+      weekly: 'Hebdomadaire',
+      monthly: 'Mensuel',
+      timesPerWeek: 'Fois par semaine',
+      timesPerMonth: 'Fois par mois',
+      iconEmoji: 'Icône (emoji)',
+      projectNotesPrompt: 'Notes du projet :',
+      deleteTaskTitle: 'Supprimer la tâche',
+      deleteTaskMessage: 'Supprimer « {{title}} » ? Cela la retire complètement.',
+      deleteProjectConfirm: 'Supprimer ce projet ?',
+      deleteHabitConfirm: 'Supprimer cette habitude ?',
+      deleteLabel: 'Supprimer',
+      viewHistory: 'Voir l’historique',
+      hideHistory: 'Masquer l’historique',
+    },
+    voice: {
+      micNotSupported: 'Microphone non pris en charge',
+      micNotSupportedBrowser: 'Microphone non pris en charge sur ce navigateur.',
+      listeningTapStop: 'J’écoute… touchez à nouveau pour arrêter',
+      listeningTapToStop: 'J’écoute… touchez pour arrêter',
+      micDenied: 'Accès au micro refusé',
+      micDeniedPeriod: 'Accès au micro refusé.',
+      processing: 'Traitement…',
+    },
+    reviewMeta: {
+      coachPromptIntro: 'Vous êtes un coach de productivité personnel direct et honnête. Revue hebdomadaire pour {{name}}.',
+      completedThisWeek: 'TÂCHES TERMINÉES CETTE SEMAINE',
+      overdue: 'EN RETARD',
+      none: 'Aucune',
     },
     more: {
       habitsTitle: 'Habitudes',
@@ -2307,7 +2567,7 @@ async function loadData(user) {
 
   if (!sb || !user) { renderAll(); return; }
 
-  setSyncStatus('syncing','Syncing…');
+  setSyncStatus('syncing',t('status.syncing'));
   try {
     const {data,error}=await sb.from('lifeos_data').select('data').eq('id',user.id).maybeSingle();
     if (error) throw error;
@@ -2326,7 +2586,7 @@ async function loadData(user) {
       DATA.tasks=DATA.tasks.map(t=>({...t,focusArea:migrateFocusArea(t)}));
       DATA.tasks=DATA.tasks.map(t=>t.completed&&!t.completedDate?{...t,completedDate:t.dueDate||t.createdAt||today()}:t);
       localStorage.setItem(currentStorageKey,JSON.stringify(DATA));
-      setSyncStatus('ok','Synced');
+      setSyncStatus('ok',t('status.synced'));
       renderAll();
       fetchCalendarData();
       maybeAutoGenerateReview();
@@ -2347,7 +2607,7 @@ async function loadData(user) {
       } else {
         DATA.settings.name = firstName;
         await saveNow();
-        setSyncStatus('ok','Synced');
+        setSyncStatus('ok',t('status.synced'));
         renderAll();
         fetchCalendarData();
         maybeAutoGenerateReview();
@@ -2355,14 +2615,14 @@ async function loadData(user) {
         checkCircleInviteParam();
       }
     }
-  } catch(e){ console.error('Load error:',e); setSyncStatus('error','Offline'); renderAll(); }
+  } catch(e){ console.error('Load error:',e); setSyncStatus('error',t('status.offline')); renderAll(); }
 }
 
 async function saveNow() {
   ensureCalendarLinksShape();
   localStorage.setItem(currentStorageKey,JSON.stringify(DATA));
   if (!sb || !currentUser) return;
-  setSyncStatus('syncing','Saving…');
+  setSyncStatus('syncing',t('common.saving'));
   try {
     const {error}=await sb.from('lifeos_data').upsert({
       id: currentUser.id,
@@ -2371,8 +2631,8 @@ async function saveNow() {
       updated_at: new Date().toISOString()
     });
     if (error) throw error;
-    setSyncStatus('ok','Synced');
-  } catch(e){ console.error('Save error:',e); setSyncStatus('error','Save failed'); }
+    setSyncStatus('ok',t('status.synced'));
+  } catch(e){ console.error('Save error:',e); setSyncStatus('error',t('status.saveFailed')); }
 }
 
 function scheduleSave() {
@@ -2387,6 +2647,10 @@ function setSyncStatus(state,label) {
   const lbl=document.getElementById('sync-label');
   dot.className='sync-dot'+(state==='syncing'?' syncing':state==='error'?' error':'');
   if (lbl) lbl.textContent=label||'';
+}
+
+function formatTemplateString(template, vars = {}) {
+  return String(template || '').replace(/\{\{(.*?)\}\}/g, (_, name) => String(vars[name.trim()] ?? ''));
 }
 
 // ─── Navigation ───────────────────────────────────────────────────────────────
@@ -2708,18 +2972,18 @@ function deleteTask(id){
   const task=DATA.tasks.find(t=>t.id===id);
   if(!task) return;
   confirmAction(
-    'Delete Task',
-    `Delete "${task.title}"? This removes it completely.`,
+    t('forms.deleteTaskTitle'),
+    formatTemplateString(t('forms.deleteTaskMessage'), { title: task.title }),
     ()=>{
       const removedTask = JSON.parse(JSON.stringify(task));
       const removedWasFocus = DATA.focusTasks.includes(id);
       DATA.tasks=DATA.tasks.filter(t=>t.id!==id);
       DATA.focusTasks=DATA.focusTasks.filter(f=>f!==id);
       scheduleSave();renderAll();
-      showTaskUndoToast('Task deleted',()=>{
+      showTaskUndoToast(t('toast.taskDeleted'),()=>{
         DATA.tasks.unshift(removedTask);
         if(removedWasFocus && !DATA.focusTasks.includes(id)) DATA.focusTasks=[...DATA.focusTasks,id];
-        scheduleSave();renderAll();toast('Task restored','info');
+        scheduleSave();renderAll();toast(t('toast.taskRestored'),'info');
       });
     }
   );
@@ -2734,13 +2998,13 @@ function dismissTask(id){
   if(nextDismissed) DATA.focusTasks=DATA.focusTasks.filter(f=>f!==id);
   scheduleSave();renderAll();
   if(nextDismissed){
-    showTaskUndoToast('Task dismissed',()=>{
+    showTaskUndoToast(t('toast.taskDismissed'),()=>{
       DATA.tasks=DATA.tasks.map(t=>t.id===id?previousState:t);
       if(wasFocus && !DATA.focusTasks.includes(id)) DATA.focusTasks=[...DATA.focusTasks,id];
-      scheduleSave();renderAll();toast('Task restored','info');
+      scheduleSave();renderAll();toast(t('toast.taskRestored'),'info');
     });
   } else {
-    toast('Task restored','info');
+    toast(t('toast.taskRestored'),'info');
   }
 }
 function toggleFocus(id){DATA.focusTasks=DATA.focusTasks.includes(id)?DATA.focusTasks.filter(f=>f!==id):[...DATA.focusTasks,id];scheduleSave();renderAll();}
@@ -2856,15 +3120,15 @@ function renderProjectDetail(id){
 
 function backToProjects(){projectDetailId=null;document.getElementById('projects-list-view').style.display='';document.getElementById('project-detail-view').style.display='none';renderProjects();}
 function updateProjectStatus(id,status){DATA.projects=DATA.projects.map(p=>p.id===id?{...p,status,lastUpdated:today()}:p);scheduleSave();renderProjectDetail(id);}
-function editProjectNotes(id){const p=DATA.projects.find(x=>x.id===id);if(!p) return;const notes=prompt('Project notes:',p.notes||'');if(notes===null) return;DATA.projects=DATA.projects.map(x=>x.id===id?{...x,notes,lastUpdated:today()}:x);scheduleSave();renderProjectDetail(id);}
+function editProjectNotes(id){const p=DATA.projects.find(x=>x.id===id);if(!p) return;const notes=prompt(t('forms.projectNotesPrompt'),p.notes||'');if(notes===null) return;DATA.projects=DATA.projects.map(x=>x.id===id?{...x,notes,lastUpdated:today()}:x);scheduleSave();renderProjectDetail(id);}
 function deleteProject(id){
-  if(!confirm('Delete this project?')) return;
+  if(!confirm(t('forms.deleteProjectConfirm'))) return;
   DATA.projects=DATA.projects.filter(p=>p.id!==id);
   ensureCalendarLinksShape();
   Object.keys(DATA.calendarLinks).forEach(key=>{
     if(DATA.calendarLinks[key]?.projectId===id) delete DATA.calendarLinks[key];
   });
-  scheduleSave();renderProjects();toast('Project deleted','info');
+  scheduleSave();renderProjects();toast(t('toast.projectDeleted'),'info');
 }
 
 // ─── Opportunities (formerly Job Tracker) ────────────────────────────────────
@@ -2906,7 +3170,7 @@ function renderJobs(){
               <div class="flex-gap">
                 <span class="stage ${oppStageClass(j.stage)}">${j.stage}</span>
                 <span class="badge badge-other" style="font-size:9px">${escHtml(j.type||'Job')}</span>
-                <button class="btn btn-ghost btn-sm" onclick="openEditJob('${j.id}')">Edit</button>
+                <button class="btn btn-ghost btn-sm" onclick="openEditJob('${j.id}')">${t('common.edit')}</button>
                 <button class="btn btn-danger btn-sm" onclick="deleteJob('${j.id}')">✕</button>
               </div>
             </div>
@@ -2917,7 +3181,7 @@ function renderJobs(){
       </div>`;
   }).join('');
 }
-function deleteJob(id){DATA.jobs=DATA.jobs.filter(j=>j.id!==id);scheduleSave();renderJobs();toast('Removed','info');}
+function deleteJob(id){DATA.jobs=DATA.jobs.filter(j=>j.id!==id);scheduleSave();renderJobs();toast(t('toast.removed'),'info');}
 
 // ─── Habits ───────────────────────────────────────────────────────────────────
 const calcStreak=hid=>{let s=0,d=new Date();while(true){const k=d.toISOString().split('T')[0];if(getHabitCompletionCount(hid,k)>0){s++;d.setDate(d.getDate()-1);}else break;}return s;};
@@ -2943,7 +3207,7 @@ function renderHabits(){
         </div>
         <div class="flex-gap">
           <span style="font-size:11px;color:${info.isComplete?'var(--green)':'var(--gold)'};font-weight:600">${escHtml(info.progressLabel)}</span>
-          <button class="btn btn-ghost btn-xs" onclick="openEditHabit('${h.id}')">Edit</button>
+          <button class="btn btn-ghost btn-xs" onclick="openEditHabit('${h.id}')">${t('common.edit')}</button>
           <button class="btn btn-danger btn-xs" onclick="deleteHabit('${h.id}')">✕</button>
         </div>
       </div>
@@ -2962,7 +3226,7 @@ function toggleHabit(hid,dateStr){
   scheduleSave();
   renderAll();
 }
-function deleteHabit(id){if(!confirm('Delete this habit?')) return;DATA.habitDefs=DATA.habitDefs.filter(h=>h.id!==id);scheduleSave();renderAll();toast('Habit deleted','info');}
+function deleteHabit(id){if(!confirm(t('forms.deleteHabitConfirm'))) return;DATA.habitDefs=DATA.habitDefs.filter(h=>h.id!==id);scheduleSave();renderAll();toast(t('toast.habitDeleted'),'info');}
 
 // ─── Capture ──────────────────────────────────────────────────────────────────
 function renderCapture(){
@@ -3139,7 +3403,7 @@ function closeModal(){
   modalState = { kind: null };
   if(priorState.kind==='confirm' && typeof priorState.resolve === 'function') priorState.resolve(false);
 }
-function openConfirmModal({ title='Are you sure?', message='', confirmLabel='Continue', cancelLabel='Cancel', confirmClass='btn-primary' } = {}){
+function openConfirmModal({ title=t('common.areYouSure'), message='', confirmLabel=t('common.continue'), cancelLabel=t('common.cancel'), confirmClass='btn-primary' } = {}){
   return new Promise(resolve => {
     modalState = { kind:'confirm', resolve };
     document.getElementById('modal-content').innerHTML = `
@@ -3154,39 +3418,39 @@ function openConfirmModal({ title='Are you sure?', message='', confirmLabel='Con
 }
 
 function renderAreaPills(selected){
-  return `<div class="area-pills" id="area-pills">${FOCUS_AREAS.map(a=>`<div class="area-pill${a===selected?' selected':''}" data-area="${a}" onclick="selectPill(this,'${a}')">${a}</div>`).join('')}</div><input type="hidden" id="m-area" value="${selected||'Career'}"/>`;
+  return `<div class="area-pills" id="area-pills">${FOCUS_AREAS.map(a=>`<div class="area-pill${a===selected?' selected':''}" data-area="${a}" onclick="selectPill(this,'${a}')">${labelFocusArea(a)}</div>`).join('')}</div><input type="hidden" id="m-area" value="${selected||'Career'}"/>`;
 }
 function selectPill(el,area){document.querySelectorAll('.area-pill').forEach(p=>p.classList.remove('selected'));el.classList.add('selected');document.getElementById('m-area').value=area;}
 
 function openAddTask(projectId='', options={}){
-  openModal(`<h3>New Task</h3>
-    <div class="form-row"><label>Title</label><input class="input" id="m-title" placeholder="What needs to be done?" autofocus onkeydown="if(event.key==='Enter')saveTask()"/></div>
-    <div class="form-row"><label>Focus Area</label>${renderAreaPills('Career')}</div>
+  openModal(`<h3>${t('forms.newTask')}</h3>
+    <div class="form-row"><label>${t('forms.title')}</label><input class="input" id="m-title" placeholder="${t('forms.whatNeedsDone')}" autofocus onkeydown="if(event.key==='Enter')saveTask()"/></div>
+    <div class="form-row"><label>${t('forms.focusArea')}</label>${renderAreaPills('Career')}</div>
     <div class="form-grid">
-      <div class="form-row"><label>Due Date <span class="text-dim" style="text-transform:none;letter-spacing:0;font-size:10px">(optional)</span></label><input type="date" class="input" id="m-due"/></div>
-      <div class="form-row"><label>Due Time <span class="text-dim" style="text-transform:none;letter-spacing:0;font-size:10px">(optional)</span></label><input type="time" class="input" id="m-time"/></div>
+      <div class="form-row"><label>${t('forms.dueDate')} <span class="text-dim" style="text-transform:none;letter-spacing:0;font-size:10px">${t('common.optional')}</span></label><input type="date" class="input" id="m-due"/></div>
+      <div class="form-row"><label>${t('forms.dueTime')} <span class="text-dim" style="text-transform:none;letter-spacing:0;font-size:10px">${t('common.optional')}</span></label><input type="time" class="input" id="m-time"/></div>
     </div>
-    <div class="form-row"><label>Project</label><select class="input" id="m-proj"><option value="">None</option>${DATA.projects.map(p=>`<option value="${p.id}"${p.id===projectId?' selected':''}>${escHtml(p.title)}</option>`).join('')}</select></div>
-    <div class="form-row"><label>Notes</label><textarea class="input" id="m-notes" placeholder="Optional…"></textarea></div>
+    <div class="form-row"><label>${t('forms.project')}</label><select class="input" id="m-proj"><option value="">${t('common.none')}</option>${DATA.projects.map(p=>`<option value="${p.id}"${p.id===projectId?' selected':''}>${escHtml(p.title)}</option>`).join('')}</select></div>
+    <div class="form-row"><label>${t('forms.notes')}</label><textarea class="input" id="m-notes" placeholder="${t('forms.optionalPlaceholder')}"></textarea></div>
     <div class="flex-gap" style="justify-content:flex-end;margin-top:6px">
-      <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
-      <button class="btn btn-primary" onclick="saveTask()">Add Task</button>
+      <button class="btn btn-ghost" onclick="closeModal()">${t('common.cancel')}</button>
+      <button class="btn btn-primary" onclick="saveTask()">${t('forms.addTask')}</button>
     </div>`, { kind:options.kind || 'task-form' });
 }
 
 function openAddProjectTask(projectId){
-  openModal(`<h3>New Task</h3>
-    <div class="form-row"><label>Title</label><input class="input" id="m-title" placeholder="What needs to be done?" autofocus onkeydown="if(event.key==='Enter')saveTask(null,'${projectId}')"/></div>
-    <div class="form-row"><label>Focus Area</label>${renderAreaPills('Career')}</div>
+  openModal(`<h3>${t('forms.newTask')}</h3>
+    <div class="form-row"><label>${t('forms.title')}</label><input class="input" id="m-title" placeholder="${t('forms.whatNeedsDone')}" autofocus onkeydown="if(event.key==='Enter')saveTask(null,'${projectId}')"/></div>
+    <div class="form-row"><label>${t('forms.focusArea')}</label>${renderAreaPills('Career')}</div>
     <div class="form-grid">
-      <div class="form-row"><label>Due Date <span class="text-dim" style="text-transform:none;letter-spacing:0;font-size:10px">(optional)</span></label><input type="date" class="input" id="m-due"/></div>
-      <div class="form-row"><label>Due Time <span class="text-dim" style="text-transform:none;letter-spacing:0;font-size:10px">(optional)</span></label><input type="time" class="input" id="m-time"/></div>
+      <div class="form-row"><label>${t('forms.dueDate')} <span class="text-dim" style="text-transform:none;letter-spacing:0;font-size:10px">${t('common.optional')}</span></label><input type="date" class="input" id="m-due"/></div>
+      <div class="form-row"><label>${t('forms.dueTime')} <span class="text-dim" style="text-transform:none;letter-spacing:0;font-size:10px">${t('common.optional')}</span></label><input type="time" class="input" id="m-time"/></div>
     </div>
-    <div class="form-row"><label>Notes</label><textarea class="input" id="m-notes" placeholder="Optional…" style="min-height:56px"></textarea></div>
+    <div class="form-row"><label>${t('forms.notes')}</label><textarea class="input" id="m-notes" placeholder="${t('forms.optionalPlaceholder')}" style="min-height:56px"></textarea></div>
     <input type="hidden" id="m-proj" value="${projectId}"/>
     <div class="flex-gap" style="justify-content:flex-end;margin-top:6px">
-      <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
-      <button class="btn btn-primary" onclick="saveTask(null,'${projectId}')">Add Task</button>
+      <button class="btn btn-ghost" onclick="closeModal()">${t('common.cancel')}</button>
+      <button class="btn btn-primary" onclick="saveTask(null,'${projectId}')">${t('forms.addTask')}</button>
     </div>`, { kind:'task-form' });
 }
 
@@ -3202,39 +3466,39 @@ function saveTask(editId=null,forceProjectId=null){
   else DATA.tasks.unshift(task);
   if(projectId) DATA.projects=DATA.projects.map(p=>p.id===projectId?{...p,lastUpdated:today()}:p);
   if(modalState.kind==='voice-single-task-review') clearPendingVoiceReview();
-  closeModal();scheduleSave();renderAll();toast(editId?'Task updated':'Task added','success');
+  closeModal();scheduleSave();renderAll();toast(editId?t('toast.taskUpdated'):t('toast.taskAdded'),'success');
 }
 
 function openEditTask(id){
   const t=DATA.tasks.find(x=>x.id===id);if(!t) return;
   const fa=t.focusArea||migrateFocusArea(t);
-  openModal(`<h3>Edit Task</h3>
-    <div class="form-row"><label>Title</label><input class="input" id="m-title" value="${escHtml(t.title)}"/></div>
-    <div class="form-row"><label>Focus Area</label>${renderAreaPills(fa)}</div>
+  openModal(`<h3>${t('forms.editTask')}</h3>
+    <div class="form-row"><label>${t('forms.title')}</label><input class="input" id="m-title" value="${escHtml(t.title)}"/></div>
+    <div class="form-row"><label>${t('forms.focusArea')}</label>${renderAreaPills(fa)}</div>
     <div class="form-grid">
-      <div class="form-row"><label>Due Date <span class="text-dim" style="text-transform:none;letter-spacing:0;font-size:10px">(optional)</span></label><input type="date" class="input" id="m-due" value="${t.dueDate||''}"/></div>
-      <div class="form-row"><label>Due Time</label><input type="time" class="input" id="m-time" value="${t.dueTime||''}"/></div>
+      <div class="form-row"><label>${t('forms.dueDate')} <span class="text-dim" style="text-transform:none;letter-spacing:0;font-size:10px">${t('common.optional')}</span></label><input type="date" class="input" id="m-due" value="${t.dueDate||''}"/></div>
+      <div class="form-row"><label>${t('forms.dueTime')}</label><input type="time" class="input" id="m-time" value="${t.dueTime||''}"/></div>
     </div>
-    <div class="form-row"><label>Project</label><select class="input" id="m-proj"><option value="">None</option>${DATA.projects.map(p=>`<option value="${p.id}"${p.id===t.projectId?' selected':''}>${escHtml(p.title)}</option>`).join('')}</select></div>
-    <div class="form-row"><label>Notes</label><textarea class="input" id="m-notes">${escHtml(t.notes||'')}</textarea></div>
+    <div class="form-row"><label>${t('forms.project')}</label><select class="input" id="m-proj"><option value="">${t('common.none')}</option>${DATA.projects.map(p=>`<option value="${p.id}"${p.id===t.projectId?' selected':''}>${escHtml(p.title)}</option>`).join('')}</select></div>
+    <div class="form-row"><label>${t('forms.notes')}</label><textarea class="input" id="m-notes">${escHtml(t.notes||'')}</textarea></div>
     <div class="flex-gap" style="justify-content:flex-end;margin-top:6px">
-      <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
-      <button class="btn btn-primary" onclick="saveTask('${id}')">Save</button>
+      <button class="btn btn-ghost" onclick="closeModal()">${t('common.cancel')}</button>
+      <button class="btn btn-primary" onclick="saveTask('${id}')">${t('common.save')}</button>
     </div>`, { kind:'task-form' });
 }
 
 function openAddProject(){
-  openModal(`<h3>New Project</h3>
-    <div class="form-row"><label>Title</label><input class="input" id="m-ptitle" autofocus/></div>
-    <div class="form-row"><label>Description</label><input class="input" id="m-pdesc"/></div>
+  openModal(`<h3>${t('forms.newProject')}</h3>
+    <div class="form-row"><label>${t('forms.title')}</label><input class="input" id="m-ptitle" autofocus/></div>
+    <div class="form-row"><label>${t('forms.description')}</label><input class="input" id="m-pdesc"/></div>
     <div class="form-grid">
-      <div class="form-row"><label>Focus Area</label><select class="input" id="m-parea">${FOCUS_AREAS.map(a=>`<option>${a}</option>`).join('')}</select></div>
-      <div class="form-row"><label>Status</label><select class="input" id="m-pstatus">${PROJ_STATUS.map(s=>`<option>${s}</option>`).join('')}</select></div>
+      <div class="form-row"><label>${t('forms.focusArea')}</label><select class="input" id="m-parea">${FOCUS_AREAS.map(a=>`<option value="${a}">${labelFocusArea(a)}</option>`).join('')}</select></div>
+      <div class="form-row"><label>${t('forms.status')}</label><select class="input" id="m-pstatus">${PROJ_STATUS.map(s=>`<option value="${s}">${labelProjectStatus(s)}</option>`).join('')}</select></div>
     </div>
-    <div class="form-row"><label>Notes</label><textarea class="input" id="m-pnotes"></textarea></div>
+    <div class="form-row"><label>${t('forms.notes')}</label><textarea class="input" id="m-pnotes"></textarea></div>
     <div class="flex-gap" style="justify-content:flex-end;margin-top:6px">
-      <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
-      <button class="btn btn-primary" onclick="saveProject()">Create</button>
+      <button class="btn btn-ghost" onclick="closeModal()">${t('common.cancel')}</button>
+      <button class="btn btn-primary" onclick="saveProject()">${t('common.create')}</button>
     </div>`);
 }
 function saveProject(){
@@ -3242,7 +3506,7 @@ function saveProject(){
   DATA.projects.unshift({id:uid(),title,description:document.getElementById('m-pdesc').value,
     focusArea:document.getElementById('m-parea').value,status:document.getElementById('m-pstatus').value,
     notes:document.getElementById('m-pnotes').value,lastUpdated:today(),createdAt:today()});
-  closeModal();scheduleSave();renderAll();toast('Project created','success');
+  closeModal();scheduleSave();renderAll();toast(t('toast.projectCreated'),'success');
 }
 
 function openAddProjectOrOpp(){
@@ -3253,21 +3517,21 @@ function openAddProjectOrOpp(){
 
 function openAddJob(editId=null){
   const j=editId?migrateJob(DATA.jobs.find(x=>x.id===editId)||{}):({});
-  openModal(`<h3>${editId?'Edit':'New'} Opportunity</h3>
+  openModal(`<h3>${editId?t('forms.editOpportunity'):t('forms.newOpportunity')}</h3>
     <div class="form-grid">
-      <div class="form-row"><label>Name</label><input class="input" id="m-jco" value="${escHtml(j.name||j.company||'')}" placeholder="Google, Bali Trip, Local Bar…" autofocus/></div>
-      <div class="form-row"><label>Type</label><select class="input" id="m-jtype">${OPP_TYPES.map(t=>`<option${t===(j.type||'Job')?' selected':''}>${t}</option>`).join('')}</select></div>
+      <div class="form-row"><label>${t('forms.name')}</label><input class="input" id="m-jco" value="${escHtml(j.name||j.company||'')}" placeholder="Google, Bali Trip, Local Bar…" autofocus/></div>
+      <div class="form-row"><label>${t('forms.type')}</label><select class="input" id="m-jtype">${OPP_TYPES.map(type=>`<option${type===(j.type||'Job')?' selected':''}>${type}</option>`).join('')}</select></div>
     </div>
-    <div class="form-row"><label>Description</label><input class="input" id="m-jrole" value="${escHtml(j.description||j.role||'')}" placeholder="Role, deal type, goal…"/></div>
-    <div class="form-row"><label>Link</label><input class="input" id="m-jurl" value="${escHtml(j.url||'')}" placeholder="https://…"/></div>
+    <div class="form-row"><label>${t('forms.description')}</label><input class="input" id="m-jrole" value="${escHtml(j.description||j.role||'')}" placeholder="Role, deal type, goal…"/></div>
+    <div class="form-row"><label>${t('forms.link')}</label><input class="input" id="m-jurl" value="${escHtml(j.url||'')}" placeholder="https://…"/></div>
     <div class="form-grid">
-      <div class="form-row"><label>Stage</label><select class="input" id="m-jstage">${OPP_STAGES.map(s=>`<option${s===(j.stage||'Exploring')?' selected':''}>${s}</option>`).join('')}</select></div>
-      <div class="form-row"><label>Deadline</label><input type="date" class="input" id="m-jdead" value="${j.deadline||''}"/></div>
+      <div class="form-row"><label>${t('forms.status')}</label><select class="input" id="m-jstage">${OPP_STAGES.map(s=>`<option${s===(j.stage||'Exploring')?' selected':''}>${s}</option>`).join('')}</select></div>
+      <div class="form-row"><label>${t('forms.deadline')}</label><input type="date" class="input" id="m-jdead" value="${j.deadline||''}"/></div>
     </div>
-    <div class="form-row"><label>Notes</label><textarea class="input" id="m-jnotes">${escHtml(j.notes||'')}</textarea></div>
+    <div class="form-row"><label>${t('forms.notes')}</label><textarea class="input" id="m-jnotes">${escHtml(j.notes||'')}</textarea></div>
     <div class="flex-gap" style="justify-content:flex-end;margin-top:6px">
-      <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
-      <button class="btn btn-primary" onclick="saveJob('${editId||''}')">Save</button>
+      <button class="btn btn-ghost" onclick="closeModal()">${t('common.cancel')}</button>
+      <button class="btn btn-primary" onclick="saveJob('${editId||''}')">${t('common.save')}</button>
     </div>`);
 }
 function openEditJob(id){openAddJob(id);}
@@ -3287,7 +3551,7 @@ function saveJob(editId=''){
   };
   if(editId) DATA.jobs=DATA.jobs.map(j=>j.id===editId?job:j);
   else DATA.jobs.unshift(job);
-  closeModal();scheduleSave();renderAll();toast('Saved','success');
+  closeModal();scheduleSave();renderAll();toast(t('toast.saved'),'success');
 }
 
 function openAddHabit(editId=null){
@@ -3295,27 +3559,27 @@ function openAddHabit(editId=null){
   const normalized=editId
     ? normalizeHabitDef(h||{})
     : {label:'',icon:'',focusArea:'Personal',frequencyType:'daily',targetCount:1};
-  openModal(`<h3>${editId?'Edit':'New'} Habit</h3>
-    <div class="form-row"><label>Name</label><input class="input" id="m-hname" value="${escHtml(normalized.label||'')}" autofocus/></div>
-    <div class="form-row"><label>Focus Area</label><select class="input" id="m-harea">${FOCUS_AREAS.map(area=>`<option value="${area}" ${normalized.focusArea===area?'selected':''}>${area}</option>`).join('')}</select></div>
+  openModal(`<h3>${editId?t('forms.editHabit'):t('forms.newHabit')}</h3>
+    <div class="form-row"><label>${t('forms.name')}</label><input class="input" id="m-hname" value="${escHtml(normalized.label||'')}" autofocus/></div>
+    <div class="form-row"><label>${t('forms.focusArea')}</label><select class="input" id="m-harea">${FOCUS_AREAS.map(area=>`<option value="${area}" ${normalized.focusArea===area?'selected':''}>${labelFocusArea(area)}</option>`).join('')}</select></div>
     <div class="form-grid">
       <div class="form-row">
-        <label>Frequency</label>
+        <label>${t('forms.frequency')}</label>
         <select class="input" id="m-hfrequency" onchange="syncHabitFrequencyFields()">
-          <option value="daily" ${normalized.frequencyType==='daily'?'selected':''}>Daily</option>
-          <option value="weekly" ${normalized.frequencyType==='weekly'?'selected':''}>Weekly</option>
-          <option value="monthly" ${normalized.frequencyType==='monthly'?'selected':''}>Monthly</option>
+          <option value="daily" ${normalized.frequencyType==='daily'?'selected':''}>${t('forms.daily')}</option>
+          <option value="weekly" ${normalized.frequencyType==='weekly'?'selected':''}>${t('forms.weekly')}</option>
+          <option value="monthly" ${normalized.frequencyType==='monthly'?'selected':''}>${t('forms.monthly')}</option>
         </select>
       </div>
       <div class="form-row" id="m-htarget-row" style="display:${normalized.frequencyType==='daily'?'none':'flex'};flex-direction:column">
-        <label id="m-htarget-label">${normalized.frequencyType==='monthly'?'Times per month':'Times per week'}</label>
+        <label id="m-htarget-label">${normalized.frequencyType==='monthly'?t('forms.timesPerMonth'):t('forms.timesPerWeek')}</label>
         <input class="input" id="m-htarget" type="number" min="1" max="${normalized.frequencyType==='monthly'?'31':'7'}" value="${normalized.targetCount||1}"/>
       </div>
     </div>
-    <div class="form-row"><label>Icon (emoji)</label><input class="input" id="m-hicon" value="${normalized.icon||''}" placeholder="e.g. 🏃 🧘 💊"/></div>
+    <div class="form-row"><label>${t('forms.iconEmoji')}</label><input class="input" id="m-hicon" value="${normalized.icon||''}" placeholder="e.g. 🏃 🧘 💊"/></div>
     <div class="flex-gap" style="justify-content:flex-end;margin-top:6px">
-      <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
-      <button class="btn btn-primary" onclick="saveHabit('${editId||''}')">Save</button>
+      <button class="btn btn-ghost" onclick="closeModal()">${t('common.cancel')}</button>
+      <button class="btn btn-primary" onclick="saveHabit('${editId||''}')">${t('common.save')}</button>
     </div>`);
   syncHabitFrequencyFields();
 }
@@ -3328,7 +3592,7 @@ function syncHabitFrequencyFields(){
   if(!row||!label||!input) return;
   const show=frequency!=='daily';
   row.style.display=show?'flex':'none';
-  label.textContent=frequency==='monthly'?'Times per month':'Times per week';
+  label.textContent=frequency==='monthly'?t('forms.timesPerMonth'):t('forms.timesPerWeek');
   input.min='1';
   input.max=frequency==='monthly'?'31':'7';
   if(!show) input.value='1';
@@ -3350,7 +3614,7 @@ function saveHabit(editId=''){
   });
   if(editId) DATA.habitDefs=DATA.habitDefs.map(h=>h.id===editId?habit:h);
   else DATA.habitDefs.push(habit);
-  closeModal();scheduleSave();renderAll();toast('Habit saved','success');
+  closeModal();scheduleSave();renderAll();toast(t('toast.habitSaved'),'success');
 }
 
 // ─── Toast ────────────────────────────────────────────────────────────────────
@@ -3367,7 +3631,7 @@ function showTaskUndoToast(label, undoFn){
   const el=document.getElementById('toast');clearTimeout(toastTimer);
   document.getElementById('toast-dot').className='toast-dot info';
   document.getElementById('toast-msg').innerHTML=
-    `${label} &nbsp;<button type="button" onclick="handleToastUndo()" style="background:none;border:none;color:var(--gold);font-size:12px;cursor:pointer;font-family:inherit;font-weight:600;padding:0">Undo</button>`;
+    `${label} &nbsp;<button type="button" onclick="handleToastUndo()" style="background:none;border:none;color:var(--gold);font-size:12px;cursor:pointer;font-family:inherit;font-weight:600;padding:0">${t('toast.undo')}</button>`;
   window.__toastUndo = ()=>{
     window.__toastUndo = null;
     undoFn();
@@ -3537,7 +3801,7 @@ function renderHabitHistoryGrid(habit) {
     </div>
     <div style="margin-top:8px">
       <button class="btn btn-ghost btn-xs" id="habit-history-btn-${habit.id}" onclick="toggleHabitHistory('${habit.id}');event.stopPropagation()">
-        View history
+        ${t('forms.viewHistory')}
       </button>
     </div>`;
 }
@@ -3548,7 +3812,7 @@ function toggleHabitHistory(habitId){
   if(!panel||!btn) return;
   const isOpen=panel.style.display!=='none';
   panel.style.display=isOpen?'none':'';
-  btn.textContent=isOpen?'View history':'Hide history';
+  btn.textContent=isOpen?t('forms.viewHistory'):t('forms.hideHistory');
 }
 
 function confirmAction(title, message, onConfirm, confirmLabel='Delete') {
@@ -3556,7 +3820,7 @@ function confirmAction(title, message, onConfirm, confirmLabel='Delete') {
     <h3>${escHtml(title)}</h3>
     <div style="font-size:13px;color:var(--text-2);line-height:1.55;margin-bottom:18px">${escHtml(message)}</div>
     <div class="flex-gap" style="justify-content:flex-end">
-      <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+          <button class="btn btn-ghost" onclick="closeModal()">${t('common.cancel')}</button>
       <button class="btn btn-danger" onclick="confirmModalAction()">${escHtml(confirmLabel)}</button>
     </div>`);
   window.confirmModalAction = () => {
@@ -3654,7 +3918,7 @@ function openCalendarLinkModal(eventKey){
       <button class="btn btn-ghost" onclick="removeCalendarLink('${eventKey}')">Remove Link</button>
       <div class="flex-gap">
         <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
-        <button class="btn btn-primary" onclick="saveCalendarLinkFromModal('${eventKey}')">Save</button>
+          <button class="btn btn-primary" onclick="saveCalendarLinkFromModal('${eventKey}')">${t('common.save')}</button>
       </div>
     </div>`, { kind:'calendar-link' });
 }
@@ -3855,7 +4119,7 @@ async function toggleHomeVoice(){
   if(isRecording){ stopHomeRecording(); return; }
   if(!navigator.mediaDevices?.getUserMedia){
     const s=document.getElementById('home-voice-status');
-    if(s){s.textContent='Microphone not supported';s.className='voice-status error';}
+    if(s){s.textContent=t('voice.micNotSupported');s.className='voice-status error';}
     return;
   }
   try{
@@ -3868,10 +4132,10 @@ async function toggleHomeVoice(){
     isRecording=true;
     document.getElementById('home-voice-btn').classList.add('recording');
     const s=document.getElementById('home-voice-status');
-    if(s){s.textContent='Listening… tap again to stop';s.className='voice-status active';}
+    if(s){s.textContent=t('voice.listeningTapStop');s.className='voice-status active';}
   }catch(e){
     const s=document.getElementById('home-voice-status');
-    if(s){s.textContent='Microphone access denied';s.className='voice-status error';}
+    if(s){s.textContent=t('voice.micDenied');s.className='voice-status error';}
   }
 }
 
@@ -3883,7 +4147,7 @@ function stopHomeRecording(){
   isRecording=false;
   document.getElementById('home-voice-btn').classList.remove('recording');
   const s=document.getElementById('home-voice-status');
-  if(s){s.textContent='Processing…';s.className='voice-status processing';}
+  if(s){s.textContent=t('voice.processing');s.className='voice-status processing';}
 }
 
 async function processHomeVoice(){
@@ -3913,7 +4177,7 @@ async function toggleTasksFabVoice(){
     }
     isRecording=false;
     if(fab){fab.innerHTML='🎙';fab.classList.remove('recording');}
-    if(pill){pill.textContent='Processing…';pill.className='fab-voice-status visible processing';}
+    if(pill){pill.textContent=t('voice.processing');pill.className='fab-voice-status visible processing';}
     return;
   }
 
@@ -3932,7 +4196,7 @@ async function toggleTasksFabVoice(){
     mediaRecorder.start();
     isRecording=true;
     if(fab){fab.innerHTML='⏹';fab.classList.add('recording');}
-    if(pill){pill.textContent='Listening… tap to stop';pill.className='fab-voice-status visible active';}
+    if(pill){pill.textContent=t('voice.listeningTapToStop');pill.className='fab-voice-status visible active';}
   }catch(e){
     if(pill){pill.textContent='Mic access denied';pill.className='fab-voice-status visible error';}
     setTimeout(()=>{if(pill)pill.className='fab-voice-status';},3000);
@@ -4228,7 +4492,7 @@ function setVoiceStatus(msg,cls=''){
 async function toggleVoice(){
   if(isRecording){stopRecording();return;}
   if(!navigator.mediaDevices?.getUserMedia){
-    setVoiceStatus('Microphone not supported on this browser.','error');return;
+    setVoiceStatus(t('voice.micNotSupportedBrowser'),'error');return;
   }
   try{
     const stream=await navigator.mediaDevices.getUserMedia({audio:true});
@@ -4239,9 +4503,9 @@ async function toggleVoice(){
     mediaRecorder.start();
     isRecording=true;
     document.getElementById('voice-btn').classList.add('recording');
-    setVoiceStatus('Listening… tap again to stop','active');
+    setVoiceStatus(t('voice.listeningTapStop'),'active');
   }catch(e){
-    setVoiceStatus('Microphone access denied.','error');
+    setVoiceStatus(t('voice.micDeniedPeriod'),'error');
   }
 }
 
@@ -4252,7 +4516,7 @@ function stopRecording(){
   }
   isRecording=false;
   document.getElementById('voice-btn').classList.remove('recording');
-  setVoiceStatus('Processing…','processing');
+  setVoiceStatus(t('voice.processing'),'processing');
 }
 
 async function processVoice(){
@@ -4730,7 +4994,7 @@ function renderCircleProjectDetail(circleId, projectId, members = []) {
         `).join('')}
       </div>
       <div class="progress-track" style="height:6px;margin-top:14px"><div class="progress-fill" style="width:${pct}%"></div></div>
-      <div class="text-xs text-dim mt8">${pct}% complete</div>
+      <div class="text-xs text-dim mt8">${t('workspace.percentComplete',{count:pct})}</div>
     </div>
     <div class="card mt14">
       <div class="flex-between mb12">
@@ -4741,19 +5005,19 @@ function renderCircleProjectDetail(circleId, projectId, members = []) {
         <input class="input" id="circle-project-task-title-${circleId}-${projectId}" placeholder="Add a project task…" onkeydown="if(event.key==='Enter')addCircleProjectTask('${circleId}','${projectId}')"/>
         <input class="input" id="circle-project-task-due-${circleId}-${projectId}" type="date"/>
         <select class="input" id="circle-project-task-assignee-${circleId}-${projectId}">
-          <option value="">Unassigned</option>
+          <option value="">${t('labels.unassigned')}</option>
           ${memberOptions}
         </select>
-        <button class="btn btn-primary btn-sm" onclick="addCircleProjectTask('${circleId}','${projectId}')">Add</button>
+        <button class="btn btn-primary btn-sm" onclick="addCircleProjectTask('${circleId}','${projectId}')">${t('common.add')}</button>
       </div>
       <div class="circle-project-task-list">${rows}</div>
     </div>
     <div class="card mt14">
-      <div class="card-title">Notes</div>
+      <div class="card-title">${t('forms.notes')}</div>
       <div class="text-sm text-dim" style="line-height:1.7;white-space:pre-wrap">${escHtml(project.notes || 'No notes yet.')}</div>
       <div class="mt12" style="display:flex;gap:8px;justify-content:space-between;flex-wrap:wrap">
-        <button class="btn btn-ghost btn-sm" onclick="editCircleProjectNotes('${circleId}','${projectId}')">Edit Notes</button>
-        <button class="btn btn-danger btn-sm" onclick="confirmDeleteCircleProject('${circleId}','${projectId}')">Delete Project</button>
+        <button class="btn btn-ghost btn-sm" onclick="editCircleProjectNotes('${circleId}','${projectId}')">${t('common.edit')} ${t('forms.notes')}</button>
+        <button class="btn btn-danger btn-sm" onclick="confirmDeleteCircleProject('${circleId}','${projectId}')">${t('forms.deleteLabel')} Project</button>
       </div>
     </div>`;
 }
@@ -4780,7 +5044,7 @@ async function addCircleTask(circleId) {
     toast('Shared task added', 'success');
   } catch (e) {
     console.error('Add circle task error:', e);
-    toast('Could not add shared task', 'error');
+    toast(t('toast.couldNotAddSharedTask'), 'error');
   }
 }
 
@@ -4810,7 +5074,7 @@ async function addCircleProjectTask(circleId, projectId) {
     toast('Project task added', 'success');
   } catch (e) {
     console.error('Add circle project task error:', e);
-    toast('Could not add project task', 'error');
+    toast(t('toast.couldNotAddProjectTask'), 'error');
   }
 }
 
@@ -4838,7 +5102,7 @@ async function toggleCircleTask(circleId, taskId) {
     refreshCircleSummaries();
   } catch (e) {
     console.error('Toggle circle task error:', e);
-    toast('Could not update shared task', 'error');
+    toast(t('toast.couldNotUpdateSharedTask'), 'error');
   }
 }
 
@@ -4853,7 +5117,7 @@ async function deleteCircleTask(circleId, taskId) {
     toast('Shared task removed', 'info');
   } catch (e) {
     console.error('Delete circle task error:', e);
-    toast('Could not remove shared task', 'error');
+    toast(t('toast.couldNotRemoveSharedTask'), 'error');
   }
 }
 
@@ -5005,14 +5269,14 @@ function renderCircles() {
 
     const memberChips = activeMembers.map(m => {
       const isYou = m.user_id === currentUser.id;
-      return `<span class="circle-member-chip${isYou ? ' you' : ''}">${isYou ? 'You' : '?'}</span>`;
+      return `<span class="circle-member-chip${isYou ? ' you' : ''}">${isYou ? t('circlesPage.you') : '?'}</span>`;
     }).join('');
 
     const pendingChips = invites.map(() =>
-      `<span class="circle-member-chip pending">Invited…</span>`
+      `<span class="circle-member-chip pending">${t('circlesPage.pendingInvite')}…</span>`
     ).join('');
 
-    const emptyChip = emptySlots > 0 ? `<span class="circle-slot-empty">+ Invite</span>` : '';
+    const emptyChip = emptySlots > 0 ? `<span class="circle-slot-empty">+ ${t('circlesPage.sendInvite')}</span>` : '';
 
     return `
       <div class="circle-card" onclick="openCircleDetail('${circle.id}')">
@@ -5268,11 +5532,11 @@ async function updateCircleFeatureFlag(circleId, flag, value) {
       e.circle.id === circleId ? { ...e, circle: { ...e.circle, [flag]: value } } : e
     );
     renderCircleDetail(circleId);
-    toast(value ? 'Feature enabled' : 'Feature hidden', 'info');
+    toast(value ? t('toast.featureEnabled') : t('toast.featureHidden'), 'info');
   } catch(e) {
     console.error('Update feature flag error:', e);
     if (toggle) toggle.checked = !value;
-    toast('Could not update setting', 'error');
+    toast(t('toast.couldNotUpdateSetting'), 'error');
   }
 }
 
@@ -5305,7 +5569,7 @@ async function submitAddCircleProject(circleId) {
   if (!title) { titleInput?.focus(); return; }
   const description = descInput?.value.trim() || null;
   const btn = document.querySelector('#modal-content .btn-primary');
-  if (btn) { btn.disabled = true; btn.textContent = 'Creating…'; }
+  if (btn) { btn.disabled = true; btn.textContent = t('common.creating'); }
   try {
     const { data, error } = await sb.from('circle_projects')
       .insert({
@@ -5321,12 +5585,12 @@ async function submitAddCircleProject(circleId) {
     closeModal();
     await loadCircleProjects(circleId, { silent: true });
     renderCircleDetail(circleId);
-    toast('Shared project created', 'success');
+    toast(t('toast.sharedProjectCreated'), 'success');
     if (data?.id) openCircleProjectDetail(circleId, data.id);
   } catch (e) {
     console.error('Create circle project error:', e);
-    toast('Could not create shared project', 'error');
-    if (btn) { btn.disabled = false; btn.textContent = 'Create Project'; }
+    toast(t('toast.couldNotCreateSharedProject'), 'error');
+    if (btn) { btn.disabled = false; btn.textContent = t('forms.createProject'); }
   }
 }
 
@@ -5343,7 +5607,7 @@ async function updateCircleProjectStatus(circleId, projectId, status) {
     renderCircleDetail(circleId);
   } catch (e) {
     console.error('Update circle project status error:', e);
-    toast('Could not update project status', 'error');
+    toast(t('toast.couldNotUpdateProjectStatus'), 'error');
   }
 }
 
@@ -5356,8 +5620,8 @@ function editCircleProjectNotes(circleId, projectId) {
       <textarea class="input" id="circle-project-notes-input" rows="6" placeholder="Add notes, context, or links for everyone in the Circle…" style="resize:vertical;line-height:1.6">${escHtml(project.notes || '')}</textarea>
     </div>
     <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:16px">
-      <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
-      <button class="btn btn-primary" onclick="saveCircleProjectNotes('${circleId}','${projectId}')">Save</button>
+      <button class="btn btn-ghost" onclick="closeModal()">${t('common.cancel')}</button>
+      <button class="btn btn-primary" onclick="saveCircleProjectNotes('${circleId}','${projectId}')">${t('common.save')}</button>
     </div>`;
   document.getElementById('modal-overlay').style.display = 'flex';
   setTimeout(() => document.getElementById('circle-project-notes-input')?.focus(), 80);
@@ -5366,7 +5630,7 @@ function editCircleProjectNotes(circleId, projectId) {
 async function saveCircleProjectNotes(circleId, projectId) {
   const notes = document.getElementById('circle-project-notes-input')?.value.trim() || '';
   const btn = document.querySelector('#modal-content .btn-primary');
-  if (btn) { btn.disabled = true; btn.textContent = 'Saving…'; }
+  if (btn) { btn.disabled = true; btn.textContent = t('common.saving'); }
   try {
     const { error } = await sb.from('circle_projects')
       .update({ notes, last_updated: new Date().toISOString() })
@@ -5377,11 +5641,11 @@ async function saveCircleProjectNotes(circleId, projectId) {
     ));
     closeModal();
     renderCircleDetail(circleId);
-    toast('Notes saved', 'success');
+    toast(t('toast.notesSaved'), 'success');
   } catch (e) {
     console.error('Edit circle project notes error:', e);
-    toast('Could not save notes', 'error');
-    if (btn) { btn.disabled = false; btn.textContent = 'Save'; }
+    toast(t('toast.couldNotSaveNotes'), 'error');
+    if (btn) { btn.disabled = false; btn.textContent = t('common.save'); }
   }
 }
 
@@ -5389,11 +5653,11 @@ function confirmDeleteCircleProject(circleId, projectId) {
   const project = getCircleProject(circleId, projectId);
   if (!project) return;
   document.getElementById('modal-content').innerHTML = `
-    <h3>Delete "${escHtml(project.title)}"?</h3>
+    <h3>${t('forms.deleteLabel')} "${escHtml(project.title)}"?</h3>
     <div class="text-sm text-dim mb16" style="line-height:1.6">This will remove the project and detach its tasks from it. The tasks themselves will stay in the Circle as general shared tasks.</div>
     <div style="display:flex;gap:8px;justify-content:flex-end">
-      <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
-      <button class="btn btn-danger" onclick="deleteCircleProject('${circleId}','${projectId}')">Delete Project</button>
+      <button class="btn btn-ghost" onclick="closeModal()">${t('common.cancel')}</button>
+      <button class="btn btn-danger" onclick="deleteCircleProject('${circleId}','${projectId}')">${t('forms.deleteLabel')} Project</button>
     </div>`;
   document.getElementById('modal-overlay').style.display = 'flex';
 }
@@ -5408,16 +5672,16 @@ async function deleteCircleProject(circleId, projectId) {
     await loadCircleTasks(circleId, { silent: true });
     circleProjectDetailId = null;
     renderCircleDetail(circleId);
-    toast('Shared project deleted', 'info');
+    toast(t('toast.sharedProjectDeleted'), 'info');
   } catch (e) {
     console.error('Delete circle project error:', e);
-    toast('Could not delete project', 'error');
+    toast(t('toast.couldNotDeleteProject'), 'error');
   }
 }
 
 function openCreateCircle() {
   document.getElementById('modal-content').innerHTML = `
-    <h3>New Circle</h3>
+    <h3>${t('actions.newCircle')}</h3>
     <div class="text-sm text-dim mb16" style="line-height:1.6">A Circle is a shared space for up to 5 people. Give it a name that fits what you'll use it for.</div>
     <div class="form-row">
       <label>Circle Name</label>
@@ -5448,8 +5712,8 @@ function openCreateCircle() {
       </div>
     </div>
     <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:16px">
-      <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
-      <button class="btn btn-primary" onclick="submitCreateCircle()">Create Circle</button>
+      <button class="btn btn-ghost" onclick="closeModal()">${t('common.cancel')}</button>
+      <button class="btn btn-primary" onclick="submitCreateCircle()">${t('common.create')}</button>
     </div>`;
   document.getElementById('modal-overlay').style.display = 'flex';
   setTimeout(() => document.getElementById('circle-name-input')?.focus(), 80);
@@ -5463,7 +5727,7 @@ async function submitCreateCircle() {
   const tasks_enabled = document.getElementById('create-tasks-enabled')?.checked ?? true;
   const projects_enabled = document.getElementById('create-projects-enabled')?.checked ?? false;
   const btn = document.querySelector('#modal-content .btn-primary');
-  if (btn) { btn.disabled = true; btn.textContent = 'Creating…'; }
+  if (btn) { btn.disabled = true; btn.textContent = t('common.creating'); }
   try {
     const { data: circle, error: cErr } = await sb
       .from('circles').insert({ name, created_by: currentUser.id, tasks_enabled, projects_enabled }).select().single();
@@ -5472,23 +5736,23 @@ async function submitCreateCircle() {
       .from('circle_members').insert({ circle_id: circle.id, user_id: currentUser.id, status: 'active' });
     if (mErr) throw mErr;
     closeModal();
-    toast('Circle created', 'success');
+    toast(t('toast.circleCreated'), 'success');
     await loadCircles();
     openCircleDetail(circle.id);
   } catch(e) {
     console.error('Create circle error:', e);
-    toast('Something went wrong', 'error');
-    if (btn) { btn.disabled = false; btn.textContent = 'Create Circle'; }
+    toast(t('toast.somethingWrong'), 'error');
+    if (btn) { btn.disabled = false; btn.textContent = t('common.create'); }
   }
 }
 
 async function sendCircleInvite(circleId) {
   const emailInput = document.getElementById('circle-invite-email');
   const email = emailInput?.value.trim().toLowerCase();
-  if (!email || !email.includes('@')) { toast('Enter a valid email', 'error'); return; }
+  if (!email || !email.includes('@')) { toast(t('toast.invalidEmail'), 'error'); return; }
   if (!sb || !currentUser) return;
   const btn = document.querySelector(`button[onclick="sendCircleInvite('${circleId}')"]`);
-  if (btn) { btn.disabled = true; btn.textContent = 'Sending…'; }
+  if (btn) { btn.disabled = true; btn.textContent = t('common.sending'); }
   try {
     const code = Math.random().toString(36).slice(2,10) + Math.random().toString(36).slice(2,6);
     const expires = new Date(Date.now() + 7*24*60*60*1000).toISOString();
@@ -5498,14 +5762,14 @@ async function sendCircleInvite(circleId) {
     });
     if (error) throw error;
     if (emailInput) emailInput.value = '';
-    toast('Invite sent — share the link too!', 'success');
+    toast(t('toast.inviteSent'), 'success');
     await loadCircles();
     renderCircleDetail(circleId);
   } catch(e) {
     console.error('Invite error:', e);
-    if (e.code === '23505') toast('An invite for this email already exists', 'info');
-    else toast('Could not send invite', 'error');
-    if (btn) { btn.disabled = false; btn.textContent = 'Send Invite'; }
+    if (e.code === '23505') toast(t('toast.inviteExists'), 'info');
+    else toast(t('toast.couldNotSendInvite'), 'error');
+    if (btn) { btn.disabled = false; btn.textContent = t('circlesPage.sendInvite'); }
   }
 }
 
@@ -5537,24 +5801,24 @@ async function generateCircleInviteLink(circleId) {
       area.innerHTML = `
         <div class="invite-link-box">
           <span class="invite-link-text">${escHtml(link)}</span>
-          <button class="btn btn-ghost btn-xs" onclick="copyCircleLink('${escHtml(link)}')">Copy</button>
+          <button class="btn btn-ghost btn-xs" onclick="copyCircleLink('${escHtml(link)}')">${t('common.copy')}</button>
         </div>
         <div class="text-xs text-dim mt4">Expires in 7 days · Revoke via the members list above</div>`;
     }
   } catch(e) {
     console.error('Generate link error:', e);
-    toast('Could not generate link', 'error');
+    toast(t('toast.couldNotGenerateLink'), 'error');
   }
 }
 
 function copyCircleLink(link) {
   navigator.clipboard.writeText(link)
-    .then(() => toast('Link copied', 'success'))
+    .then(() => toast(t('toast.linkCopied'), 'success'))
     .catch(() => {
       const el = document.createElement('textarea');
       el.value = link; document.body.appendChild(el); el.select();
       document.execCommand('copy'); document.body.removeChild(el);
-      toast('Link copied', 'success');
+      toast(t('toast.linkCopied'), 'success');
     });
 }
 
@@ -5563,12 +5827,12 @@ async function revokeCircleInvite(inviteId, circleId) {
   try {
     const { error } = await sb.from('circle_invites').delete().eq('id', inviteId);
     if (error) throw error;
-    toast('Invite revoked', 'info');
+    toast(t('toast.inviteRevoked'), 'info');
     await loadCircles();
     renderCircleDetail(circleId);
   } catch(e) {
     console.error('Revoke invite error:', e);
-    toast('Could not revoke invite', 'error');
+    toast(t('toast.couldNotRevokeInvite'), 'error');
   }
 }
 
@@ -5579,8 +5843,8 @@ function confirmDeleteCircle(id) {
     <h3>Delete "${escHtml(entry.circle.name)}"?</h3>
     <div class="text-sm text-dim mb16" style="line-height:1.6">This will permanently delete the Circle and remove all members. This cannot be undone.</div>
     <div style="display:flex;gap:8px;justify-content:flex-end">
-      <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
-      <button class="btn btn-danger" onclick="deleteCircle('${id}')">Delete Circle</button>
+      <button class="btn btn-ghost" onclick="closeModal()">${t('common.cancel')}</button>
+      <button class="btn btn-danger" onclick="deleteCircle('${id}')">${t('circlesPage.deleteCircle')}</button>
     </div>`;
   document.getElementById('modal-overlay').style.display = 'flex';
 }
@@ -5591,14 +5855,14 @@ async function deleteCircle(id) {
     const { error } = await sb.from('circles').delete().eq('id', id);
     if (error) throw error;
     closeModal();
-    toast('Circle deleted', 'info');
+    toast(t('toast.circleDeleted'), 'info');
     circleDetailId = null;
     circleProjectDetailId = null;
     await loadCircles();
     navigate('circles');
   } catch(e) {
     console.error('Delete circle error:', e);
-    toast('Could not delete circle', 'error');
+    toast(t('toast.couldNotDeleteCircle'), 'error');
   }
 }
 
@@ -5609,8 +5873,8 @@ function confirmLeaveCircle(id) {
     <h3>Leave "${escHtml(entry.circle.name)}"?</h3>
     <div class="text-sm text-dim mb16" style="line-height:1.6">You'll lose access to shared tasks and projects in this Circle.</div>
     <div style="display:flex;gap:8px;justify-content:flex-end">
-      <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
-      <button class="btn btn-danger" onclick="leaveCircle('${id}')">Leave Circle</button>
+      <button class="btn btn-ghost" onclick="closeModal()">${t('common.cancel')}</button>
+      <button class="btn btn-danger" onclick="leaveCircle('${id}')">${t('circlesPage.leaveCircle')}</button>
     </div>`;
   document.getElementById('modal-overlay').style.display = 'flex';
 }
@@ -5622,14 +5886,14 @@ async function leaveCircle(id) {
       .delete().eq('circle_id', id).eq('user_id', currentUser.id);
     if (error) throw error;
     closeModal();
-    toast('You left the Circle', 'info');
+    toast(t('toast.circleLeft'), 'info');
     circleDetailId = null;
     circleProjectDetailId = null;
     await loadCircles();
     navigate('circles');
   } catch(e) {
     console.error('Leave circle error:', e);
-    toast('Could not leave circle', 'error');
+    toast(t('toast.couldNotLeaveCircle'), 'error');
   }
 }
 
@@ -5645,7 +5909,7 @@ async function checkCircleInviteParam() {
     const { data: inviteRows, error } = await sb
       .rpc('get_circle_invite_by_code', { target_invite_code: code });
     const invite = Array.isArray(inviteRows) ? inviteRows[0] : null;
-    if (error || !invite) { toast('Invite link is invalid or expired', 'error'); return; }
+    if (error || !invite) { toast(t('toast.invalidInvite'), 'error'); return; }
 
     const { data: existing } = await sb
       .from('circle_members')
@@ -5653,7 +5917,7 @@ async function checkCircleInviteParam() {
       .eq('circle_id', invite.circle_id)
       .eq('user_id', currentUser.id)
       .maybeSingle();
-    if (existing) { toast("You're already in this Circle", 'info'); return; }
+    if (existing) { toast(t('toast.alreadyInCircle'), 'info'); return; }
 
     let circleName = 'a Circle';
     const circleEntry = CIRCLES_DATA.find(e => e.circle.id === invite.circle_id);
@@ -5671,7 +5935,7 @@ async function checkCircleInviteParam() {
       <h3>You've been invited</h3>
       <div class="text-sm text-dim mb16" style="line-height:1.6">You've been invited to join <strong style="color:var(--text)">${escHtml(circleName)}</strong> on Kairo.</div>
       <div style="display:flex;gap:8px;justify-content:flex-end">
-        <button class="btn btn-ghost" onclick="closeModal()">Decline</button>
+        <button class="btn btn-ghost" onclick="closeModal()">${t('common.decline')}</button>
         <button class="btn btn-primary" onclick="acceptCircleInvite('${invite.id}','${invite.circle_id}')">Join Circle</button>
       </div>`;
     document.getElementById('modal-overlay').style.display = 'flex';
@@ -5683,7 +5947,7 @@ async function checkCircleInviteParam() {
 async function acceptCircleInvite(inviteId, circleId) {
   if (!sb || !currentUser) return;
   const btn = document.querySelector('#modal-content .btn-primary');
-  if (btn) { btn.disabled = true; btn.textContent = 'Joining…'; }
+  if (btn) { btn.disabled = true; btn.textContent = t('common.joining'); }
   try {
     const { error: memberErr } = await sb.from('circle_members')
       .insert({ circle_id: circleId, user_id: currentUser.id, status: 'active' });
@@ -5694,15 +5958,15 @@ async function acceptCircleInvite(inviteId, circleId) {
     if (inviteErr) throw inviteErr;
 
     closeModal();
-    toast('Welcome to the Circle!', 'success');
+    toast(t('toast.welcomeCircle'), 'success');
     await loadCircles();
     navigate('circles');
     circleProjectDetailId = null;
     openCircleDetail(circleId);
   } catch(e) {
     console.error('Accept invite error:', e);
-    if (e.code === '23514') toast('Circle is full', 'error');
-    else toast('Could not join circle', 'error');
+    if (e.code === '23514') toast(t('toast.circleFull'), 'error');
+    else toast(t('toast.couldNotJoinCircle'), 'error');
     if (btn) { btn.disabled = false; btn.textContent = 'Join Circle'; }
   }
 }

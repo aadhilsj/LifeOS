@@ -246,7 +246,7 @@ input[type="date"].input,input[type="time"].input{color-scheme:var(--date-color-
 .badge-focus{background:var(--gold-soft);color:var(--gold);border:1px solid var(--gold-soft);padding:2px 6px;min-width:22px;justify-content:center}
 [data-theme="light"] .badge-career{background:#d4e6f5;color:#1e4a82;border-color:#aecde8}
 [data-theme="light"] .badge-health{background:#cce8d8;color:#144d30;border-color:#8ec9a8}
-[data-theme="light"] .badge-personal{background:#f0dfc0;color:#5a3e0a;border-color:#d8b870}
+[data-theme="light"] .badge-personal{background:#ead7de;color:#7a3b52;border-color:#d7aebc}
 [data-theme="light"] .badge-life-admin{background:#e0d0f0;color:#451e82;border-color:#b898d8}
 [data-theme="light"] .badge-growth{background:#d4e8b8;color:#2a4a08;border-color:#98c468}
 [data-theme="light"] .badge-overdue{background:#f0d8d8;color:#8a1010;border-color:#d89898}
@@ -511,7 +511,6 @@ input[type="date"].input,input[type="time"].input{color-scheme:var(--date-color-
 .circles-home-count.dim{color:var(--text-3)}
 .circles-home-label{font-size:10px;color:var(--text-3);margin-top:1px;white-space:nowrap}
 .circles-home-divider{width:1px;height:24px;background:var(--border)}
-.circles-new-dot{width:7px;height:7px;border-radius:50%;background:var(--accent);flex-shrink:0}
 .circle-members-bar{display:flex;align-items:center;justify-content:space-between;padding:12px 0;cursor:pointer;user-select:none}
 .circle-members-bar:hover .manage-link{color:var(--text-2)}
 .manage-link{font-size:11px;color:var(--text-3);transition:color var(--transition);white-space:nowrap}
@@ -584,6 +583,11 @@ input[type="date"].input,input[type="time"].input{color-scheme:var(--date-color-
 .circle-project-add-row{display:flex;justify-content:flex-end;margin-top:12px}
 .circle-project-task-add{display:grid;grid-template-columns:minmax(0,1fr) 130px 140px auto;gap:8px}
 .circle-project-task-add .input[type="date"]{min-width:0}
+.home-habits-summary{font-size:11.5px;font-weight:600;margin-bottom:10px;padding:6px 10px;border-radius:8px;display:inline-flex;align-items:center;gap:5px}
+.home-habits-summary.attention{background:var(--gold-soft);color:var(--gold);border:1px solid color-mix(in srgb, var(--gold) 24%, transparent)}
+.home-habits-summary.good{background:var(--green-soft);color:var(--green);border:1px solid color-mix(in srgb, var(--green) 20%, transparent)}
+[data-theme="light"] .home-habits-summary.attention{background:#e8d4a8;color:#5f4714;border-color:#c8a850}
+[data-theme="light"] .home-habits-summary.good{background:#d5e8dc;color:#1d5e3b;border-color:#8ec9a8}
 
 @media (max-width: 760px){
   .circle-project-task-add{grid-template-columns:minmax(0,1fr) 108px 52px;gap:7px;align-items:center}
@@ -3318,11 +3322,6 @@ function renderHomeCirclesCard() {
         const tasksOn = circle.tasks_enabled !== false;
         const projectsOn = circle.projects_enabled === true;
 
-        // "new activity" dot: latest_activity_at > my last_seen_circles_at
-        const myMember = members.find(m => m.user_id === currentUser?.id);
-        const lastSeen = myMember?.last_seen_circles_at;
-        const hasNew = s.latest_activity_at && (!lastSeen || s.latest_activity_at > lastSeen);
-
         const avatars = activeMembers.slice(0, 4).map(m => {
           const isYou = m.user_id === currentUser?.id;
           const init = isYou ? (getUserName()[0] || 'Y').toUpperCase() : '?';
@@ -3340,7 +3339,6 @@ function renderHomeCirclesCard() {
         return `
           <div class="circles-home-row" onclick="navigate('circles');setTimeout(()=>openCircleDetail('${circle.id}'),60)">
             <div class="circles-home-left">
-              ${hasNew ? '<div class="circles-new-dot"></div>' : ''}
               <div class="circle-avatar-strip">${avatars}</div>
               <div class="circles-home-name">${escHtml(circle.name)}</div>
             </div>
@@ -3484,7 +3482,7 @@ function renderHome(){
         const label=over?`overdue since ${formatDueLabel(t.dueDate)}`:t.dueDate===td?'due today':t.dueDate?`due ${formatDueLabel(t.dueDate)}`:'no due date';
         const labelColor=over?'#e57373':t.dueDate===td?'var(--gold)':t.dueDate?'var(--text-2)':'var(--text-3)';
         return taskHTML(t,isFocus)+(dtnMode==='auto'
-          ?`<div style="font-size:10.5px;color:var(--text-3);margin:-4px 0 6px 25px;display:flex;align-items:center;gap:5px"><span style="opacity:.4">↑</span> Star to pin · <span style="color:${labelColor}">${label}</span></div>`
+          ?`<div style="font-size:10.5px;color:var(--text-3);margin:3px 0 8px 25px;display:flex;align-items:center;gap:5px;line-height:1.35"><span style="opacity:.4">↑</span> Star to pin · <span style="color:${labelColor};font-weight:600">${label}</span></div>`
           :'');
       }).join('');
 
@@ -3498,7 +3496,7 @@ function renderHome(){
   const habitStatus=DATA.habitDefs.map(h=>({habit:h,info:getHabitWindowInfo(h),consistency:getHabitConsistency(h)})).sort((a,b)=>getHabitAttentionRank(a.habit)-getHabitAttentionRank(b.habit));
   const habitsOnTrack=habitStatus.filter(entry=>entry.info.isComplete).length;
   const attentionCount=habitStatus.length-habitsOnTrack;
-  const habitsSummary=`<div style="font-size:11.5px;font-weight:${attentionCount===0?'600':'500'};margin-bottom:10px;padding:5px 10px;background:${attentionCount===0?'var(--green-soft)':'var(--gold-soft)'};border-radius:6px;display:inline-flex;align-items:center;gap:5px;color:${attentionCount===0?'var(--green)':'var(--gold)'}">
+  const habitsSummary=`<div class="home-habits-summary ${attentionCount===0?'good':'attention'}">
     ${attentionCount===0?'✓ All habits on track':`${attentionCount} habit${attentionCount>1?'s':''} need attention`}
   </div>`;
   const habitRows=habitStatus.slice(0,4).map(({habit:h,info,consistency})=>{

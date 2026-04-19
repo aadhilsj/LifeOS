@@ -54,31 +54,31 @@
 
 /* ── Light theme overrides ── */
 [data-theme="light"]{
-  --bg:#f4f1ec;
-  --glass:#ffffff;--glass-border:#e2ddd7;--glass-hover:#f9f6f2;
-  --surface:#f9f6f2;--surface2:#f1ede7;--surface3:#ebe6df;
-  --text:#1c1916;--text-2:#6b6762;--text-3:#a09e97;
-  --border:#ddd9d3;--border-active:#c8c3bc;
-  --shadow:0 4px 24px rgba(0,0,0,.10);--shadow-sm:0 2px 12px rgba(0,0,0,.07);
-  --green:#2f8a5c;--green-soft:#2f8a5c14;
-  --gold:#a8872a;--gold-soft:#a8872a14;
-  --blue:#3a68b0;--blue-soft:#3a68b014;
+  --bg:#e8e3dc;
+  --glass:#f0ece5;--glass-border:#d4cfc8;--glass-hover:#ebe6de;
+  --surface:#ebe6de;--surface2:#e2dcd4;--surface3:#d8d2c9;
+  --text:#1c1916;--text-2:#68645f;--text-3:#9a9690;
+  --border:#cdc8c0;--border-active:#b8b2a9;
+  --shadow:0 4px 24px rgba(0,0,0,.15);--shadow-sm:0 2px 12px rgba(0,0,0,.10);
+  --green:#1e6640;--green-soft:#1e664016;
+  --gold:#6b5014;--gold-soft:#6b501414;
+  --blue:#284d8a;--blue-soft:#284d8a14;
   --accent-soft:rgba(var(--accent-rgb),.12);--accent-glow:rgba(var(--accent-rgb),.08);
-  --sidebar-bg:linear-gradient(180deg,#f9f6f2 0%,#f4f1ec 100%);
-  --topbar-bg:linear-gradient(180deg,#f4f1ec 0%,transparent 100%);
-  --modal-bg:linear-gradient(135deg,#fdfcfa,#f9f7f4);
-  --input-bg:#ffffff;--input-focus-bg:#ffffff;--input-focus-border:#c8c3bc;
-  --cmd-bg:linear-gradient(135deg,#fdfcfa,#f9f7f4);
-  --cmd-input-bg:#f4f1ec;--cmd-input-focus-bg:#ffffff;--cmd-input-focus-border:#c8c3bc;
-  --dtn-bg:linear-gradient(135deg,#fff5f4,#fdf0ee);
-  --toast-bg:linear-gradient(135deg,#fdfcfa,#f9f7f4);
-  --bottom-nav-bg:linear-gradient(180deg,#f4f1ecee,#f4f1ec);
-  --more-sheet-bg:linear-gradient(135deg,#fdfcfa,#f5f2ed);
-  --login-bg:#f4f1ec;
-  --brand-icon-bg:#f4f1ec;--brand-icon-border:#ddd9d3;
-  --scrollbar-thumb:#ddd9d3;
+  --sidebar-bg:linear-gradient(180deg,#ebe6de 0%,#e4dfd7 100%);
+  --topbar-bg:linear-gradient(180deg,#e8e3dccc 0%,transparent 100%);
+  --modal-bg:linear-gradient(135deg,#f0ece5,#e8e3dc);
+  --input-bg:#f0ece5;--input-focus-bg:#f6f3ee;--input-focus-border:#b8b2a9;
+  --cmd-bg:linear-gradient(135deg,#eeeae3,#e8e3dc);
+  --cmd-input-bg:#e2dcd4;--cmd-input-focus-bg:#ebe6de;--cmd-input-focus-border:#b8b2a9;
+  --dtn-bg:linear-gradient(135deg,#f5e8e5,#eeddd9);
+  --toast-bg:linear-gradient(135deg,#f0ece5,#e8e3dc);
+  --bottom-nav-bg:linear-gradient(180deg,#e8e3dcee,#e8e3dc);
+  --more-sheet-bg:linear-gradient(135deg,#f0ece5,#e2dcd4);
+  --login-bg:#e8e3dc;
+  --brand-icon-bg:#e8e3dc;--brand-icon-border:#cdc8c0;
+  --scrollbar-thumb:#cdc8c0;
   --date-color-scheme:light;
-  --modal-handle:#00000015;
+  --modal-handle:#00000018;
 }
 
 html,body{height:100%;overflow:hidden}
@@ -89,13 +89,29 @@ body{font-family:var(--font-sans);font-size:13.5px;color:var(--text);background:
   radial-gradient(ellipse 60% 50% at 95% 100%,#080d1a 0%,transparent 55%),
   linear-gradient(135deg,#0a0e1a 0%,#0d0a0f 50%,#0a0f0e 100%)}
 [data-theme="light"] .bg-gradient{background:
-  radial-gradient(ellipse 70% 50% at 5% 0%,#f0e8e5 0%,transparent 55%),
-  radial-gradient(ellipse 60% 50% at 95% 100%,#e8ecf4 0%,transparent 55%),
-  linear-gradient(135deg,#f4f1ec 0%,#f2eeea 50%,#f0ede8 100%)}
+  radial-gradient(ellipse 80% 60% at 0% 0%,#ddd0c8 0%,transparent 60%),
+  radial-gradient(ellipse 70% 55% at 100% 100%,#ccd0dc 0%,transparent 60%),
+  radial-gradient(ellipse 50% 40% at 50% 50%,#e0dbd4 0%,transparent 70%),
+  linear-gradient(150deg,#e8e3dc 0%,#e4dfd8 50%,#e0dbd4 100%)}
 .bg-grain{position:fixed;inset:0;z-index:1;opacity:.022;
   background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   pointer-events:none}
-[data-theme="light"] .bg-grain{opacity:.035}
+[data-theme="light"] .bg-grain{opacity:.04}
+
+/* ── Light mode colour overrides ── */
+[data-theme="light"] .task-due.is-today{color:var(--gold);background:#f0dfc0;border-color:#c8a850}
+[data-theme="light"] .capture-nudge{background:#f0dfc0;border-color:#c8a850}
+[data-theme="light"] .capture-nudge:hover{background:#e8d4a8;border-color:#b89040}
+[data-theme="light"] .context-bar.gold{background:#f0dfc0;border-color:#c8a850;color:var(--gold)}
+[data-theme="light"] .habit-dot.done{background:var(--green);border-color:var(--green)}
+[data-theme="light"] .habit-strip-dot.done{background:var(--green);border-color:var(--green)}
+[data-theme="light"] .review-nudge{background:#d4e6f5;border-color:#aecde8}
+[data-theme="light"] .review-nudge:hover{background:#c4d8ec;border-color:#9ec0e0}
+[data-theme="light"] .focus-btn:hover,[data-theme="light"] .focus-btn.active{color:var(--gold);background:var(--surface2);border-color:var(--border)}
+[data-theme="light"] .content::-webkit-scrollbar-thumb{background:var(--border-active)}
+[data-theme="light"] .card:hover{border-color:var(--border-active);box-shadow:0 4px 20px rgba(0,0,0,.12)}
+[data-theme="light"] .project-card:hover{box-shadow:0 6px 24px rgba(0,0,0,.14)}
+[data-theme="light"] .dtn-card{border-color:#c8392b40;box-shadow:0 0 24px rgba(200,57,43,.07),var(--shadow-sm)}
 
 .app{position:relative;z-index:2;display:flex;height:100vh;overflow:hidden}
 
@@ -227,14 +243,12 @@ input[type="date"].input,input[type="time"].input{color-scheme:var(--date-color-
 .badge-other{background:var(--surface2);color:var(--text-3);border:1px solid var(--border)}
 .badge-overdue{background:#c8392b1e;color:#e57373;border:1px solid #c8392b28}
 .badge-focus{background:var(--gold-soft);color:var(--gold);border:1px solid var(--gold-soft);padding:2px 6px;min-width:22px;justify-content:center}
-/* Light mode: higher contrast badge colours */
-[data-theme="light"] .badge-career{background:#ddeaf8;color:#2a5a96;border-color:#bad4ef}
-[data-theme="light"] .badge-health{background:#d8f0e7;color:#1f6e46;border-color:#a9d9c0}
-[data-theme="light"] .badge-personal{background:#faecd5;color:#7a5a12;border-color:#e8c980}
-[data-theme="light"] .badge-life-admin{background:#ecdff8;color:#5c2e96;border-color:#cda8e8}
-[data-theme="light"] .badge-growth{background:#e3f0ce;color:#3a6010;border-color:#b4d488}
-[data-theme="light"] .badge-overdue{background:#fce8e8;color:#b02020;border-color:#f0aaaa}
-
+[data-theme="light"] .badge-career{background:#d4e6f5;color:#1e4a82;border-color:#aecde8}
+[data-theme="light"] .badge-health{background:#cce8d8;color:#144d30;border-color:#8ec9a8}
+[data-theme="light"] .badge-personal{background:#f0dfc0;color:#5a3e0a;border-color:#d8b870}
+[data-theme="light"] .badge-life-admin{background:#e0d0f0;color:#451e82;border-color:#b898d8}
+[data-theme="light"] .badge-growth{background:#d4e8b8;color:#2a4a08;border-color:#98c468}
+[data-theme="light"] .badge-overdue{background:#f0d8d8;color:#8a1010;border-color:#d89898}
 .stage{font-size:10px;font-weight:600;padding:2px 8px;border-radius:20px;letter-spacing:.03em}
 .stage-not-applied{background:var(--surface2);color:var(--text-3);border:1px solid var(--border)}
 .stage-applied{background:#1e3a5f20;color:#6aaad8;border:1px solid #7cb9e818}
@@ -244,8 +258,8 @@ input[type="date"].input,input[type="time"].input{color-scheme:var(--date-color-
 .status-active{background:var(--green-soft);color:var(--green);border:1px solid var(--green-soft)}
 .status-paused{background:var(--gold-soft);color:var(--gold);border:1px solid var(--gold-soft)}
 .status-completed{background:#1e3a5f20;color:#6aaad8;border:1px solid #7cb9e818}
-[data-theme="light"] .stage-applied,[data-theme="light"] .status-completed{background:#ddeaf8;color:#2a5a96;border-color:#bad4ef}
-[data-theme="light"] .stage-rejected{background:#fce8e8;color:#b02020;border-color:#f0aaaa}
+[data-theme="light"] .stage-applied,[data-theme="light"] .status-completed{background:#d4e6f5;color:#1e4a82;border-color:#aecde8}
+[data-theme="light"] .stage-rejected{background:#f0d8d8;color:#8a1010;border-color:#d89898}
 
 /* ── Progress ── */
 .progress-track{height:4px;background:var(--surface3);border-radius:4px;overflow:hidden;margin-top:8px}
@@ -268,12 +282,16 @@ input[type="date"].input,input[type="time"].input{color-scheme:var(--date-color-
 .area-pill.selected[data-area="Personal"]{background:#a8872a18;color:#a8872a;border-color:#a8872a30}
 .area-pill.selected[data-area="Life Admin"]{background:#7c4db018;color:#7c4db0;border-color:#7c4db030}
 .area-pill.selected[data-area="Growth"]{background:#4a7a2018;color:#4a7a20;border-color:#4a7a2030}
-/* Dark mode area pills — keep contrast */
 [data-theme="dark"] .area-pill.selected[data-area="Career"]{background:#1e3a5f40;color:#7cb9e8;border-color:#7cb9e835}
 [data-theme="dark"] .area-pill.selected[data-area="Health"]{background:#1a2e2a40;color:#7dd3a8;border-color:#7dd3a835}
 [data-theme="dark"] .area-pill.selected[data-area="Personal"]{background:#2e241840;color:#e8c57c;border-color:#e8c57c35}
 [data-theme="dark"] .area-pill.selected[data-area="Life Admin"]{background:#2a1a2e40;color:#c084fc;border-color:#c084fc35}
 [data-theme="dark"] .area-pill.selected[data-area="Growth"]{background:#1e2e1a40;color:#a3e635;border-color:#a3e63535}
+[data-theme="light"] .area-pill.selected[data-area="Career"]{background:#d4e6f5;color:#1e4a82;border-color:#aecde8}
+[data-theme="light"] .area-pill.selected[data-area="Health"]{background:#cce8d8;color:#144d30;border-color:#8ec9a8}
+[data-theme="light"] .area-pill.selected[data-area="Personal"]{background:#f0dfc0;color:#5a3e0a;border-color:#d8b870}
+[data-theme="light"] .area-pill.selected[data-area="Life Admin"]{background:#e0d0f0;color:#451e82;border-color:#b898d8}
+[data-theme="light"] .area-pill.selected[data-area="Growth"]{background:#d4e8b8;color:#2a4a08;border-color:#98c468}
 
 /* ── Tasks ── */
 .task-item{display:flex;align-items:flex-start;gap:9px;padding:9px 0;border-bottom:1px solid var(--border)}
@@ -331,7 +349,6 @@ input[type="date"].input,input[type="time"].input{color-scheme:var(--date-color-
   display:flex;align-items:center;justify-content:center;font-size:9px;color:var(--text-3);transition:all var(--transition)}
 .habit-dot.done{background:var(--green);border-color:var(--green);color:#fff;font-size:11px}
 .habit-dot.today-ring{border-color:var(--border-active)}
-[data-theme="light"] .habit-dot.today-ring{border-color:var(--border-active)}
 .habit-dot:hover:not(.done){background:var(--green-soft);border-color:var(--green)}
 
 /* Projects */
@@ -482,6 +499,18 @@ input[type="date"].input,input[type="time"].input{color-scheme:var(--date-color-
 .circle-avatar-strip{display:flex;gap:4px;align-items:center}
 .circle-avatar-sm{width:26px;height:26px;border-radius:50%;background:var(--surface3);border:1px solid var(--border);display:inline-flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;color:var(--text-2)}
 .circle-avatar-sm.pending{opacity:.45;font-style:normal}
+.circles-home-row{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);cursor:pointer;transition:opacity var(--transition)}
+.circles-home-row:last-child{border-bottom:none}
+.circles-home-row:hover{opacity:.8}
+.circles-home-left{display:flex;align-items:center;gap:8px;min-width:0;flex:1}
+.circles-home-right{display:flex;align-items:center;gap:10px;flex-shrink:0}
+.circles-home-name{font-size:13px;font-weight:500;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.circles-home-stat{display:flex;flex-direction:column;align-items:flex-end}
+.circles-home-count{font-size:15px;font-weight:500;color:var(--text);line-height:1}
+.circles-home-count.dim{color:var(--text-3)}
+.circles-home-label{font-size:10px;color:var(--text-3);margin-top:1px;white-space:nowrap}
+.circles-home-divider{width:1px;height:24px;background:var(--border)}
+.circles-new-dot{width:7px;height:7px;border-radius:50%;background:var(--accent);flex-shrink:0}
 .circle-members-bar{display:flex;align-items:center;justify-content:space-between;padding:12px 0;cursor:pointer;user-select:none}
 .circle-members-bar:hover .manage-link{color:var(--text-2)}
 .manage-link{font-size:11px;color:var(--text-3);transition:color var(--transition);white-space:nowrap}
@@ -685,8 +714,8 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;heigh
 .stage-in-progress{background:var(--gold-soft);color:var(--gold);border:1px solid var(--gold-soft)}
 .stage-won{background:var(--green-soft);color:var(--green);border:1px solid var(--green-soft)}
 .stage-dropped{background:#c8392b12;color:#e57373;border:1px solid #c8392b20}
-[data-theme="light"] .stage-contacted{background:#ddeaf8;color:#2a5a96;border-color:#bad4ef}
-[data-theme="light"] .stage-dropped{background:#fce8e8;color:#b02020;border-color:#f0aaaa}
+[data-theme="light"] .stage-contacted{background:#d4e6f5;color:#1e4a82;border-color:#aecde8}
+[data-theme="light"] .stage-dropped{background:#f0d8d8;color:#8a1010;border-color:#d89898}
 
 /* ── Dismissed task state ── */
 .task-item.dismissed{opacity:.45}
@@ -986,6 +1015,13 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;heigh
               </div>
               <div id="home-projects-list"></div>
             </div>
+            <div class="card mt14" id="home-circles-card" style="display:none">
+              <div class="flex-between mb12">
+                <div class="card-title" style="margin:0" id="home-circles-title">Circles</div>
+                <span class="text-xs text-dim" style="cursor:pointer" onclick="navigate('circles')">All →</span>
+              </div>
+              <div id="home-circles-list"></div>
+            </div>
             <div class="card mt14">
               <div class="card-title">Habits</div>
               <div id="home-habits-list"></div>
@@ -1269,12 +1305,45 @@ async function confirmName() {
   document.getElementById('login-screen').style.display = 'none';
   document.querySelector('.app').style.display = 'flex';
   await saveNow();
+  await upsertProfile(val);
   renderAll();
 }
 
 function showLoginScreen() {
   document.getElementById('login-screen').style.display = 'flex';
   document.querySelector('.app').style.display = 'none';
+}
+
+async function upsertProfile(displayName) {
+  if (!sb || !currentUser || !displayName) return;
+  try {
+    await sb.from('profiles').upsert({
+      user_id: currentUser.id,
+      display_name: displayName,
+      updated_at: new Date().toISOString(),
+    }, { onConflict: 'user_id' });
+  } catch(e) {
+    console.error('Profile upsert error:', e);
+  }
+}
+
+async function checkProfileGate() {
+  if (!sb || !currentUser) return false;
+  try {
+    const { data } = await sb.from('profiles')
+      .select('display_name').eq('user_id', currentUser.id).maybeSingle();
+    if (data?.display_name) {
+      // Profile exists — update local name if not already set
+      if (!DATA.settings.name) {
+        DATA.settings.name = data.display_name;
+        scheduleSave();
+      }
+      return false; // no gate needed
+    }
+    return true; // needs gate
+  } catch(_) {
+    return false; // on error, don't block the app
+  }
 }
 
 async function applyAuthSession(session) {
@@ -1292,6 +1361,22 @@ async function applyAuthSession(session) {
       resetAppState();
       await loadData(currentUser);
     }
+    // Check if user needs to set a display name
+    const needsProfileGate = await checkProfileGate();
+    if (needsProfileGate) {
+      const googleName = currentUser.user_metadata?.full_name || currentUser.user_metadata?.name || '';
+      const firstName = googleName.split(' ')[0] || '';
+      const looksOk = firstName && !firstName.includes('@') && !firstName.includes('.');
+      document.getElementById('login-screen').style.display = 'flex';
+      document.getElementById('login-box').style.display = 'none';
+      document.getElementById('name-setup-box').style.display = 'flex';
+      document.getElementById('name-setup-input').value = looksOk ? firstName : '';
+      document.querySelector('.app').style.display = 'none';
+      return;
+    }
+    // Ensure profile is written for existing users who predate profiles table
+    const existingName = DATA.settings.name || getUserName();
+    if (existingName) upsertProfile(existingName);
     document.getElementById('login-screen').style.display = 'none';
     document.querySelector('.app').style.display = 'flex';
     return;
@@ -1517,9 +1602,8 @@ function applyColorMode() {
   ensureSettingsShape();
   const mode = DATA.settings.colorMode || 'dark';
   document.documentElement.setAttribute('data-theme', mode);
-  // Keep meta theme-color in sync for PWA status bar
   const meta = document.querySelector('meta[name="theme-color"]');
-  if (meta) meta.content = mode === 'light' ? '#f4f1ec' : '#0d1117';
+  if (meta) meta.content = mode === 'light' ? '#e8e3dc' : '#0d1117';
 }
 
 function applyTheme() {
@@ -2266,7 +2350,6 @@ function renderSettings(){
     `).join('');
   }
 
-  // Color mode toggle
   const modeEl = document.getElementById('color-mode-options');
   if(modeEl) {
     const isDark = (DATA.settings.colorMode||'dark') === 'dark';
@@ -2326,6 +2409,11 @@ function updateSettingName(value){
   DATA.settings.name=(value||'').trimStart();
   scheduleSave();
   if(currentPage==='home') document.getElementById('page-title').textContent=getGreeting();
+  clearTimeout(window._profileUpsertTimer);
+  window._profileUpsertTimer = setTimeout(() => {
+    const name = (value||'').trim();
+    if (name) upsertProfile(name);
+  }, 1200);
 }
 
 function setAccentTheme(themeKey){
@@ -3192,6 +3280,95 @@ async function processTasksFabVoice(){
 }
 
 // ─── Home ─────────────────────────────────────────────────────────────────────
+async function refreshCircleSummaries() {
+  if (!sb || !currentUser) return;
+  try {
+    const { data } = await sb.rpc('get_circle_summaries');
+    if (data) { CIRCLE_SUMMARIES = data; renderHomeCirclesCard(); }
+  } catch(_) {}
+}
+
+function renderHomeCirclesCard() {
+  const card = document.getElementById('home-circles-card');
+  const el = document.getElementById('home-circles-list') || card;
+  if (!card || !el) return;
+  if (!CIRCLES_DATA.length) { card.style.display = 'none'; return; }
+  card.style.display = '';
+
+  const totalCount = CIRCLES_DATA.length;
+  const titleEl = document.getElementById('home-circles-title');
+  if (titleEl) titleEl.textContent = totalCount > 1 ? `Circles (${totalCount})` : 'Circles';
+
+  // Sort by latest_activity_at desc, cap at 2
+  const sortedSummaries = [...CIRCLE_SUMMARIES].sort((a, b) =>
+    new Date(b.latest_activity_at || 0) - new Date(a.latest_activity_at || 0)
+  ).slice(0, 2);
+
+  const sortedData = CIRCLE_SUMMARIES.length
+    ? sortedSummaries.map(s => CIRCLES_DATA.find(e => e.circle.id === s.circle_id)).filter(Boolean)
+    : [...CIRCLES_DATA].slice(0, 2);
+
+  const rows = CIRCLE_SUMMARIES.length
+    ? sortedSummaries.map(s => {
+        const entry = CIRCLES_DATA.find(e => e.circle.id === s.circle_id);
+        if (!entry) return '';
+        const { circle, members } = entry;
+        const activeMembers = members.filter(m => m.status === 'active');
+        const tasksOn = circle.tasks_enabled !== false;
+        const projectsOn = circle.projects_enabled === true;
+
+        // "new activity" dot: latest_activity_at > my last_seen_circles_at
+        const myMember = members.find(m => m.user_id === currentUser?.id);
+        const lastSeen = myMember?.last_seen_circles_at;
+        const hasNew = s.latest_activity_at && (!lastSeen || s.latest_activity_at > lastSeen);
+
+        const avatars = activeMembers.slice(0, 4).map(m => {
+          const isYou = m.user_id === currentUser?.id;
+          const init = isYou ? (getUserName()[0] || 'Y').toUpperCase() : '?';
+          return `<div class="circle-avatar-sm">${escHtml(init)}</div>`;
+        }).join('');
+
+        const taskChip = tasksOn && s.open_task_count > 0
+          ? `<div class="circles-home-stat"><span class="circles-home-count${s.open_task_count === 0 ? ' dim' : ''}">${s.open_task_count}</span><span class="circles-home-label">open task${s.open_task_count !== 1 ? 's' : ''}</span></div>`
+          : (tasksOn ? `<div class="circles-home-stat"><span class="circles-home-count dim">0</span><span class="circles-home-label">open tasks</span></div>` : '');
+
+        const projectChip = projectsOn
+          ? `<div class="circles-home-stat"><span class="circles-home-count${s.active_project_count === 0 ? ' dim' : ''}">${s.active_project_count}</span><span class="circles-home-label">active project${s.active_project_count !== 1 ? 's' : ''}</span></div>`
+          : '';
+
+        return `
+          <div class="circles-home-row" onclick="navigate('circles');setTimeout(()=>openCircleDetail('${circle.id}'),60)">
+            <div class="circles-home-left">
+              ${hasNew ? '<div class="circles-new-dot"></div>' : ''}
+              <div class="circle-avatar-strip">${avatars}</div>
+              <div class="circles-home-name">${escHtml(circle.name)}</div>
+            </div>
+            <div class="circles-home-right">
+              ${taskChip}${projectChip ? `<div class="circles-home-divider"></div>${projectChip}` : ''}
+              <svg width="12" height="12" viewBox="0 0 12 12" fill="none" style="flex-shrink:0;opacity:.35"><path d="M4 2.5l3.5 3.5L4 9.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+          </div>`;
+      }).join('')
+    : sortedData.map(({ circle, members }) => {
+        const activeMembers = members.filter(m => m.status === 'active');
+        const avatars = activeMembers.slice(0, 4).map(m => {
+          const isYou = m.user_id === currentUser?.id;
+          const init = isYou ? (getUserName()[0] || 'Y').toUpperCase() : '?';
+          return `<div class="circle-avatar-sm">${escHtml(init)}</div>`;
+        }).join('');
+        return `
+          <div class="circles-home-row" onclick="navigate('circles');setTimeout(()=>openCircleDetail('${circle.id}'),60)">
+            <div class="circles-home-left">
+              <div class="circle-avatar-strip">${avatars}</div>
+              <div class="circles-home-name">${escHtml(circle.name)}</div>
+            </div>
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none" style="flex-shrink:0;opacity:.35"><path d="M4 2.5l3.5 3.5L4 9.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>`;
+      }).join('');
+
+  el.innerHTML = rows;
+}
+
 function renderHome(){
   const td=today();
   const datedTodayTasks=DATA.tasks.filter(t=>!t.completed&&!t.dismissed&&t.dueDate===td);
@@ -3346,6 +3523,9 @@ function renderHome(){
     </div>`;
   }).join('');
   document.getElementById('home-habits-list').innerHTML=habitStatus.length?habitsSummary+habitRows:`<div class="empty" style="padding:10px 0"><div class="empty-icon">↺</div>No habits yet. Add one to start building rhythm.</div>`;
+
+  // Circles card
+  renderHomeCirclesCard();
 
   // Projects
   const active=DATA.projects.filter(p=>p.status==='Active').slice(0,3);
@@ -3636,6 +3816,8 @@ function renderReviewOutput(text){
 
 // ─── Circles ──────────────────────────────────────────────────────────────────
 let CIRCLES_DATA = []; // [{circle, members, invites}]
+let CIRCLE_SUMMARIES = []; // [{circle_id, circle_name, open_task_count, active_project_count, latest_activity_at}]
+let CIRCLE_MEMBER_NAMES = {}; // { user_id: display_name }
 let circleDetailId = null;
 let circleProjectDetailId = null;
 let circlesLoading = false;
@@ -3674,6 +3856,7 @@ function getCircleProject(circleId, projectId) {
 function getCircleMemberLabel(circleId, userId, members = null) {
   if (!userId) return 'Unassigned';
   if (userId === currentUser?.id) return 'You';
+  if (CIRCLE_MEMBER_NAMES[userId]) return CIRCLE_MEMBER_NAMES[userId];
   const entry = getCircleEntry(circleId);
   const activeMembers = (members || entry?.members || []).filter(m => m.status === 'active');
   const idx = activeMembers.findIndex(m => m.user_id === userId);
@@ -3918,6 +4101,7 @@ async function addCircleTask(circleId) {
     if (dueInput) dueInput.value = '';
     await loadCircleTasks(circleId, { silent: true });
     renderCircleDetail(circleId);
+    refreshCircleSummaries();
     toast('Shared task added', 'success');
   } catch (e) {
     console.error('Add circle task error:', e);
@@ -3947,6 +4131,7 @@ async function addCircleProjectTask(circleId, projectId) {
     if (assigneeInput) assigneeInput.value = '';
     await loadCircleTasks(circleId, { silent: true });
     renderCircleDetail(circleId);
+    refreshCircleSummaries();
     toast('Project task added', 'success');
   } catch (e) {
     console.error('Add circle project task error:', e);
@@ -3975,6 +4160,7 @@ async function toggleCircleTask(circleId, taskId) {
       completed_at: nextCompleted ? new Date().toISOString() : null,
     } : t));
     renderCircleDetail(circleId);
+    refreshCircleSummaries();
   } catch (e) {
     console.error('Toggle circle task error:', e);
     toast('Could not update shared task', 'error');
@@ -3988,6 +4174,7 @@ async function deleteCircleTask(circleId, taskId) {
     if (error) throw error;
     CIRCLE_TASKS[circleId] = (CIRCLE_TASKS[circleId] || []).filter(t => t.id !== taskId);
     renderCircleDetail(circleId);
+    refreshCircleSummaries();
     toast('Shared task removed', 'info');
   } catch (e) {
     console.error('Delete circle task error:', e);
@@ -4062,9 +4249,29 @@ async function loadCircles() {
       circleProjectDetailId = null;
     }
 
+    // Batch-fetch display names for all circle members
+    const allMemberIds = [...new Set((allMembers || []).map(m => m.user_id))];
+    if (allMemberIds.length) {
+      try {
+        const { data: profiles } = await sb
+          .from('profiles').select('user_id, display_name').in('user_id', allMemberIds);
+        CIRCLE_MEMBER_NAMES = {};
+        (profiles || []).forEach(p => { CIRCLE_MEMBER_NAMES[p.user_id] = p.display_name; });
+      } catch(_) {}
+    }
+
+    // Fetch summaries for Home dashboard card (non-blocking — don't throw on failure)
+    try {
+      const { data: summaries } = await sb.rpc('get_circle_summaries');
+      CIRCLE_SUMMARIES = summaries || [];
+    } catch(_) {
+      CIRCLE_SUMMARIES = [];
+    }
+
     circlesLoading = false;
     updateCirclesBadge();
     if (currentPage === 'circles') renderCircles();
+    if (currentPage === 'home') renderHomeCirclesCard();
   } catch(e) {
     console.error('Circles load error:', e);
     circlesLoading = false;
@@ -4160,6 +4367,26 @@ function openCircleDetail(id) {
   renderCircleDetail(id);
   loadCircleTasks(id);
   loadCircleProjects(id);
+  // Mark this circle as seen — used for "new activity" dot on Home dashboard
+  if (sb && currentUser) {
+    sb.from('circle_members')
+      .update({ last_seen_circles_at: new Date().toISOString() })
+      .eq('circle_id', id)
+      .eq('user_id', currentUser.id)
+      .then(() => {
+        // Update local member record so dot clears immediately without reload
+        CIRCLES_DATA = CIRCLES_DATA.map(e => e.circle.id === id ? {
+          ...e,
+          members: e.members.map(m => m.user_id === currentUser.id
+            ? { ...m, last_seen_circles_at: new Date().toISOString() }
+            : m)
+        } : e);
+        // Refresh summaries so Home card dot clears
+        sb.rpc('get_circle_summaries').then(({ data }) => {
+          if (data) { CIRCLE_SUMMARIES = data; renderHomeCirclesCard(); }
+        });
+      });
+  }
 }
 
 function backToCircles() {
@@ -4910,21 +5137,10 @@ function showUpdateBanner(newWorker) {
   const banner = document.createElement('div');
   banner.id = 'kairo-update-banner';
   banner.className = 'kairo-update-banner';
-  // Inject banner styles via a style tag so they respect CSS vars
   if (!document.getElementById('kairo-banner-style')) {
     const s = document.createElement('style');
     s.id = 'kairo-banner-style';
-    s.textContent = `
-      .kairo-update-banner{
-        position:fixed;bottom:22px;left:50%;transform:translateX(-50%);
-        z-index:9999;display:flex;align-items:center;gap:12px;
-        background:var(--toast-bg);
-        border:1px solid var(--glass-border);border-radius:12px;
-        padding:12px 16px;box-shadow:var(--shadow);
-        font-family:'Geist',system-ui,sans-serif;font-size:13px;
-        color:var(--text);white-space:nowrap;animation:slideInR .25s ease;
-      }
-    `;
+    s.textContent = `.kairo-update-banner{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);z-index:9999;display:flex;align-items:center;gap:12px;background:var(--toast-bg);border:1px solid var(--glass-border);border-radius:12px;padding:12px 16px;box-shadow:var(--shadow);font-family:'Geist',system-ui,sans-serif;font-size:13px;color:var(--text);white-space:nowrap;animation:slideInR .25s ease;}`;
     document.head.appendChild(s);
   }
   banner.innerHTML = `

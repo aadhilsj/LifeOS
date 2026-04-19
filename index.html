@@ -1097,7 +1097,6 @@ async function initSupabase() {
         storageKey: 'kairo_auth',
         autoRefreshToken: true,
         detectSessionInUrl: true,
-        flowType: 'implicit',
       }
     });
     return true;
@@ -4114,7 +4113,7 @@ document.getElementById('page-sub').textContent=todayLong();
 // Hide app until auth confirmed
 document.querySelector('.app').style.display='none';
 const _script=document.createElement('script');
-_script.src='https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js';
+_script.src='https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.0/dist/umd/supabase.js';
 _script.onload=()=>handleAuth();
 _script.onerror=()=>{setSyncStatus('error','Offline');document.querySelector('.app').style.display='flex';loadData(null);};
 document.head.appendChild(_script);

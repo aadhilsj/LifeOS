@@ -4149,15 +4149,15 @@ function renderHome(){
     else if(dtnMode==='auto') dtnSubEl.textContent=t('home.dtnSuggested');
     else dtnSubEl.textContent=t('home.dtnEmpty');
   }
-  const dtnIds=new Set(dtnTasks.map(t=>t.id));
+  const dtnIds=new Set(dtnTasks.map(task=>task.id));
   document.getElementById('home-focus-list').innerHTML=dtnMode==='empty'
     ?`<div class="text-dim text-sm" style="padding:6px 0">🎉 ${t('home.noPending')}</div>`
-    :dtnTasks.map(t=>{
-        const isFocus=DATA.focusTasks.includes(t.id);
-        const over=isOverdue(t);
-        const label=over?t('tasksPage.overdueSince',{date:formatDueLabel(t.dueDate)}):t.dueDate===td?t('tasksPage.dueToday'):t.dueDate?t('tasksPage.dueDate',{date:formatDueLabel(t.dueDate)}):t('tasksPage.noDueDate');
-        const labelColor=over?'#e57373':t.dueDate===td?'var(--gold)':t.dueDate?'var(--text-2)':'var(--text-3)';
-        return taskHTML(t,isFocus)+(dtnMode==='auto'
+    :dtnTasks.map(task=>{
+        const isFocus=DATA.focusTasks.includes(task.id);
+        const over=isOverdue(task);
+        const label=over?t('tasksPage.overdueSince',{date:formatDueLabel(task.dueDate)}):task.dueDate===td?t('tasksPage.dueToday'):task.dueDate?t('tasksPage.dueDate',{date:formatDueLabel(task.dueDate)}):t('tasksPage.noDueDate');
+        const labelColor=over?'#e57373':task.dueDate===td?'var(--gold)':task.dueDate?'var(--text-2)':'var(--text-3)';
+        return taskHTML(task,isFocus)+(dtnMode==='auto'
           ?`<div style="font-size:10.5px;color:var(--text-3);margin:3px 0 8px 25px;display:flex;align-items:center;gap:5px;line-height:1.35"><span style="opacity:.4">↑</span> ${t('tasksPage.starToPin')} · <span style="color:${labelColor};font-weight:600">${label}</span></div>`
           :'');
       }).join('');

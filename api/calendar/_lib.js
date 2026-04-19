@@ -24,11 +24,12 @@ function getIntegrationRowId(userId) {
   return userId || process.env.KAIRO_DATA_ROW_ID || 'main';
 }
 
-function buildState(userId) {
+function buildState(userId, returnOrigin) {
   return Buffer.from(JSON.stringify({
     nonce: Math.random().toString(36).slice(2, 10),
     createdAt: Date.now(),
     userId: userId || '',
+    returnOrigin: returnOrigin || '',
   })).toString('base64url');
 }
 
@@ -50,7 +51,7 @@ function slugify(value) {
     .slice(0, 48);
 }
 
-function buildGoogleAuthUrl(userId) {
+function buildGoogleAuthUrl(userId, returnOrigin) {
   const { googleClientId, googleRedirectUri } = getConfig();
   const params = new URLSearchParams({
     client_id: googleClientId,
@@ -60,7 +61,7 @@ function buildGoogleAuthUrl(userId) {
     prompt: 'consent',
     include_granted_scopes: 'true',
     scope: GOOGLE_SCOPE,
-    state: buildState(userId),
+    state: buildState(userId, returnOrigin),
   });
   return `${GOOGLE_AUTH_BASE}?${params.toString()}`;
 }

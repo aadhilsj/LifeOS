@@ -928,7 +928,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;heigh
             </div>
             <div class="card mt14" id="home-circles-card" style="display:none">
               <div class="flex-between mb12">
-                <div class="card-title" style="margin:0">Circles</div>
+                <div class="card-title" style="margin:0" id="home-circles-title">Circles</div>
                 <span class="text-xs text-dim" style="cursor:pointer" onclick="navigate('circles')">All →</span>
               </div>
               <div id="home-circles-list"></div>
@@ -1210,12 +1210,45 @@ async function confirmName() {
   document.getElementById('login-screen').style.display = 'none';
   document.querySelector('.app').style.display = 'flex';
   await saveNow();
+  await upsertProfile(val);
   renderAll();
 }
 
 function showLoginScreen() {
   document.getElementById('login-screen').style.display = 'flex';
   document.querySelector('.app').style.display = 'none';
+}
+
+async function upsertProfile(displayName) {
+  if (!sb || !currentUser || !displayName) return;
+  try {
+    await sb.from('profiles').upsert({
+      user_id: currentUser.id,
+      display_name: displayName,
+      updated_at: new Date().toISOString(),
+    }, { onConflict: 'user_id' });
+  } catch(e) {
+    console.error('Profile upsert error:', e);
+  }
+}
+
+async function checkProfileGate() {
+  if (!sb || !currentUser) return false;
+  try {
+    const { data } = await sb.from('profiles')
+      .select('display_name').eq('user_id', currentUser.id).maybeSingle();
+    if (data?.display_name) {
+      // Profile exists — update local name if not already set
+      if (!DATA.settings.name) {
+        DATA.settings.name = data.display_name;
+        scheduleSave();
+      }
+      return false; // no gate needed
+    }
+    return true; // needs gate
+  } catch(_) {
+    return false; // on error, don't block the app
+  }
 }
 
 async function applyAuthSession(session) {
@@ -1233,6 +1266,22 @@ async function applyAuthSession(session) {
       resetAppState();
       await loadData(currentUser);
     }
+    // Check if user needs to set a display name
+    const needsProfileGate = await checkProfileGate();
+    if (needsProfileGate) {
+      const googleName = currentUser.user_metadata?.full_name || currentUser.user_metadata?.name || '';
+      const firstName = googleName.split(' ')[0] || '';
+      const looksOk = firstName && !firstName.includes('@') && !firstName.includes('.');
+      document.getElementById('login-screen').style.display = 'flex';
+      document.getElementById('login-box').style.display = 'none';
+      document.getElementById('name-setup-box').style.display = 'flex';
+      document.getElementById('name-setup-input').value = looksOk ? firstName : '';
+      document.querySelector('.app').style.display = 'none';
+      return;
+    }
+    // Ensure profile is written for existing users who predate profiles table
+    const existingName = DATA.settings.name || getUserName();
+    if (existingName) upsertProfile(existingName);
     document.getElementById('login-screen').style.display = 'none';
     document.querySelector('.app').style.display = 'flex';
     return;
@@ -2228,6 +2277,11 @@ function updateSettingName(value){
   DATA.settings.name=(value||'').trimStart();
   scheduleSave();
   if(currentPage==='home') document.getElementById('page-title').textContent=getGreeting();
+  clearTimeout(window._profileUpsertTimer);
+  window._profileUpsertTimer = setTimeout(() => {
+    const name = (value||'').trim();
+    if (name) upsertProfile(name);
+  }, 1200);
 }
 
 function setAccentTheme(themeKey){
@@ -3109,8 +3163,21 @@ function renderHomeCirclesCard() {
   if (!CIRCLES_DATA.length) { card.style.display = 'none'; return; }
   card.style.display = '';
 
+  const totalCount = CIRCLES_DATA.length;
+  const titleEl = document.getElementById('home-circles-title');
+  if (titleEl) titleEl.textContent = totalCount > 1 ? `Circles (${totalCount})` : 'Circles';
+
+  // Sort by latest_activity_at desc, cap at 2
+  const sortedSummaries = [...CIRCLE_SUMMARIES].sort((a, b) =>
+    new Date(b.latest_activity_at || 0) - new Date(a.latest_activity_at || 0)
+  ).slice(0, 2);
+
+  const sortedData = CIRCLE_SUMMARIES.length
+    ? sortedSummaries.map(s => CIRCLES_DATA.find(e => e.circle.id === s.circle_id)).filter(Boolean)
+    : [...CIRCLES_DATA].slice(0, 2);
+
   const rows = CIRCLE_SUMMARIES.length
-    ? CIRCLE_SUMMARIES.map(s => {
+    ? sortedSummaries.map(s => {
         const entry = CIRCLES_DATA.find(e => e.circle.id === s.circle_id);
         if (!entry) return '';
         const { circle, members } = entry;
@@ -3150,7 +3217,7 @@ function renderHomeCirclesCard() {
             </div>
           </div>`;
       }).join('')
-    : CIRCLES_DATA.map(({ circle, members }) => {
+    : sortedData.map(({ circle, members }) => {
         const activeMembers = members.filter(m => m.status === 'active');
         const avatars = activeMembers.slice(0, 4).map(m => {
           const isYou = m.user_id === currentUser?.id;
@@ -3618,6 +3685,7 @@ function renderReviewOutput(text){
 // ─── Circles ──────────────────────────────────────────────────────────────────
 let CIRCLES_DATA = []; // [{circle, members, invites}]
 let CIRCLE_SUMMARIES = []; // [{circle_id, circle_name, open_task_count, active_project_count, latest_activity_at}]
+let CIRCLE_MEMBER_NAMES = {}; // { user_id: display_name }
 let circleDetailId = null;
 let circleProjectDetailId = null;
 let circlesLoading = false;
@@ -3656,6 +3724,7 @@ function getCircleProject(circleId, projectId) {
 function getCircleMemberLabel(circleId, userId, members = null) {
   if (!userId) return 'Unassigned';
   if (userId === currentUser?.id) return 'You';
+  if (CIRCLE_MEMBER_NAMES[userId]) return CIRCLE_MEMBER_NAMES[userId];
   const entry = getCircleEntry(circleId);
   const activeMembers = (members || entry?.members || []).filter(m => m.status === 'active');
   const idx = activeMembers.findIndex(m => m.user_id === userId);
@@ -4046,6 +4115,17 @@ async function loadCircles() {
     if (circleDetailId && !CIRCLES_DATA.some(entry => entry.circle.id === circleDetailId)) {
       circleDetailId = null;
       circleProjectDetailId = null;
+    }
+
+    // Batch-fetch display names for all circle members
+    const allMemberIds = [...new Set((allMembers || []).map(m => m.user_id))];
+    if (allMemberIds.length) {
+      try {
+        const { data: profiles } = await sb
+          .from('profiles').select('user_id, display_name').in('user_id', allMemberIds);
+        CIRCLE_MEMBER_NAMES = {};
+        (profiles || []).forEach(p => { CIRCLE_MEMBER_NAMES[p.user_id] = p.display_name; });
+      } catch(_) {}
     }
 
     // Fetch summaries for Home dashboard card (non-blocking — don't throw on failure)

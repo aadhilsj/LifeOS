@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
@@ -19,6 +19,7 @@
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
+  --bg:#0d1117;
   --glass:#ffffff08;--glass-border:#ffffff12;--glass-hover:#ffffff10;
   --surface:#ffffff06;--surface2:#ffffff0a;--surface3:#ffffff0f;
   --text:#f0efe8;--text-2:#a09e97;--text-3:#5c5a55;
@@ -33,32 +34,83 @@
   --font-serif:'Instrument Serif',Georgia,serif;
   --font-sans:'Geist',system-ui,sans-serif;
   --transition:0.18s cubic-bezier(.4,0,.2,1);
+  /* component-level vars (dark defaults) */
+  --sidebar-bg:linear-gradient(180deg,#ffffff07 0%,#ffffff03 100%);
+  --topbar-bg:linear-gradient(180deg,#ffffff04 0%,transparent 100%);
+  --modal-bg:linear-gradient(135deg,#13151e,#0f1118);
+  --input-bg:#ffffff08;--input-focus-bg:#ffffff0d;--input-focus-border:#ffffff25;
+  --cmd-bg:linear-gradient(135deg,#13151e,#0f1118);
+  --cmd-input-bg:#ffffff08;--cmd-input-focus-bg:#ffffff0d;--cmd-input-focus-border:#ffffff25;
+  --dtn-bg:linear-gradient(135deg,#1a0c0c,#110e18);
+  --toast-bg:linear-gradient(135deg,#1a1c25,#141620);
+  --bottom-nav-bg:linear-gradient(180deg,#0d1117ee,#0d1117);
+  --more-sheet-bg:linear-gradient(135deg,#171a24,#11141d);
+  --login-bg:#0d1117;
+  --brand-icon-bg:#0d1117;--brand-icon-border:#ffffff10;
+  --scrollbar-thumb:var(--surface3);
+  --date-color-scheme:dark;
+  --modal-handle:#ffffff20;
 }
+
+/* ── Light theme overrides ── */
+[data-theme="light"]{
+  --bg:#f4f1ec;
+  --glass:#ffffff;--glass-border:#e2ddd7;--glass-hover:#f9f6f2;
+  --surface:#f9f6f2;--surface2:#f1ede7;--surface3:#ebe6df;
+  --text:#1c1916;--text-2:#6b6762;--text-3:#a09e97;
+  --border:#ddd9d3;--border-active:#c8c3bc;
+  --shadow:0 4px 24px rgba(0,0,0,.10);--shadow-sm:0 2px 12px rgba(0,0,0,.07);
+  --green:#2f8a5c;--green-soft:#2f8a5c14;
+  --gold:#a8872a;--gold-soft:#a8872a14;
+  --blue:#3a68b0;--blue-soft:#3a68b014;
+  --accent-soft:rgba(var(--accent-rgb),.12);--accent-glow:rgba(var(--accent-rgb),.08);
+  --sidebar-bg:linear-gradient(180deg,#f9f6f2 0%,#f4f1ec 100%);
+  --topbar-bg:linear-gradient(180deg,#f4f1ec 0%,transparent 100%);
+  --modal-bg:linear-gradient(135deg,#fdfcfa,#f9f7f4);
+  --input-bg:#ffffff;--input-focus-bg:#ffffff;--input-focus-border:#c8c3bc;
+  --cmd-bg:linear-gradient(135deg,#fdfcfa,#f9f7f4);
+  --cmd-input-bg:#f4f1ec;--cmd-input-focus-bg:#ffffff;--cmd-input-focus-border:#c8c3bc;
+  --dtn-bg:linear-gradient(135deg,#fff5f4,#fdf0ee);
+  --toast-bg:linear-gradient(135deg,#fdfcfa,#f9f7f4);
+  --bottom-nav-bg:linear-gradient(180deg,#f4f1ecee,#f4f1ec);
+  --more-sheet-bg:linear-gradient(135deg,#fdfcfa,#f5f2ed);
+  --login-bg:#f4f1ec;
+  --brand-icon-bg:#f4f1ec;--brand-icon-border:#ddd9d3;
+  --scrollbar-thumb:#ddd9d3;
+  --date-color-scheme:light;
+  --modal-handle:#00000015;
+}
+
 html,body{height:100%;overflow:hidden}
-body{font-family:var(--font-sans);font-size:13.5px;color:var(--text);background:#0d1117;line-height:1.55}
+body{font-family:var(--font-sans);font-size:13.5px;color:var(--text);background:var(--bg);line-height:1.55}
 
 .bg-gradient{position:fixed;inset:0;z-index:0;background:
   radial-gradient(ellipse 70% 50% at 5% 0%,#1a0808 0%,transparent 55%),
   radial-gradient(ellipse 60% 50% at 95% 100%,#080d1a 0%,transparent 55%),
   linear-gradient(135deg,#0a0e1a 0%,#0d0a0f 50%,#0a0f0e 100%)}
+[data-theme="light"] .bg-gradient{background:
+  radial-gradient(ellipse 70% 50% at 5% 0%,#f0e8e5 0%,transparent 55%),
+  radial-gradient(ellipse 60% 50% at 95% 100%,#e8ecf4 0%,transparent 55%),
+  linear-gradient(135deg,#f4f1ec 0%,#f2eeea 50%,#f0ede8 100%)}
 .bg-grain{position:fixed;inset:0;z-index:1;opacity:.022;
   background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   pointer-events:none}
+[data-theme="light"] .bg-grain{opacity:.035}
 
 .app{position:relative;z-index:2;display:flex;height:100vh;overflow:hidden}
 
 /* ── Sidebar ── */
 .sidebar{
   width:var(--sidebar);flex-shrink:0;
-  background:linear-gradient(180deg,#ffffff07 0%,#ffffff03 100%);
+  background:var(--sidebar-bg);
   border-right:1px solid var(--glass-border);
   display:flex;flex-direction:column;height:100vh;overflow-y:auto;
   backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
 }
 .sidebar-brand{padding:16px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
-.brand-icon{width:30px;height:30px;border-radius:8px;background:#0d1117;
+.brand-icon{width:30px;height:30px;border-radius:8px;background:var(--brand-icon-bg);
   display:flex;align-items:center;justify-content:center;
-  flex-shrink:0;overflow:hidden;border:1px solid #ffffff10}
+  flex-shrink:0;overflow:hidden;border:1px solid var(--brand-icon-border)}
 .brand-icon svg{width:30px;height:30px}
 .brand-name{font-family:var(--font-serif);font-size:17px;color:var(--text);letter-spacing:-.2px}
 .nav-section{padding:10px 8px 2px}
@@ -86,7 +138,7 @@ body{font-family:var(--font-sans);font-size:13.5px;color:var(--text);background:
 /* ── Main ── */
 .main{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0}
 .topbar{display:flex;align-items:center;justify-content:space-between;padding:14px 26px;
-  border-bottom:1px solid var(--border);background:linear-gradient(180deg,#ffffff04 0%,transparent 100%);flex-shrink:0}
+  border-bottom:1px solid var(--border);background:var(--topbar-bg);flex-shrink:0}
 .breadcrumb{display:flex;align-items:center;gap:5px;font-size:11.5px;color:var(--text-3)}
 .breadcrumb-sep{opacity:.4}
 .breadcrumb-current{color:var(--text-2);font-weight:500}
@@ -96,7 +148,7 @@ body{font-family:var(--font-sans);font-size:13.5px;color:var(--text);background:
 .topbar-actions{display:flex;align-items:center;gap:8px}
 .content{flex:1;overflow-y:auto;padding:22px 26px}
 .content::-webkit-scrollbar{width:4px}
-.content::-webkit-scrollbar-thumb{background:var(--surface3);border-radius:4px}
+.content::-webkit-scrollbar-thumb{background:var(--scrollbar-thumb);border-radius:4px}
 
 /* ── Pages ── */
 .page{display:none;animation:fadeUp .2s ease}
@@ -122,16 +174,16 @@ body{font-family:var(--font-sans);font-size:13.5px;color:var(--text);background:
 .grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
 
 /* ── Inputs ── */
-.input{background:#ffffff08;border:1px solid var(--glass-border);border-radius:var(--radius-sm);
+.input{background:var(--input-bg);border:1px solid var(--glass-border);border-radius:var(--radius-sm);
   color:var(--text);font-family:var(--font-sans);font-size:13px;padding:8px 11px;outline:none;width:100%;
   transition:border-color var(--transition),background var(--transition)}
-.input:focus{border-color:#ffffff25;background:#ffffff0d}
+.input:focus{border-color:var(--input-focus-border);background:var(--input-focus-bg)}
 .input::placeholder{color:var(--text-3)}
 select.input{cursor:pointer;appearance:none;
   background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23555'/%3E%3C/svg%3E");
   background-repeat:no-repeat;background-position:right 10px center}
 textarea.input{resize:vertical;min-height:70px;line-height:1.5}
-input[type="date"].input,input[type="time"].input{color-scheme:dark}
+input[type="date"].input,input[type="time"].input{color-scheme:var(--date-color-scheme)}
 
 /* ── Buttons ── */
 .btn{font-family:var(--font-sans);font-size:12.5px;font-weight:500;border:none;border-radius:var(--radius-sm);
@@ -157,7 +209,7 @@ input[type="date"].input,input[type="time"].input{color-scheme:dark}
 .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:500;
   display:flex;align-items:center;justify-content:center;padding:20px;
   backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
-.modal{background:linear-gradient(135deg,#13151e,#0f1118);border:1px solid var(--glass-border);
+.modal{background:var(--modal-bg);border:1px solid var(--glass-border);
   border-radius:18px;padding:24px;width:100%;max-width:480px;max-height:88vh;overflow-y:auto;
   box-shadow:0 24px 80px rgba(0,0,0,.65);animation:slideUp .2s ease}
 @keyframes slideUp{from{transform:translateY(10px);opacity:0}to{transform:none;opacity:1}}
@@ -165,28 +217,38 @@ input[type="date"].input,input[type="time"].input{color-scheme:dark}
 .modal::-webkit-scrollbar{width:4px}
 .modal::-webkit-scrollbar-thumb{background:var(--surface3);border-radius:4px}
 
-/* ── Badges ── */
+/* ── Badges (theme-adaptive) ── */
 .badge{font-size:10px;font-weight:600;padding:2px 8px;border-radius:20px;letter-spacing:.03em;display:inline-flex;align-items:center;gap:3px}
-.badge-career{background:#1e3a5f28;color:#7cb9e8;border:1px solid #7cb9e820}
-.badge-health{background:#1a2e2a28;color:#7dd3a8;border:1px solid #7dd3a820}
-.badge-personal{background:#2e241828;color:#e8c57c;border:1px solid #e8c57c20}
-.badge-life-admin{background:#2a1a2e28;color:#c084fc;border:1px solid #c084fc20}
-.badge-growth{background:#1e2e1a28;color:#a3e635;border:1px solid #a3e63520}
+.badge-career{background:#1e3a5f28;color:#6aaad8;border:1px solid #7cb9e820}
+.badge-health{background:#1a2e2a28;color:#6dc49a;border:1px solid #7dd3a820}
+.badge-personal{background:#2e241828;color:#d4aa60;border:1px solid #e8c57c20}
+.badge-life-admin{background:#2a1a2e28;color:#b07de8;border:1px solid #c084fc20}
+.badge-growth{background:#1e2e1a28;color:#8abd30;border:1px solid #a3e63520}
 .badge-other{background:var(--surface2);color:var(--text-3);border:1px solid var(--border)}
 .badge-overdue{background:#c8392b1e;color:#e57373;border:1px solid #c8392b28}
-.badge-focus{background:var(--gold-soft);color:var(--gold);border:1px solid #c9a84c18;padding:2px 6px;min-width:22px;justify-content:center}
+.badge-focus{background:var(--gold-soft);color:var(--gold);border:1px solid var(--gold-soft);padding:2px 6px;min-width:22px;justify-content:center}
+/* Light mode: higher contrast badge colours */
+[data-theme="light"] .badge-career{background:#ddeaf8;color:#2a5a96;border-color:#bad4ef}
+[data-theme="light"] .badge-health{background:#d8f0e7;color:#1f6e46;border-color:#a9d9c0}
+[data-theme="light"] .badge-personal{background:#faecd5;color:#7a5a12;border-color:#e8c980}
+[data-theme="light"] .badge-life-admin{background:#ecdff8;color:#5c2e96;border-color:#cda8e8}
+[data-theme="light"] .badge-growth{background:#e3f0ce;color:#3a6010;border-color:#b4d488}
+[data-theme="light"] .badge-overdue{background:#fce8e8;color:#b02020;border-color:#f0aaaa}
+
 .stage{font-size:10px;font-weight:600;padding:2px 8px;border-radius:20px;letter-spacing:.03em}
 .stage-not-applied{background:var(--surface2);color:var(--text-3);border:1px solid var(--border)}
-.stage-applied{background:#1e3a5f20;color:#7cb9e8;border:1px solid #7cb9e818}
-.stage-interview{background:var(--gold-soft);color:var(--gold);border:1px solid #c9a84c18}
-.stage-offer{background:var(--green-soft);color:var(--green);border:1px solid #4a9e6e18}
+.stage-applied{background:#1e3a5f20;color:#6aaad8;border:1px solid #7cb9e818}
+.stage-interview{background:var(--gold-soft);color:var(--gold);border:1px solid var(--gold-soft)}
+.stage-offer{background:var(--green-soft);color:var(--green);border:1px solid var(--green-soft)}
 .stage-rejected{background:#c8392b12;color:#e57373;border:1px solid #c8392b20}
-.status-active{background:var(--green-soft);color:var(--green);border:1px solid #4a9e6e18}
-.status-paused{background:var(--gold-soft);color:var(--gold);border:1px solid #c9a84c18}
-.status-completed{background:#1e3a5f20;color:#7cb9e8;border:1px solid #7cb9e818}
+.status-active{background:var(--green-soft);color:var(--green);border:1px solid var(--green-soft)}
+.status-paused{background:var(--gold-soft);color:var(--gold);border:1px solid var(--gold-soft)}
+.status-completed{background:#1e3a5f20;color:#6aaad8;border:1px solid #7cb9e818}
+[data-theme="light"] .stage-applied,[data-theme="light"] .status-completed{background:#ddeaf8;color:#2a5a96;border-color:#bad4ef}
+[data-theme="light"] .stage-rejected{background:#fce8e8;color:#b02020;border-color:#f0aaaa}
 
 /* ── Progress ── */
-.progress-track{height:4px;background:#ffffff08;border-radius:4px;overflow:hidden;margin-top:8px}
+.progress-track{height:4px;background:var(--surface3);border-radius:4px;overflow:hidden;margin-top:8px}
 .progress-fill{height:100%;border-radius:4px;transition:width .5s ease;background:linear-gradient(90deg,var(--green),#6dc49a)}
 
 /* ── Task due chip ── */
@@ -201,11 +263,17 @@ input[type="date"].input,input[type="time"].input{color-scheme:dark}
   border:1px solid var(--border);color:var(--text-3);background:var(--surface);
   transition:all var(--transition);user-select:none}
 .area-pill:hover{border-color:var(--border-active);color:var(--text-2)}
-.area-pill.selected[data-area="Career"]{background:#1e3a5f40;color:#7cb9e8;border-color:#7cb9e835}
-.area-pill.selected[data-area="Health"]{background:#1a2e2a40;color:#7dd3a8;border-color:#7dd3a835}
-.area-pill.selected[data-area="Personal"]{background:#2e241840;color:#e8c57c;border-color:#e8c57c35}
-.area-pill.selected[data-area="Life Admin"]{background:#2a1a2e40;color:#c084fc;border-color:#c084fc35}
-.area-pill.selected[data-area="Growth"]{background:#1e2e1a40;color:#a3e635;border-color:#a3e63535}
+.area-pill.selected[data-area="Career"]{background:#3a68b018;color:#3a68b0;border-color:#3a68b030}
+.area-pill.selected[data-area="Health"]{background:#2f8a5c18;color:#2f8a5c;border-color:#2f8a5c30}
+.area-pill.selected[data-area="Personal"]{background:#a8872a18;color:#a8872a;border-color:#a8872a30}
+.area-pill.selected[data-area="Life Admin"]{background:#7c4db018;color:#7c4db0;border-color:#7c4db030}
+.area-pill.selected[data-area="Growth"]{background:#4a7a2018;color:#4a7a20;border-color:#4a7a2030}
+/* Dark mode area pills — keep contrast */
+[data-theme="dark"] .area-pill.selected[data-area="Career"]{background:#1e3a5f40;color:#7cb9e8;border-color:#7cb9e835}
+[data-theme="dark"] .area-pill.selected[data-area="Health"]{background:#1a2e2a40;color:#7dd3a8;border-color:#7dd3a835}
+[data-theme="dark"] .area-pill.selected[data-area="Personal"]{background:#2e241840;color:#e8c57c;border-color:#e8c57c35}
+[data-theme="dark"] .area-pill.selected[data-area="Life Admin"]{background:#2a1a2e40;color:#c084fc;border-color:#c084fc35}
+[data-theme="dark"] .area-pill.selected[data-area="Growth"]{background:#1e2e1a40;color:#a3e635;border-color:#a3e63535}
 
 /* ── Tasks ── */
 .task-item{display:flex;align-items:flex-start;gap:9px;padding:9px 0;border-bottom:1px solid var(--border)}
@@ -230,7 +298,7 @@ input[type="date"].input,input[type="time"].input{color-scheme:dark}
 .task-actions button{position:relative}
 .task-actions button[data-tip]::after{
   content:attr(data-tip);position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%) translateY(4px);
-  background:#11141d;border:1px solid var(--glass-border);border-radius:8px;padding:5px 7px;font-size:10px;font-weight:600;
+  background:var(--modal-bg);border:1px solid var(--glass-border);border-radius:8px;padding:5px 7px;font-size:10px;font-weight:600;
   color:var(--text-2);white-space:nowrap;box-shadow:var(--shadow-sm);opacity:0;pointer-events:none;transition:all var(--transition)
 }
 .task-actions button[data-tip]:hover::after{opacity:1;transform:translateX(-50%) translateY(0)}
@@ -240,7 +308,7 @@ input[type="date"].input,input[type="time"].input{color-scheme:dark}
 
 /* Subtasks */
 .subtask-list{margin-top:8px;padding-left:16px;border-left:1px solid var(--border)}
-.subtask-item{display:flex;align-items:center;gap:7px;padding:4px 0;border-bottom:1px solid #ffffff04}
+.subtask-item{display:flex;align-items:center;gap:7px;padding:4px 0;border-bottom:1px solid var(--border)}
 .subtask-item:last-child{border-bottom:none}
 .subtask-check{width:12px;height:12px;border-radius:50%;border:1.5px solid var(--border-active);
   cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all var(--transition)}
@@ -252,7 +320,7 @@ input[type="date"].input,input[type="time"].input{color-scheme:dark}
 .add-subtask-row{display:flex;gap:6px;margin-top:7px;padding-left:16px}
 
 /* Note */
-.note-block{background:#ffffff05;border-left:2px solid var(--accent);border-radius:0 6px 6px 0;
+.note-block{background:var(--surface2);border-left:2px solid var(--accent);border-radius:0 6px 6px 0;
   padding:7px 11px;font-size:12px;color:var(--text-2);margin-top:7px;white-space:pre-wrap;line-height:1.5}
 
 /* Habits */
@@ -262,7 +330,8 @@ input[type="date"].input,input[type="time"].input{color-scheme:dark}
 .habit-dot{width:26px;height:26px;border-radius:6px;border:1px solid var(--border-active);cursor:pointer;
   display:flex;align-items:center;justify-content:center;font-size:9px;color:var(--text-3);transition:all var(--transition)}
 .habit-dot.done{background:var(--green);border-color:var(--green);color:#fff;font-size:11px}
-.habit-dot.today-ring{border-color:#ffffff28}
+.habit-dot.today-ring{border-color:var(--border-active)}
+[data-theme="light"] .habit-dot.today-ring{border-color:var(--border-active)}
 .habit-dot:hover:not(.done){background:var(--green-soft);border-color:var(--green)}
 
 /* Projects */
@@ -306,10 +375,11 @@ input[type="date"].input,input[type="time"].input{color-scheme:dark}
 .settings-stack{display:flex;flex-direction:column;gap:14px}
 .theme-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px}
 .theme-option{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:10px 8px;cursor:pointer;
-  transition:all var(--transition);text-align:center;color:var(--text-2);font-family:var(--font-sans);width:100%}
+  transition:all var(--transition);text-align:center;color:var(--text-2);font-family:var(--font-sans);width:100%;
+  display:flex;flex-direction:column;align-items:center;justify-content:center}
 .theme-option:hover{border-color:var(--border-active);background:var(--surface2);color:var(--text)}
 .theme-option.active{border-color:var(--accent);background:var(--accent-soft);color:var(--text)}
-.theme-swatch{width:28px;height:28px;border-radius:50%;margin:0 auto 8px;border:2px solid #ffffff14;box-shadow:inset 0 0 0 1px #00000020}
+.theme-swatch{width:28px;height:28px;border-radius:50%;margin:0 auto 8px;border:2px solid var(--border-active);box-shadow:inset 0 0 0 1px rgba(0,0,0,.15)}
 .theme-label{font-size:11px;font-weight:600}
 .settings-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:1px solid var(--border)}
 .settings-row:last-child{border-bottom:none;padding-bottom:0}
@@ -329,7 +399,7 @@ input[type="date"].input,input[type="time"].input{color-scheme:dark}
 
 /* Toast */
 .toast{position:fixed;bottom:22px;right:22px;z-index:1000;
-  background:linear-gradient(135deg,#1a1c25,#141620);border:1px solid var(--glass-border);
+  background:var(--toast-bg);border:1px solid var(--glass-border);
   border-radius:10px;padding:11px 15px;font-size:12.5px;color:var(--text);box-shadow:var(--shadow);
   display:flex;align-items:center;gap:8px;animation:slideInR .25s ease;max-width:260px}
 .toast.hide{animation:slideOutR .25s ease forwards}
@@ -348,7 +418,7 @@ input[type="date"].input,input[type="time"].input{color-scheme:dark}
   flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:8px;
   color:var(--text-3);transition:all var(--transition);cursor:pointer}
 .habit-strip-dot.done{background:var(--green);border-color:var(--green);color:#fff}
-.habit-strip-dot.today{border-color:#ffffff28}
+.habit-strip-dot.today{border-color:var(--border-active)}
 .habit-strip-dot.today.done{border-color:var(--green)}
 
 /* ── Capture nudge ── */
@@ -371,7 +441,7 @@ input[type="date"].input,input[type="time"].input{color-scheme:dark}
 /* ── Mobile bottom nav ── */
 .bottom-nav{
   display:none;position:fixed;bottom:0;left:0;right:0;z-index:100;
-  background:linear-gradient(180deg,#0d1117ee,#0d1117);
+  background:var(--bottom-nav-bg);
   border-top:1px solid var(--glass-border);
   backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
   padding:6px 0 max(8px,env(safe-area-inset-bottom));
@@ -386,7 +456,7 @@ input[type="date"].input,input[type="time"].input{color-scheme:dark}
 .bottom-nav-item svg{width:20px;height:20px}
 .bottom-nav-item span{font-size:9.5px;font-weight:500}
 .more-sheet-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:250;display:none}
-.more-sheet{position:fixed;left:14px;right:14px;bottom:78px;z-index:260;background:linear-gradient(135deg,#171a24,#11141d);
+.more-sheet{position:fixed;left:14px;right:14px;bottom:78px;z-index:260;background:var(--more-sheet-bg);
   border:1px solid var(--glass-border);border-radius:18px;padding:8px;box-shadow:0 20px 60px rgba(0,0,0,.45);
   backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);display:none}
 .more-sheet-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px}
@@ -412,18 +482,6 @@ input[type="date"].input,input[type="time"].input{color-scheme:dark}
 .circle-avatar-strip{display:flex;gap:4px;align-items:center}
 .circle-avatar-sm{width:26px;height:26px;border-radius:50%;background:var(--surface3);border:1px solid var(--border);display:inline-flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;color:var(--text-2)}
 .circle-avatar-sm.pending{opacity:.45;font-style:normal}
-.circles-home-row{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);cursor:pointer;transition:opacity var(--transition)}
-.circles-home-row:last-child{border-bottom:none}
-.circles-home-row:hover{opacity:.8}
-.circles-home-left{display:flex;align-items:center;gap:8px;min-width:0;flex:1}
-.circles-home-right{display:flex;align-items:center;gap:10px;flex-shrink:0}
-.circles-home-name{font-size:13px;font-weight:500;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.circles-home-stat{display:flex;flex-direction:column;align-items:flex-end}
-.circles-home-count{font-size:15px;font-weight:500;color:var(--text);line-height:1}
-.circles-home-count.dim{color:var(--text-3)}
-.circles-home-label{font-size:10px;color:var(--text-3);margin-top:1px;white-space:nowrap}
-.circles-home-divider{width:1px;height:24px;background:var(--border)}
-.circles-new-dot{width:7px;height:7px;border-radius:50%;background:var(--accent);flex-shrink:0}
 .circle-members-bar{display:flex;align-items:center;justify-content:space-between;padding:12px 0;cursor:pointer;user-select:none}
 .circle-members-bar:hover .manage-link{color:var(--text-2)}
 .manage-link{font-size:11px;color:var(--text-3);transition:color var(--transition);white-space:nowrap}
@@ -529,7 +587,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;heigh
 
 /* ── Do This Now card ── */
 .dtn-card{
-  background:linear-gradient(135deg,#1a0c0c,#110e18);
+  background:var(--dtn-bg);
   border:1px solid #c8392b30;border-left:3px solid var(--accent);
   border-radius:var(--radius);padding:18px 20px;
   box-shadow:0 0 32px rgba(200,57,43,.08),var(--shadow-sm);
@@ -577,7 +635,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;heigh
 /* ── FAB voice status pill ── */
 .fab-voice-status{
   position:fixed;bottom:136px;right:14px;z-index:200;
-  background:linear-gradient(135deg,#1a1c25,#141620);
+  background:var(--toast-bg);
   border:1px solid var(--glass-border);border-radius:20px;
   padding:6px 12px;font-size:11px;font-weight:500;color:var(--text-2);
   box-shadow:var(--shadow-sm);white-space:nowrap;
@@ -593,7 +651,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;heigh
 
 /* ── Home command bar ── */
 .command-bar{
-  background:linear-gradient(135deg,#13151e,#0f1118);
+  background:var(--cmd-bg);
   border:1px solid var(--glass-border);border-radius:var(--radius);
   padding:16px 18px;margin-bottom:16px;
   box-shadow:var(--shadow-sm);
@@ -602,12 +660,12 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;heigh
 .command-bar-label{font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--text-3);margin-bottom:10px}
 .command-bar-input-row{display:flex;gap:8px;align-items:center}
 .command-bar-input{
-  flex:1;background:#ffffff08;border:1px solid var(--glass-border);
+  flex:1;background:var(--cmd-input-bg);border:1px solid var(--glass-border);
   border-radius:var(--radius-sm);color:var(--text);font-family:var(--font-sans);
   font-size:14px;padding:10px 14px;outline:none;
   transition:border-color var(--transition),background var(--transition);
 }
-.command-bar-input:focus{border-color:#ffffff25;background:#ffffff0d}
+.command-bar-input:focus{border-color:var(--cmd-input-focus-border);background:var(--cmd-input-focus-bg)}
 .command-bar-input::placeholder{color:var(--text-3)}
 .command-bar-hint{font-size:10.5px;color:var(--text-3);margin-top:8px}
 .command-bar-hint span{color:var(--text-2)}
@@ -623,10 +681,12 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;heigh
 .nav-sub-item.active{color:var(--accent)}
 .nav-sub-dot{width:5px;height:5px;border-radius:50%;background:currentColor;flex-shrink:0;opacity:.6}
 .stage-exploring{background:var(--surface2);color:var(--text-3);border:1px solid var(--border)}
-.stage-contacted{background:#1e3a5f20;color:#7cb9e8;border:1px solid #7cb9e818}
-.stage-in-progress{background:var(--gold-soft);color:var(--gold);border:1px solid #c9a84c18}
-.stage-won{background:var(--green-soft);color:var(--green);border:1px solid #4a9e6e18}
+.stage-contacted{background:#1e3a5f20;color:#6aaad8;border:1px solid #7cb9e818}
+.stage-in-progress{background:var(--gold-soft);color:var(--gold);border:1px solid var(--gold-soft)}
+.stage-won{background:var(--green-soft);color:var(--green);border:1px solid var(--green-soft)}
 .stage-dropped{background:#c8392b12;color:#e57373;border:1px solid #c8392b20}
+[data-theme="light"] .stage-contacted{background:#ddeaf8;color:#2a5a96;border-color:#bad4ef}
+[data-theme="light"] .stage-dropped{background:#fce8e8;color:#b02020;border-color:#f0aaaa}
 
 /* ── Dismissed task state ── */
 .task-item.dismissed{opacity:.45}
@@ -666,7 +726,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;heigh
 .login-screen{
   position:fixed;inset:0;z-index:1000;
   display:flex;align-items:center;justify-content:center;
-  background:#0d1117;
+  background:var(--login-bg);
 }
 .login-box{
   width:100%;max-width:380px;padding:48px 40px;
@@ -739,7 +799,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;heigh
     max-height:92vh;padding:20px 20px max(20px,env(safe-area-inset-bottom));
     animation:slideUpSheet .25s cubic-bezier(.32,0,.67,0)}
   .modal::before{content:'';display:block;width:36px;height:4px;
-    background:#ffffff20;border-radius:4px;margin:0 auto 16px}
+    background:var(--modal-handle);border-radius:4px;margin:0 auto 16px}
   .tabs{-webkit-overflow-scrolling:touch}
 }
 @keyframes slideUpSheet{from{transform:translateY(100%)}to{transform:none}}
@@ -926,13 +986,6 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;heigh
               </div>
               <div id="home-projects-list"></div>
             </div>
-            <div class="card mt14" id="home-circles-card" style="display:none">
-              <div class="flex-between mb12">
-                <div class="card-title" style="margin:0" id="home-circles-title">Circles</div>
-                <span class="text-xs text-dim" style="cursor:pointer" onclick="navigate('circles')">All →</span>
-              </div>
-              <div id="home-circles-list"></div>
-            </div>
             <div class="card mt14">
               <div class="card-title">Habits</div>
               <div id="home-habits-list"></div>
@@ -1062,6 +1115,12 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;heigh
               <div class="card-title">Look & Feel</div>
               <div class="text-sm text-muted mb12">Pick a small accent palette for the whole dashboard.</div>
               <div class="theme-grid" id="theme-options"></div>
+            </div>
+
+            <div class="card">
+              <div class="card-title">Mode</div>
+              <div class="text-sm text-muted mb12">Switch between dark and light.</div>
+              <div id="color-mode-options"></div>
             </div>
           </div>
 
@@ -1210,45 +1269,12 @@ async function confirmName() {
   document.getElementById('login-screen').style.display = 'none';
   document.querySelector('.app').style.display = 'flex';
   await saveNow();
-  await upsertProfile(val);
   renderAll();
 }
 
 function showLoginScreen() {
   document.getElementById('login-screen').style.display = 'flex';
   document.querySelector('.app').style.display = 'none';
-}
-
-async function upsertProfile(displayName) {
-  if (!sb || !currentUser || !displayName) return;
-  try {
-    await sb.from('profiles').upsert({
-      user_id: currentUser.id,
-      display_name: displayName,
-      updated_at: new Date().toISOString(),
-    }, { onConflict: 'user_id' });
-  } catch(e) {
-    console.error('Profile upsert error:', e);
-  }
-}
-
-async function checkProfileGate() {
-  if (!sb || !currentUser) return false;
-  try {
-    const { data } = await sb.from('profiles')
-      .select('display_name').eq('user_id', currentUser.id).maybeSingle();
-    if (data?.display_name) {
-      // Profile exists — update local name if not already set
-      if (!DATA.settings.name) {
-        DATA.settings.name = data.display_name;
-        scheduleSave();
-      }
-      return false; // no gate needed
-    }
-    return true; // needs gate
-  } catch(_) {
-    return false; // on error, don't block the app
-  }
 }
 
 async function applyAuthSession(session) {
@@ -1266,22 +1292,6 @@ async function applyAuthSession(session) {
       resetAppState();
       await loadData(currentUser);
     }
-    // Check if user needs to set a display name
-    const needsProfileGate = await checkProfileGate();
-    if (needsProfileGate) {
-      const googleName = currentUser.user_metadata?.full_name || currentUser.user_metadata?.name || '';
-      const firstName = googleName.split(' ')[0] || '';
-      const looksOk = firstName && !firstName.includes('@') && !firstName.includes('.');
-      document.getElementById('login-screen').style.display = 'flex';
-      document.getElementById('login-box').style.display = 'none';
-      document.getElementById('name-setup-box').style.display = 'flex';
-      document.getElementById('name-setup-input').value = looksOk ? firstName : '';
-      document.querySelector('.app').style.display = 'none';
-      return;
-    }
-    // Ensure profile is written for existing users who predate profiles table
-    const existingName = DATA.settings.name || getUserName();
-    if (existingName) upsertProfile(existingName);
     document.getElementById('login-screen').style.display = 'none';
     document.querySelector('.app').style.display = 'flex';
     return;
@@ -1367,6 +1377,7 @@ function createDefaultData() {
     settings:{
       name:'',
       accentTheme:'red',
+      colorMode:'dark',
       notifications:{weeklyReview:true,overdueNudge:true},
       modules:{opportunities:true},
     },
@@ -1448,6 +1459,7 @@ function ensureSettingsShape() {
   DATA.settings = DATA.settings || {};
   DATA.settings.name = (DATA.settings.name || '').trim();
   DATA.settings.accentTheme = THEME_PRESETS[DATA.settings.accentTheme] ? DATA.settings.accentTheme : 'red';
+  DATA.settings.colorMode = ['dark','light'].includes(DATA.settings.colorMode) ? DATA.settings.colorMode : 'dark';
   DATA.settings.notifications = {
     weeklyReview: DATA.settings.notifications?.weeklyReview !== false,
     overdueNudge: DATA.settings.notifications?.overdueNudge !== false,
@@ -1501,13 +1513,32 @@ function getUserName() {
   return authName.split(' ')[0] || 'there';
 }
 
+function applyColorMode() {
+  ensureSettingsShape();
+  const mode = DATA.settings.colorMode || 'dark';
+  document.documentElement.setAttribute('data-theme', mode);
+  // Keep meta theme-color in sync for PWA status bar
+  const meta = document.querySelector('meta[name="theme-color"]');
+  if (meta) meta.content = mode === 'light' ? '#f4f1ec' : '#0d1117';
+}
+
 function applyTheme() {
   ensureSettingsShape();
+  applyColorMode();
   const theme = THEME_PRESETS[DATA.settings.accentTheme] || THEME_PRESETS.red;
   const root = document.documentElement;
   root.style.setProperty('--accent', theme.accent);
   root.style.setProperty('--accent-soft', `rgba(${theme.rgb},0.16)`);
   root.style.setProperty('--accent-glow', `rgba(${theme.rgb},0.12)`);
+  root.style.setProperty('--accent-rgb', theme.rgb);
+}
+
+function setColorMode(mode) {
+  if (!['dark','light'].includes(mode)) return;
+  DATA.settings.colorMode = mode;
+  applyTheme();
+  scheduleSave();
+  renderSettings();
 }
 
 function getGreeting() {
@@ -1908,7 +1939,7 @@ function projectTaskHTML(task){
         </div>`).join('')}</div>`:''}
       <div class="add-subtask-row mt8">
         <input class="input" id="sti-${task.id}" placeholder="+ Add subtask… (Enter)"
-          style="font-size:12px;flex:1;background:#ffffff05;border-color:transparent"
+          style="font-size:12px;flex:1;background:var(--surface2);border-color:transparent"
           onkeydown="if(event.key==='Enter')addSubtask('${task.id}')"/>
       </div>
     </div>
@@ -2235,6 +2266,24 @@ function renderSettings(){
     `).join('');
   }
 
+  // Color mode toggle
+  const modeEl = document.getElementById('color-mode-options');
+  if(modeEl) {
+    const isDark = (DATA.settings.colorMode||'dark') === 'dark';
+    modeEl.innerHTML = `
+      <div style="display:flex;gap:8px">
+        <button type="button" class="theme-option${isDark?' active':''}" onclick="setColorMode('dark')" style="flex:1;flex-direction:row;gap:8px;justify-content:flex-start;padding:10px 12px">
+          <span style="font-size:16px">🌙</span>
+          <div class="theme-label" style="font-size:12px">Dark</div>
+        </button>
+        <button type="button" class="theme-option${!isDark?' active':''}" onclick="setColorMode('light')" style="flex:1;flex-direction:row;gap:8px;justify-content:flex-start;padding:10px 12px">
+          <span style="font-size:16px">☀️</span>
+          <div class="theme-label" style="font-size:12px">Light</div>
+        </button>
+      </div>
+    `;
+  }
+
   const prefsEl=document.getElementById('settings-preferences');
   if(prefsEl){
     const rows = [
@@ -2277,11 +2326,6 @@ function updateSettingName(value){
   DATA.settings.name=(value||'').trimStart();
   scheduleSave();
   if(currentPage==='home') document.getElementById('page-title').textContent=getGreeting();
-  clearTimeout(window._profileUpsertTimer);
-  window._profileUpsertTimer = setTimeout(() => {
-    const name = (value||'').trim();
-    if (name) upsertProfile(name);
-  }, 1200);
 }
 
 function setAccentTheme(themeKey){
@@ -3148,95 +3192,6 @@ async function processTasksFabVoice(){
 }
 
 // ─── Home ─────────────────────────────────────────────────────────────────────
-async function refreshCircleSummaries() {
-  if (!sb || !currentUser) return;
-  try {
-    const { data } = await sb.rpc('get_circle_summaries');
-    if (data) { CIRCLE_SUMMARIES = data; renderHomeCirclesCard(); }
-  } catch(_) {}
-}
-
-function renderHomeCirclesCard() {
-  const card = document.getElementById('home-circles-card');
-  const el = document.getElementById('home-circles-list') || card;
-  if (!card || !el) return;
-  if (!CIRCLES_DATA.length) { card.style.display = 'none'; return; }
-  card.style.display = '';
-
-  const totalCount = CIRCLES_DATA.length;
-  const titleEl = document.getElementById('home-circles-title');
-  if (titleEl) titleEl.textContent = totalCount > 1 ? `Circles (${totalCount})` : 'Circles';
-
-  // Sort by latest_activity_at desc, cap at 2
-  const sortedSummaries = [...CIRCLE_SUMMARIES].sort((a, b) =>
-    new Date(b.latest_activity_at || 0) - new Date(a.latest_activity_at || 0)
-  ).slice(0, 2);
-
-  const sortedData = CIRCLE_SUMMARIES.length
-    ? sortedSummaries.map(s => CIRCLES_DATA.find(e => e.circle.id === s.circle_id)).filter(Boolean)
-    : [...CIRCLES_DATA].slice(0, 2);
-
-  const rows = CIRCLE_SUMMARIES.length
-    ? sortedSummaries.map(s => {
-        const entry = CIRCLES_DATA.find(e => e.circle.id === s.circle_id);
-        if (!entry) return '';
-        const { circle, members } = entry;
-        const activeMembers = members.filter(m => m.status === 'active');
-        const tasksOn = circle.tasks_enabled !== false;
-        const projectsOn = circle.projects_enabled === true;
-
-        // "new activity" dot: latest_activity_at > my last_seen_circles_at
-        const myMember = members.find(m => m.user_id === currentUser?.id);
-        const lastSeen = myMember?.last_seen_circles_at;
-        const hasNew = s.latest_activity_at && (!lastSeen || s.latest_activity_at > lastSeen);
-
-        const avatars = activeMembers.slice(0, 4).map(m => {
-          const isYou = m.user_id === currentUser?.id;
-          const init = isYou ? (getUserName()[0] || 'Y').toUpperCase() : '?';
-          return `<div class="circle-avatar-sm">${escHtml(init)}</div>`;
-        }).join('');
-
-        const taskChip = tasksOn && s.open_task_count > 0
-          ? `<div class="circles-home-stat"><span class="circles-home-count${s.open_task_count === 0 ? ' dim' : ''}">${s.open_task_count}</span><span class="circles-home-label">open task${s.open_task_count !== 1 ? 's' : ''}</span></div>`
-          : (tasksOn ? `<div class="circles-home-stat"><span class="circles-home-count dim">0</span><span class="circles-home-label">open tasks</span></div>` : '');
-
-        const projectChip = projectsOn
-          ? `<div class="circles-home-stat"><span class="circles-home-count${s.active_project_count === 0 ? ' dim' : ''}">${s.active_project_count}</span><span class="circles-home-label">active project${s.active_project_count !== 1 ? 's' : ''}</span></div>`
-          : '';
-
-        return `
-          <div class="circles-home-row" onclick="navigate('circles');setTimeout(()=>openCircleDetail('${circle.id}'),60)">
-            <div class="circles-home-left">
-              ${hasNew ? '<div class="circles-new-dot"></div>' : ''}
-              <div class="circle-avatar-strip">${avatars}</div>
-              <div class="circles-home-name">${escHtml(circle.name)}</div>
-            </div>
-            <div class="circles-home-right">
-              ${taskChip}${projectChip ? `<div class="circles-home-divider"></div>${projectChip}` : ''}
-              <svg width="12" height="12" viewBox="0 0 12 12" fill="none" style="flex-shrink:0;opacity:.35"><path d="M4 2.5l3.5 3.5L4 9.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            </div>
-          </div>`;
-      }).join('')
-    : sortedData.map(({ circle, members }) => {
-        const activeMembers = members.filter(m => m.status === 'active');
-        const avatars = activeMembers.slice(0, 4).map(m => {
-          const isYou = m.user_id === currentUser?.id;
-          const init = isYou ? (getUserName()[0] || 'Y').toUpperCase() : '?';
-          return `<div class="circle-avatar-sm">${escHtml(init)}</div>`;
-        }).join('');
-        return `
-          <div class="circles-home-row" onclick="navigate('circles');setTimeout(()=>openCircleDetail('${circle.id}'),60)">
-            <div class="circles-home-left">
-              <div class="circle-avatar-strip">${avatars}</div>
-              <div class="circles-home-name">${escHtml(circle.name)}</div>
-            </div>
-            <svg width="12" height="12" viewBox="0 0 12 12" fill="none" style="flex-shrink:0;opacity:.35"><path d="M4 2.5l3.5 3.5L4 9.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          </div>`;
-      }).join('');
-
-  el.innerHTML = rows;
-}
-
 function renderHome(){
   const td=today();
   const datedTodayTasks=DATA.tasks.filter(t=>!t.completed&&!t.dismissed&&t.dueDate===td);
@@ -3278,7 +3233,7 @@ function renderHome(){
 
     if(hasThisWeek&&!dismissed){
       reviewNudge.style.display='flex';
-      reviewNudge.innerHTML=`<div class="flex-gap"><span style="font-size:14px">📋</span><span style="font-size:12.5px;color:#7cb9e8;font-weight:500">Your weekly review is ready</span></div><span class="text-xs text-dim">View →</span>`;
+      reviewNudge.innerHTML=`<div class="flex-gap"><span style="font-size:14px">📋</span><span style="font-size:12.5px;color:var(--blue);font-weight:500">Your weekly review is ready</span></div><span class="text-xs text-dim">View →</span>`;
       reviewNudge.onclick=()=>{
         DATA.dismissedReviewWeek=thisWeekStr;
         scheduleSave();
@@ -3391,9 +3346,6 @@ function renderHome(){
     </div>`;
   }).join('');
   document.getElementById('home-habits-list').innerHTML=habitStatus.length?habitsSummary+habitRows:`<div class="empty" style="padding:10px 0"><div class="empty-icon">↺</div>No habits yet. Add one to start building rhythm.</div>`;
-
-  // Circles card
-  renderHomeCirclesCard();
 
   // Projects
   const active=DATA.projects.filter(p=>p.status==='Active').slice(0,3);
@@ -3684,8 +3636,6 @@ function renderReviewOutput(text){
 
 // ─── Circles ──────────────────────────────────────────────────────────────────
 let CIRCLES_DATA = []; // [{circle, members, invites}]
-let CIRCLE_SUMMARIES = []; // [{circle_id, circle_name, open_task_count, active_project_count, latest_activity_at}]
-let CIRCLE_MEMBER_NAMES = {}; // { user_id: display_name }
 let circleDetailId = null;
 let circleProjectDetailId = null;
 let circlesLoading = false;
@@ -3724,7 +3674,6 @@ function getCircleProject(circleId, projectId) {
 function getCircleMemberLabel(circleId, userId, members = null) {
   if (!userId) return 'Unassigned';
   if (userId === currentUser?.id) return 'You';
-  if (CIRCLE_MEMBER_NAMES[userId]) return CIRCLE_MEMBER_NAMES[userId];
   const entry = getCircleEntry(circleId);
   const activeMembers = (members || entry?.members || []).filter(m => m.status === 'active');
   const idx = activeMembers.findIndex(m => m.user_id === userId);
@@ -3969,7 +3918,6 @@ async function addCircleTask(circleId) {
     if (dueInput) dueInput.value = '';
     await loadCircleTasks(circleId, { silent: true });
     renderCircleDetail(circleId);
-    refreshCircleSummaries();
     toast('Shared task added', 'success');
   } catch (e) {
     console.error('Add circle task error:', e);
@@ -3999,7 +3947,6 @@ async function addCircleProjectTask(circleId, projectId) {
     if (assigneeInput) assigneeInput.value = '';
     await loadCircleTasks(circleId, { silent: true });
     renderCircleDetail(circleId);
-    refreshCircleSummaries();
     toast('Project task added', 'success');
   } catch (e) {
     console.error('Add circle project task error:', e);
@@ -4028,7 +3975,6 @@ async function toggleCircleTask(circleId, taskId) {
       completed_at: nextCompleted ? new Date().toISOString() : null,
     } : t));
     renderCircleDetail(circleId);
-    refreshCircleSummaries();
   } catch (e) {
     console.error('Toggle circle task error:', e);
     toast('Could not update shared task', 'error');
@@ -4042,7 +3988,6 @@ async function deleteCircleTask(circleId, taskId) {
     if (error) throw error;
     CIRCLE_TASKS[circleId] = (CIRCLE_TASKS[circleId] || []).filter(t => t.id !== taskId);
     renderCircleDetail(circleId);
-    refreshCircleSummaries();
     toast('Shared task removed', 'info');
   } catch (e) {
     console.error('Delete circle task error:', e);
@@ -4117,29 +4062,9 @@ async function loadCircles() {
       circleProjectDetailId = null;
     }
 
-    // Batch-fetch display names for all circle members
-    const allMemberIds = [...new Set((allMembers || []).map(m => m.user_id))];
-    if (allMemberIds.length) {
-      try {
-        const { data: profiles } = await sb
-          .from('profiles').select('user_id, display_name').in('user_id', allMemberIds);
-        CIRCLE_MEMBER_NAMES = {};
-        (profiles || []).forEach(p => { CIRCLE_MEMBER_NAMES[p.user_id] = p.display_name; });
-      } catch(_) {}
-    }
-
-    // Fetch summaries for Home dashboard card (non-blocking — don't throw on failure)
-    try {
-      const { data: summaries } = await sb.rpc('get_circle_summaries');
-      CIRCLE_SUMMARIES = summaries || [];
-    } catch(_) {
-      CIRCLE_SUMMARIES = [];
-    }
-
     circlesLoading = false;
     updateCirclesBadge();
     if (currentPage === 'circles') renderCircles();
-    if (currentPage === 'home') renderHomeCirclesCard();
   } catch(e) {
     console.error('Circles load error:', e);
     circlesLoading = false;
@@ -4235,26 +4160,6 @@ function openCircleDetail(id) {
   renderCircleDetail(id);
   loadCircleTasks(id);
   loadCircleProjects(id);
-  // Mark this circle as seen — used for "new activity" dot on Home dashboard
-  if (sb && currentUser) {
-    sb.from('circle_members')
-      .update({ last_seen_circles_at: new Date().toISOString() })
-      .eq('circle_id', id)
-      .eq('user_id', currentUser.id)
-      .then(() => {
-        // Update local member record so dot clears immediately without reload
-        CIRCLES_DATA = CIRCLES_DATA.map(e => e.circle.id === id ? {
-          ...e,
-          members: e.members.map(m => m.user_id === currentUser.id
-            ? { ...m, last_seen_circles_at: new Date().toISOString() }
-            : m)
-        } : e);
-        // Refresh summaries so Home card dot clears
-        sb.rpc('get_circle_summaries').then(({ data }) => {
-          if (data) { CIRCLE_SUMMARIES = data; renderHomeCirclesCard(); }
-        });
-      });
-  }
 }
 
 function backToCircles() {
@@ -5004,25 +4909,34 @@ function showUpdateBanner(newWorker) {
   if (document.getElementById('kairo-update-banner')) return;
   const banner = document.createElement('div');
   banner.id = 'kairo-update-banner';
-  banner.style.cssText = `
-    position:fixed;bottom:22px;left:50%;transform:translateX(-50%);
-    z-index:9999;display:flex;align-items:center;gap:12px;
-    background:linear-gradient(135deg,#1a1c25,#141620);
-    border:1px solid #ffffff18;border-radius:12px;
-    padding:12px 16px;box-shadow:0 8px 32px rgba(0,0,0,.5);
-    font-family:'Geist',system-ui,sans-serif;font-size:13px;
-    color:#f0efe8;white-space:nowrap;animation:slideInR .25s ease;
-  `;
+  banner.className = 'kairo-update-banner';
+  // Inject banner styles via a style tag so they respect CSS vars
+  if (!document.getElementById('kairo-banner-style')) {
+    const s = document.createElement('style');
+    s.id = 'kairo-banner-style';
+    s.textContent = `
+      .kairo-update-banner{
+        position:fixed;bottom:22px;left:50%;transform:translateX(-50%);
+        z-index:9999;display:flex;align-items:center;gap:12px;
+        background:var(--toast-bg);
+        border:1px solid var(--glass-border);border-radius:12px;
+        padding:12px 16px;box-shadow:var(--shadow);
+        font-family:'Geist',system-ui,sans-serif;font-size:13px;
+        color:var(--text);white-space:nowrap;animation:slideInR .25s ease;
+      }
+    `;
+    document.head.appendChild(s);
+  }
   banner.innerHTML = `
     <span style="font-size:16px">⚡</span>
-    <span style="color:#a09e97">Kairo has been updated</span>
+    <span style="color:var(--text-2)">Kairo has been updated</span>
     <button onclick="window.__kairoUpdate()" style="
-      background:#c8392b;color:#fff;border:none;border-radius:7px;
+      background:var(--accent);color:#fff;border:none;border-radius:7px;
       padding:6px 13px;font-family:inherit;font-size:12px;font-weight:600;
       cursor:pointer;white-space:nowrap;
     ">Reload now</button>
     <button onclick="this.parentElement.remove()" style="
-      background:none;border:none;color:#5c5a55;cursor:pointer;
+      background:none;border:none;color:var(--text-3);cursor:pointer;
       font-size:16px;padding:0 2px;line-height:1;font-family:inherit;
     ">✕</button>
   `;

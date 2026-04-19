@@ -1502,7 +1502,6 @@ async function loadData(user) {
       maybeAutoGenerateReview();
       loadCircles();
       checkCircleInviteParam();
-      debugCircleSummariesRpc();
     } else {
       // First time user — check if name looks like an email/username
       const googleName = user.user_metadata?.full_name || user.user_metadata?.name || '';
@@ -1524,7 +1523,6 @@ async function loadData(user) {
         maybeAutoGenerateReview();
         loadCircles();
         checkCircleInviteParam();
-        debugCircleSummariesRpc();
       }
     }
   } catch(e){ console.error('Load error:',e); setSyncStatus('error','Offline'); renderAll(); }
@@ -3623,17 +3621,6 @@ async function loadCircleProjects(circleId, { silent = false } = {}) {
   } finally {
     circleProjectsLoading[circleId] = false;
     if (circleDetailId === circleId && currentPage === 'circles') renderCircleDetail(circleId);
-  }
-}
-
-async function debugCircleSummariesRpc() {
-  if (!sb || !currentUser || window.__kairoCircleSummariesDebugRan) return;
-  window.__kairoCircleSummariesDebugRan = true;
-  try {
-    const { data, error } = await sb.rpc('get_circle_summaries');
-    console.log('KAIRO_DEBUG get_circle_summaries', { userId: currentUser.id, data, error });
-  } catch (error) {
-    console.log('KAIRO_DEBUG get_circle_summaries threw', { userId: currentUser?.id, error });
   }
 }
 

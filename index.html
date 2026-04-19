@@ -1695,6 +1695,50 @@ const I18N = {
       leaveCircle: 'Leave Circle',
       openTasks: 'open task{{plural}}',
       activeProjects: 'active project{{plural}}',
+      projectStatus: 'Project Status',
+      projectTasks: 'Project Tasks',
+      openCount: '{{count}} open',
+      openTotal: '{{open}} open · {{total}} total',
+      addProjectTask: 'Add a project task…',
+      noNotesYet: 'No notes yet.',
+      sharedTaskAdded: 'Shared task added',
+      projectTaskAdded: 'Project task added',
+      sharedTaskRemoved: 'Shared task removed',
+      linkInvite: 'Link invite',
+      newSharedProject: 'New Shared Project',
+      sharedProjectIntro: 'Create a shared project for anything that needs a clearer container than a general Circle task list.',
+      projectTitle: 'Project Title',
+      sharedProjectPlaceholder: 'e.g. Flat Reset, Wedding Planning, Summer Trip',
+      sharedProjectDescriptionPlaceholder: 'Optional context for everyone in the Circle',
+      createProject: 'Create Project',
+      projectNotes: 'Project Notes',
+      projectNotesPlaceholder: 'Add notes, context, or links for everyone in the Circle…',
+      deleteProjectMessage: 'This will remove the project and detach its tasks from it. The tasks themselves will stay in the Circle as general shared tasks.',
+      circleIntro: "A Circle is a shared space for up to 5 people. Give it a name that fits what you'll use it for.",
+      circleName: 'Circle Name',
+      circleNamePlaceholder: 'e.g. The Flat, Portugal Trip, Side Hustle…',
+      features: 'Features',
+      sharedTaskListCreateCopy: 'A simple list of tasks for everyone in the Circle',
+      sharedProjectsCreateCopy: 'Structured projects with task lists inside — for trips, events, side hustles',
+      joinCircle: 'Join Circle',
+      invitedTitle: "You've been invited",
+      invitedMessage: "You've been invited to join <strong style=\"color:var(--text)\">{{name}}</strong> on Kairo.",
+      loadingSharedProjects: 'Loading shared projects…',
+      noSharedProjects: 'No shared projects yet. Create one when a Circle needs something bigger than a loose task list.',
+      sharedProjectsTitle: 'Shared Projects',
+      totalCount: '{{count}} total',
+      newProject: '+ New Project',
+      openTaskCount: '{{count}} open task{{plural}}',
+      totalLabel: '{{count}} total',
+      projectNotFound: 'Project not found.',
+      sharedProjectInsideCircle: 'Shared project inside this Circle',
+      noProjectTasks: 'No project tasks yet. Add the first one below.',
+      hideSharedTaskListTitle: 'Hide shared task list?',
+      hideSharedTaskListMessage: 'You have {{count}} shared task{{plural}} in this Circle. Disabling this will hide them, but it will not delete them.',
+      hideTasks: 'Hide tasks',
+      hideSharedProjectsTitle: 'Hide shared projects?',
+      hideSharedProjectsMessage: 'You have {{count}} shared project{{plural}} in this Circle. Disabling this will hide them, but it will not delete them.',
+      hideProjects: 'Hide projects',
     },
     settings: {
       profile: 'Profile',
@@ -2081,6 +2125,50 @@ const I18N = {
       leaveCircle: 'Quitter le cercle',
       openTasks: 'tâche{{plural}} ouverte{{plural}}',
       activeProjects: 'projet{{plural}} actif{{plural}}',
+      projectStatus: 'Statut du projet',
+      projectTasks: 'Tâches du projet',
+      openCount: '{{count}} ouvertes',
+      openTotal: '{{open}} ouvertes · {{total}} au total',
+      addProjectTask: 'Ajouter une tâche au projet…',
+      noNotesYet: 'Pas encore de notes.',
+      sharedTaskAdded: 'Tâche partagée ajoutée',
+      projectTaskAdded: 'Tâche de projet ajoutée',
+      sharedTaskRemoved: 'Tâche partagée supprimée',
+      linkInvite: 'Invitation par lien',
+      newSharedProject: 'Nouveau projet partagé',
+      sharedProjectIntro: 'Créez un projet partagé pour tout ce qui a besoin d’un cadre plus clair qu’une simple liste générale du cercle.',
+      projectTitle: 'Titre du projet',
+      sharedProjectPlaceholder: 'ex. Remise à plat de la coloc, Mariage, Voyage d’été',
+      sharedProjectDescriptionPlaceholder: 'Contexte optionnel pour tout le cercle',
+      createProject: 'Créer le projet',
+      projectNotes: 'Notes du projet',
+      projectNotesPlaceholder: 'Ajoutez des notes, du contexte ou des liens pour tout le cercle…',
+      deleteProjectMessage: 'Cela supprimera le projet et détachera ses tâches. Les tâches resteront dans le cercle comme tâches partagées générales.',
+      circleIntro: 'Un cercle est un espace partagé pour un maximum de 5 personnes. Donnez-lui un nom adapté à son usage.',
+      circleName: 'Nom du cercle',
+      circleNamePlaceholder: 'ex. La coloc, Voyage au Portugal, Projet perso…',
+      features: 'Fonctionnalités',
+      sharedTaskListCreateCopy: 'Une simple liste de tâches pour tout le cercle',
+      sharedProjectsCreateCopy: 'Des projets structurés avec listes de tâches pour voyages, événements ou side hustles',
+      joinCircle: 'Rejoindre le cercle',
+      invitedTitle: 'Vous avez été invité·e',
+      invitedMessage: 'Vous avez été invité·e à rejoindre <strong style="color:var(--text)">{{name}}</strong> sur Kairo.',
+      loadingSharedProjects: 'Chargement des projets partagés…',
+      noSharedProjects: 'Aucun projet partagé pour le moment. Créez-en un quand le cercle a besoin d’un cadre plus clair qu’une simple liste de tâches.',
+      sharedProjectsTitle: 'Projets partagés',
+      totalCount: '{{count}} au total',
+      newProject: '+ Nouveau projet',
+      openTaskCount: '{{count}} tâche{{plural}} ouverte{{plural}}',
+      totalLabel: '{{count}} au total',
+      projectNotFound: 'Projet introuvable.',
+      sharedProjectInsideCircle: 'Projet partagé dans ce cercle',
+      noProjectTasks: 'Aucune tâche de projet pour le moment. Ajoutez-en une juste en dessous.',
+      hideSharedTaskListTitle: 'Masquer la liste de tâches partagée ?',
+      hideSharedTaskListMessage: 'Vous avez {{count}} tâche{{plural}} partagée{{plural}} dans ce cercle. La désactiver les masquera, sans les supprimer.',
+      hideTasks: 'Masquer les tâches',
+      hideSharedProjectsTitle: 'Masquer les projets partagés ?',
+      hideSharedProjectsMessage: 'Vous avez {{count}} projet{{plural}} partagé{{plural}} dans ce cercle. Les désactiver les masquera, sans les supprimer.',
+      hideProjects: 'Masquer les projets',
     },
     settings: {
       profile: 'Profil',
@@ -3174,8 +3262,8 @@ function renderJobs(){
                 <button class="btn btn-danger btn-sm" onclick="deleteJob('${j.id}')">✕</button>
               </div>
             </div>
-            ${j.url?`<div class="mt8"><a href="${escHtml(j.url)}" target="_blank" rel="noreferrer" class="text-sm">🔗 Link</a></div>`:''}
-            ${j.deadline?`<div class="text-xs mt4" style="color:var(--gold)">⏰ Deadline: ${j.deadline}</div>`:''}
+            ${j.url?`<div class="mt8"><a href="${escHtml(j.url)}" target="_blank" rel="noreferrer" class="text-sm">🔗 ${t('forms.link')}</a></div>`:''}
+            ${j.deadline?`<div class="text-xs mt4" style="color:var(--gold)">⏰ ${t('forms.deadline')}: ${j.deadline}</div>`:''}
             ${j.notes?`<div class="note-block">${escHtml(j.notes)}</div>`:''}
           </div>`).join('')}
       </div>`;
@@ -3719,9 +3807,9 @@ function setHabitCompletionCount(habitId, dateStr, count) {
 }
 
 function getHabitFrequencyLabel(habit) {
-  if (habit.frequencyType === 'weekly') return `${habit.targetCount}x / week`;
-  if (habit.frequencyType === 'monthly') return `${habit.targetCount}x / month`;
-  return 'Daily';
+  if (habit.frequencyType === 'weekly') return `${habit.targetCount}x / ${getCurrentLanguage()==='fr' ? 'semaine' : 'week'}`;
+  if (habit.frequencyType === 'monthly') return `${habit.targetCount}x / ${getCurrentLanguage()==='fr' ? 'mois' : 'month'}`;
+  return t('forms.daily');
 }
 
 function getHabitWindowInfo(habit, refDate = today()) {
@@ -3744,10 +3832,12 @@ function getHabitWindowInfo(habit, refDate = today()) {
     windowLabel,
     progressLabel: `${windowLabel}: ${Math.min(completed, target)}/${target}`,
     statusLabel: remaining === 0
-      ? habit.frequencyType === 'daily' ? 'Done today' : 'On track'
+      ? habit.frequencyType === 'daily' ? (getCurrentLanguage()==='fr' ? "Fait aujourd'hui" : 'Done today') : (getCurrentLanguage()==='fr' ? 'Sur la bonne voie' : 'On track')
       : habit.frequencyType === 'daily'
-        ? 'Due today'
-        : `${remaining} left ${habit.frequencyType === 'weekly' ? 'this week' : 'this month'}`,
+        ? (getCurrentLanguage()==='fr' ? "À faire aujourd'hui" : 'Due today')
+        : getCurrentLanguage()==='fr'
+          ? `${remaining} restant${remaining>1?'s':''} ${habit.frequencyType === 'weekly' ? 'cette semaine' : 'ce mois-ci'}`
+          : `${remaining} left ${habit.frequencyType === 'weekly' ? 'this week' : 'this month'}`,
     daysLeft,
   };
 }
@@ -3790,7 +3880,7 @@ function renderHabitHistoryGrid(habit) {
           ${row.map(d=>{
             const done=getHabitCompletionCount(habit.id,d)>0;
             const isT=d===today();
-            const dayLabel=new Date(d+'T12:00:00').toLocaleDateString('en-US',{weekday:'short'});
+            const dayLabel=new Date(d+'T12:00:00').toLocaleDateString(getCurrentLocale(),{weekday:'short'});
             return `<div style="text-align:center;flex:1;min-width:0">
               <div class="text-xs text-dim" style="margin-bottom:3px">${dayLabel}</div>
               <div class="habit-dot${done?' done':''}${isT?' today-ring':''}" onclick="toggleHabit('${habit.id}','${d}')" title="${d}">${done?'✓':''}</div>
@@ -3841,27 +3931,27 @@ function getContextBar(){
   const habitsNeedingAttention=DATA.habitDefs.filter(h=>!getHabitWindowInfo(h, td).isComplete).length;
   const habitsOnTrack=DATA.habitDefs.length-habitsNeedingAttention;
 
-  if(overdue.length>=3) return{cls:'warn',icon:'⚠️',msg:`${overdue.length} tasks overdue — clear the backlog first.`};
-  if(overdue.length>0&&doneToday.length===0) return{cls:'warn',icon:'⌛︎',msg:`${overdue.length} overdue task${overdue.length>1?'s':''} — start there.`};
-  if(habitsNeedingAttention>=2&&doneToday.length===0) return{cls:'gold',icon:'〰️',msg:`${habitsNeedingAttention} habits need progress right now. Reset the rhythm today.`};
-  if(habitsNeedingAttention===0&&doneToday.length>0) return{cls:'green',icon:'🔥',msg:`Habits on track + ${doneToday.length} task${doneToday.length>1?'s':''} completed. Strong day.`};
-  if(habitsNeedingAttention===0&&DATA.habitDefs.length>0) return{cls:'green',icon:'✓',msg:`All habits on track — now tackle the tasks.`};
-  if(habitsOnTrack>0&&habitsNeedingAttention>0) return{cls:'gold',icon:'↺',msg:`${habitsOnTrack} habits on track, ${habitsNeedingAttention} still need attention.`};
-  if(doneWeek.length===0&&new Date().getDay()>=3) return{cls:'warn',icon:'📉',msg:`No tasks completed yet this week — let's change that.`};
-  if(doneToday.length>=3) return{cls:'green',icon:'⚡',msg:`${doneToday.length} tasks done today. Good momentum.`};
-  if(doneWeek.length>=5) return{cls:'gold',icon:'📈',msg:`Strong week — ${doneWeek.length} tasks done. Stay consistent.`};
+  if(overdue.length>=3) return{cls:'warn',icon:'⚠️',msg:getCurrentLanguage()==='fr'?`${overdue.length} tâches en retard — videz le backlog d'abord.`:`${overdue.length} tasks overdue — clear the backlog first.`};
+  if(overdue.length>0&&doneToday.length===0) return{cls:'warn',icon:'⌛︎',msg:getCurrentLanguage()==='fr'?`${overdue.length} tâche${overdue.length>1?'s':''} en retard — commencez par là.`:`${overdue.length} overdue task${overdue.length>1?'s':''} — start there.`};
+  if(habitsNeedingAttention>=2&&doneToday.length===0) return{cls:'gold',icon:'〰️',msg:getCurrentLanguage()==='fr'?`${habitsNeedingAttention} habitudes demandent du progrès maintenant. Relancez le rythme aujourd'hui.`:`${habitsNeedingAttention} habits need progress right now. Reset the rhythm today.`};
+  if(habitsNeedingAttention===0&&doneToday.length>0) return{cls:'green',icon:'🔥',msg:getCurrentLanguage()==='fr'?`Habitudes sur la bonne voie + ${doneToday.length} tâche${doneToday.length>1?'s':''} terminée${doneToday.length>1?'s':''}. Bonne journée.`:`Habits on track + ${doneToday.length} task${doneToday.length>1?'s':''} completed. Strong day.`};
+  if(habitsNeedingAttention===0&&DATA.habitDefs.length>0) return{cls:'green',icon:'✓',msg:getCurrentLanguage()==='fr'?`Toutes les habitudes sont sur la bonne voie — attaquez maintenant les tâches.`:`All habits on track — now tackle the tasks.`};
+  if(habitsOnTrack>0&&habitsNeedingAttention>0) return{cls:'gold',icon:'↺',msg:getCurrentLanguage()==='fr'?`${habitsOnTrack} habitudes sur la bonne voie, ${habitsNeedingAttention} demandent encore de l'attention.`:`${habitsOnTrack} habits on track, ${habitsNeedingAttention} still need attention.`};
+  if(doneWeek.length===0&&new Date().getDay()>=3) return{cls:'warn',icon:'📉',msg:getCurrentLanguage()==='fr'?`Aucune tâche terminée cette semaine — changeons ça.`:`No tasks completed yet this week — let's change that.`};
+  if(doneToday.length>=3) return{cls:'green',icon:'⚡',msg:getCurrentLanguage()==='fr'?`${doneToday.length} tâches faites aujourd'hui. Bon élan.`:`${doneToday.length} tasks done today. Good momentum.`};
+  if(doneWeek.length>=5) return{cls:'gold',icon:'📈',msg:getCurrentLanguage()==='fr'?`Bonne semaine — ${doneWeek.length} tâches faites. Restez régulier.`:`Strong week — ${doneWeek.length} tasks done. Stay consistent.`};
   return null;
 }
 
 function formatDueLabel(dateStr){
   if(!dateStr) return '';
-  return new Date(dateStr+'T12:00:00').toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short'});
+  return new Date(dateStr+'T12:00:00').toLocaleDateString(getCurrentLocale(),{weekday:'short',day:'numeric',month:'short'});
 }
 
 function formatCalendarTime(isoString, isAllDay){
   if(!isoString) return '';
-  if(isAllDay) return 'All day';
-  return new Date(isoString).toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'});
+  if(isAllDay) return getCurrentLanguage()==='fr' ? 'Toute la journée' : 'All day';
+  return new Date(isoString).toLocaleTimeString(getCurrentLocale(),{hour:'numeric',minute:'2-digit'});
 }
 
 function getCalendarEventKey(event){
@@ -3899,25 +3989,25 @@ function openCalendarLinkModal(eventKey){
   const event = CALENDAR_STATE.events.find(item=>getCalendarEventKey(item)===eventKey);
   if(!event) return;
   const linkedProject = getCalendarLinkedProject(event);
-  openModal(`<h3>Link Event to Project</h3>
+  openModal(`<h3>${getCurrentLanguage()==='fr' ? 'Lier un événement à un projet' : 'Link Event to Project'}</h3>
     <div class="form-row">
-      <label>Event</label>
+      <label>${getCurrentLanguage()==='fr' ? 'Événement' : 'Event'}</label>
       <div class="note-block" style="min-height:auto">
-        <div style="font-weight:600;color:var(--text)">${escHtml(event.summary||'Untitled event')}</div>
+        <div style="font-weight:600;color:var(--text)">${escHtml(event.summary||(getCurrentLanguage()==='fr' ? 'Événement sans titre' : 'Untitled event'))}</div>
         <div class="text-xs text-dim" style="margin-top:4px">${escHtml(formatCalendarTime(event.start,event.isAllDay))}${event.end&&!event.isAllDay?` - ${escHtml(formatCalendarTime(event.end,false))}`:''}${event.sourceLabel?` · ${escHtml(event.sourceLabel)}`:''}</div>
       </div>
     </div>
     <div class="form-row">
-      <label>Project</label>
+      <label>${t('forms.project')}</label>
       <select class="input" id="m-calendar-project">
-        <option value="">None</option>
+        <option value="">${t('common.none')}</option>
         ${DATA.projects.map(project=>`<option value="${project.id}"${project.id===linkedProject?.id?' selected':''}>${escHtml(project.title)}</option>`).join('')}
       </select>
     </div>
     <div class="flex-gap" style="justify-content:space-between;margin-top:6px">
-      <button class="btn btn-ghost" onclick="removeCalendarLink('${eventKey}')">Remove Link</button>
+      <button class="btn btn-ghost" onclick="removeCalendarLink('${eventKey}')">${getCurrentLanguage()==='fr' ? 'Retirer le lien' : 'Remove Link'}</button>
       <div class="flex-gap">
-        <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+        <button class="btn btn-ghost" onclick="closeModal()">${t('common.cancel')}</button>
           <button class="btn btn-primary" onclick="saveCalendarLinkFromModal('${eventKey}')">${t('common.save')}</button>
       </div>
     </div>`, { kind:'calendar-link' });
@@ -3930,7 +4020,7 @@ function saveCalendarLinkFromModal(eventKey){
   saveCalendarProjectLink(event, projectId || null);
   closeModal();
   renderAll();
-  toast(projectId ? 'Calendar event linked' : 'Calendar link removed','success');
+  toast(projectId ? (getCurrentLanguage()==='fr' ? 'Événement lié au projet' : 'Calendar event linked') : (getCurrentLanguage()==='fr' ? 'Lien du calendrier supprimé' : 'Calendar link removed'),'success');
 }
 
 function removeCalendarLink(eventKey){
@@ -3939,7 +4029,7 @@ function removeCalendarLink(eventKey){
   saveCalendarProjectLink(event, null);
   closeModal();
   renderAll();
-  toast('Calendar link removed','info');
+  toast(getCurrentLanguage()==='fr' ? 'Lien du calendrier supprimé' : 'Calendar link removed','info');
 }
 
 function formatFreeWindow(window){
@@ -3983,7 +4073,7 @@ async function fetchCalendarData(){
       message:'',
       connections:[],
       connectedCount:0,
-      error:'Calendar unavailable until Google and Vercel are configured.',
+      error:getCurrentLanguage()==='fr' ? 'Calendrier indisponible tant que Google et Vercel ne sont pas configurés.' : 'Calendar unavailable until Google and Vercel are configured.',
     };
   }
   if(currentPage==='home') renderHome();
@@ -4019,7 +4109,7 @@ async function sendToVoiceAPI(text, audioB64, mimeType, overrideStatusEl){
     }
   }
 
-  setStatus('Thinking…','processing');
+  setStatus(getCurrentLanguage()==='fr' ? 'Réflexion…' : 'Thinking…','processing');
 
   try{
     const body = isTextMode
@@ -4912,9 +5002,9 @@ function renderCircleProjectsSection(circleId, members = []) {
   const projects = CIRCLE_PROJECTS[circleId] || [];
   const loading = !!circleProjectsLoading[circleId];
   const rows = loading
-    ? `<div class="circle-task-empty">Loading shared projects…</div>`
+    ? `<div class="circle-task-empty">${t('circlesPage.loadingSharedProjects')}</div>`
     : projects.length === 0
-      ? `<div class="circle-task-empty">No shared projects yet. Create one when a Circle needs something bigger than a loose task list.</div>`
+      ? `<div class="circle-task-empty">${t('circlesPage.noSharedProjects')}</div>`
       : projects.map(project => {
           const tasks = getCircleProjectTasks(circleId, project.id);
           const openCount = tasks.filter(task => !task.completed).length;
@@ -4929,8 +5019,8 @@ function renderCircleProjectsSection(circleId, members = []) {
                 <span class="status-${escHtml(project.status || 'active')}" style="padding:4px 8px;border-radius:999px;font-size:10px;font-weight:600;text-transform:capitalize">${escHtml(project.status || 'active')}</span>
               </div>
               <div class="circle-project-meta">
-                <span>${openCount} open task${openCount !== 1 ? 's' : ''}</span>
-                <span>${tasks.length} total</span>
+                <span>${t('circlesPage.openTaskCount',{count:openCount,plural:pluralSuffix(openCount)})}</span>
+                <span>${t('circlesPage.totalLabel',{count:tasks.length})}</span>
                 <span>${pct}% complete</span>
               </div>
               <div class="progress-track" style="height:6px;margin-top:10px"><div class="progress-fill" style="width:${pct}%"></div></div>
@@ -4940,19 +5030,19 @@ function renderCircleProjectsSection(circleId, members = []) {
   return `
     <div class="card mt14">
       <div class="flex-between mb12">
-        <div class="card-title" style="margin:0">Shared Projects</div>
-        <span class="text-xs text-dim">${projects.length} total</span>
+        <div class="card-title" style="margin:0">${t('circlesPage.sharedProjectsTitle')}</div>
+        <span class="text-xs text-dim">${t('circlesPage.totalCount',{count:projects.length})}</span>
       </div>
       <div>${rows}</div>
       <div class="circle-project-add-row">
-        <button class="btn btn-primary btn-sm" onclick="openAddCircleProject('${circleId}')">+ New Project</button>
+        <button class="btn btn-primary btn-sm" onclick="openAddCircleProject('${circleId}')">${t('circlesPage.newProject')}</button>
       </div>
     </div>`;
 }
 
 function renderCircleProjectDetail(circleId, projectId, members = []) {
   const project = getCircleProject(circleId, projectId);
-  if (!project) return `<div class="empty"><div class="empty-icon">◈</div>Project not found.</div>`;
+  if (!project) return `<div class="empty"><div class="empty-icon">◈</div>${t('circlesPage.projectNotFound')}</div>`;
 
   const tasks = getCircleProjectTasks(circleId, projectId);
   const openCount = tasks.filter(task => !task.completed).length;
@@ -4976,21 +5066,21 @@ function renderCircleProjectDetail(circleId, projectId, members = []) {
           <button class="btn-icon" onclick="deleteCircleTask('${circleId}','${task.id}')" style="color:var(--accent)">✕</button>
         </div>
       `).join('')
-    : `<div class="circle-task-empty">No project tasks yet. Add the first one below.</div>`;
+    : `<div class="circle-task-empty">${t('circlesPage.noProjectTasks')}</div>`;
 
   return `
     <div class="mb20">
       <div class="circle-detail-name">${escHtml(project.title)}</div>
-      <div class="text-xs text-dim">${escHtml(project.description || 'Shared project inside this Circle')}</div>
+      <div class="text-xs text-dim">${escHtml(project.description || t('circlesPage.sharedProjectInsideCircle'))}</div>
     </div>
     <div class="card">
       <div class="flex-between mb12">
-        <div class="card-title" style="margin:0">Project Status</div>
-        <span class="text-xs text-dim">${openCount} open · ${tasks.length} total</span>
+        <div class="card-title" style="margin:0">${t('circlesPage.projectStatus')}</div>
+        <span class="text-xs text-dim">${t('circlesPage.openTotal',{open:openCount,total:tasks.length})}</span>
       </div>
       <div class="circle-project-status-row">
         ${['active','paused','completed'].map(status => `
-          <button class="circle-status-btn status-${status}${(project.status || 'active') === status ? ' active' : ''}" onclick="updateCircleProjectStatus('${circleId}','${project.id}','${status}')">${status[0].toUpperCase() + status.slice(1)}</button>
+          <button class="circle-status-btn status-${status}${(project.status || 'active') === status ? ' active' : ''}" onclick="updateCircleProjectStatus('${circleId}','${project.id}','${status}')">${t(`projectStatus.${status}`)}</button>
         `).join('')}
       </div>
       <div class="progress-track" style="height:6px;margin-top:14px"><div class="progress-fill" style="width:${pct}%"></div></div>
@@ -4998,11 +5088,11 @@ function renderCircleProjectDetail(circleId, projectId, members = []) {
     </div>
     <div class="card mt14">
       <div class="flex-between mb12">
-        <div class="card-title" style="margin:0">Project Tasks</div>
-        <span class="text-xs text-dim">${openCount} open</span>
+        <div class="card-title" style="margin:0">${t('circlesPage.projectTasks')}</div>
+        <span class="text-xs text-dim">${t('circlesPage.openCount',{count:openCount})}</span>
       </div>
       <div class="circle-project-task-add">
-        <input class="input" id="circle-project-task-title-${circleId}-${projectId}" placeholder="Add a project task…" onkeydown="if(event.key==='Enter')addCircleProjectTask('${circleId}','${projectId}')"/>
+        <input class="input" id="circle-project-task-title-${circleId}-${projectId}" placeholder="${t('circlesPage.addProjectTask')}" onkeydown="if(event.key==='Enter')addCircleProjectTask('${circleId}','${projectId}')"/>
         <input class="input" id="circle-project-task-due-${circleId}-${projectId}" type="date"/>
         <select class="input" id="circle-project-task-assignee-${circleId}-${projectId}">
           <option value="">${t('labels.unassigned')}</option>
@@ -5014,10 +5104,10 @@ function renderCircleProjectDetail(circleId, projectId, members = []) {
     </div>
     <div class="card mt14">
       <div class="card-title">${t('forms.notes')}</div>
-      <div class="text-sm text-dim" style="line-height:1.7;white-space:pre-wrap">${escHtml(project.notes || 'No notes yet.')}</div>
+      <div class="text-sm text-dim" style="line-height:1.7;white-space:pre-wrap">${escHtml(project.notes || t('circlesPage.noNotesYet'))}</div>
       <div class="mt12" style="display:flex;gap:8px;justify-content:space-between;flex-wrap:wrap">
         <button class="btn btn-ghost btn-sm" onclick="editCircleProjectNotes('${circleId}','${projectId}')">${t('common.edit')} ${t('forms.notes')}</button>
-        <button class="btn btn-danger btn-sm" onclick="confirmDeleteCircleProject('${circleId}','${projectId}')">${t('forms.deleteLabel')} Project</button>
+        <button class="btn btn-danger btn-sm" onclick="confirmDeleteCircleProject('${circleId}','${projectId}')">${t('forms.deleteLabel')} ${t('forms.project')}</button>
       </div>
     </div>`;
 }
@@ -5041,7 +5131,7 @@ async function addCircleTask(circleId) {
     await loadCircleTasks(circleId, { silent: true });
     renderCircleDetail(circleId);
     refreshCircleSummaries();
-    toast('Shared task added', 'success');
+    toast(t('circlesPage.sharedTaskAdded'), 'success');
   } catch (e) {
     console.error('Add circle task error:', e);
     toast(t('toast.couldNotAddSharedTask'), 'error');
@@ -5071,7 +5161,7 @@ async function addCircleProjectTask(circleId, projectId) {
     await loadCircleTasks(circleId, { silent: true });
     renderCircleDetail(circleId);
     refreshCircleSummaries();
-    toast('Project task added', 'success');
+    toast(t('circlesPage.projectTaskAdded'), 'success');
   } catch (e) {
     console.error('Add circle project task error:', e);
     toast(t('toast.couldNotAddProjectTask'), 'error');
@@ -5114,7 +5204,7 @@ async function deleteCircleTask(circleId, taskId) {
     CIRCLE_TASKS[circleId] = (CIRCLE_TASKS[circleId] || []).filter(t => t.id !== taskId);
     renderCircleDetail(circleId);
     refreshCircleSummaries();
-    toast('Shared task removed', 'info');
+    toast(t('circlesPage.sharedTaskRemoved'), 'info');
   } catch (e) {
     console.error('Delete circle task error:', e);
     toast(t('toast.couldNotRemoveSharedTask'), 'error');
@@ -5394,7 +5484,7 @@ function renderCircleDetail(id) {
     <div class="circle-member-row">
       <div class="circle-member-avatar" style="opacity:.45">?</div>
       <div class="circle-member-info">
-        <div class="circle-member-name" style="color:var(--text-3)">${escHtml(inv.invited_email || 'Link invite')}</div>
+        <div class="circle-member-name" style="color:var(--text-3)">${escHtml(inv.invited_email || t('circlesPage.linkInvite'))}</div>
         <div class="circle-member-email">${t('circlesPage.awaitingAcceptance')}</div>
       </div>
       <div style="display:flex;align-items:center;gap:8px">
@@ -5500,9 +5590,9 @@ async function updateCircleFeatureFlag(circleId, flag, value) {
     const tasks = (CIRCLE_TASKS[circleId] || []).filter(t => !t.project_id);
     if (tasks.length > 0) {
       const confirmed = await openConfirmModal({
-        title: 'Hide shared task list?',
-        message: `You have ${tasks.length} shared task${tasks.length !== 1 ? 's' : ''} in this Circle. Disabling this will hide them, but it will not delete them.`,
-        confirmLabel: 'Hide tasks'
+        title: t('circlesPage.hideSharedTaskListTitle'),
+        message: t('circlesPage.hideSharedTaskListMessage',{count:tasks.length,plural:pluralSuffix(tasks.length)}),
+        confirmLabel: t('circlesPage.hideTasks')
       });
       if (!confirmed) {
         if (toggle) toggle.checked = true;
@@ -5514,9 +5604,9 @@ async function updateCircleFeatureFlag(circleId, flag, value) {
     const projects = CIRCLE_PROJECTS[circleId] || [];
     if (projects.length > 0) {
       const confirmed = await openConfirmModal({
-        title: 'Hide shared projects?',
-        message: `You have ${projects.length} shared project${projects.length !== 1 ? 's' : ''} in this Circle. Disabling this will hide them, but it will not delete them.`,
-        confirmLabel: 'Hide projects'
+        title: t('circlesPage.hideSharedProjectsTitle'),
+        message: t('circlesPage.hideSharedProjectsMessage',{count:projects.length,plural:pluralSuffix(projects.length)}),
+        confirmLabel: t('circlesPage.hideProjects')
       });
       if (!confirmed) {
         if (toggle) toggle.checked = true;
@@ -5542,20 +5632,20 @@ async function updateCircleFeatureFlag(circleId, flag, value) {
 
 function openAddCircleProject(circleId) {
   document.getElementById('modal-content').innerHTML = `
-    <h3>New Shared Project</h3>
-    <div class="text-sm text-dim mb16" style="line-height:1.6">Create a shared project for anything that needs a clearer container than a general Circle task list.</div>
+    <h3>${t('circlesPage.newSharedProject')}</h3>
+    <div class="text-sm text-dim mb16" style="line-height:1.6">${t('circlesPage.sharedProjectIntro')}</div>
     <div class="form-row">
-      <label>Project Title</label>
-      <input class="input" id="circle-project-title-input" placeholder="e.g. Flat Reset, Wedding Planning, Summer Trip" maxlength="80"
+      <label>${t('circlesPage.projectTitle')}</label>
+      <input class="input" id="circle-project-title-input" placeholder="${t('circlesPage.sharedProjectPlaceholder')}" maxlength="80"
         onkeydown="if(event.key==='Enter')submitAddCircleProject('${circleId}')"/>
     </div>
     <div class="form-row">
-      <label>Description</label>
-      <textarea class="input" id="circle-project-description-input" rows="3" placeholder="Optional context for everyone in the Circle"></textarea>
+      <label>${t('forms.description')}</label>
+      <textarea class="input" id="circle-project-description-input" rows="3" placeholder="${t('circlesPage.sharedProjectDescriptionPlaceholder')}"></textarea>
     </div>
     <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:16px">
-      <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
-      <button class="btn btn-primary" onclick="submitAddCircleProject('${circleId}')">Create Project</button>
+      <button class="btn btn-ghost" onclick="closeModal()">${t('common.cancel')}</button>
+      <button class="btn btn-primary" onclick="submitAddCircleProject('${circleId}')">${t('circlesPage.createProject')}</button>
     </div>`;
   document.getElementById('modal-overlay').style.display = 'flex';
   setTimeout(() => document.getElementById('circle-project-title-input')?.focus(), 80);
@@ -5615,9 +5705,9 @@ function editCircleProjectNotes(circleId, projectId) {
   const project = getCircleProject(circleId, projectId);
   if (!project) return;
   document.getElementById('modal-content').innerHTML = `
-    <h3>Project Notes</h3>
+    <h3>${t('circlesPage.projectNotes')}</h3>
     <div class="form-row" style="margin-top:12px">
-      <textarea class="input" id="circle-project-notes-input" rows="6" placeholder="Add notes, context, or links for everyone in the Circle…" style="resize:vertical;line-height:1.6">${escHtml(project.notes || '')}</textarea>
+      <textarea class="input" id="circle-project-notes-input" rows="6" placeholder="${t('circlesPage.projectNotesPlaceholder')}" style="resize:vertical;line-height:1.6">${escHtml(project.notes || '')}</textarea>
     </div>
     <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:16px">
       <button class="btn btn-ghost" onclick="closeModal()">${t('common.cancel')}</button>
@@ -5654,10 +5744,10 @@ function confirmDeleteCircleProject(circleId, projectId) {
   if (!project) return;
   document.getElementById('modal-content').innerHTML = `
     <h3>${t('forms.deleteLabel')} "${escHtml(project.title)}"?</h3>
-    <div class="text-sm text-dim mb16" style="line-height:1.6">This will remove the project and detach its tasks from it. The tasks themselves will stay in the Circle as general shared tasks.</div>
+    <div class="text-sm text-dim mb16" style="line-height:1.6">${t('circlesPage.deleteProjectMessage')}</div>
     <div style="display:flex;gap:8px;justify-content:flex-end">
       <button class="btn btn-ghost" onclick="closeModal()">${t('common.cancel')}</button>
-      <button class="btn btn-danger" onclick="deleteCircleProject('${circleId}','${projectId}')">${t('forms.deleteLabel')} Project</button>
+      <button class="btn btn-danger" onclick="deleteCircleProject('${circleId}','${projectId}')">${t('forms.deleteLabel')} ${t('forms.project')}</button>
     </div>`;
   document.getElementById('modal-overlay').style.display = 'flex';
 }
@@ -5682,18 +5772,18 @@ async function deleteCircleProject(circleId, projectId) {
 function openCreateCircle() {
   document.getElementById('modal-content').innerHTML = `
     <h3>${t('actions.newCircle')}</h3>
-    <div class="text-sm text-dim mb16" style="line-height:1.6">A Circle is a shared space for up to 5 people. Give it a name that fits what you'll use it for.</div>
+    <div class="text-sm text-dim mb16" style="line-height:1.6">${t('circlesPage.circleIntro')}</div>
     <div class="form-row">
-      <label>Circle Name</label>
-      <input class="input" id="circle-name-input" placeholder="e.g. The Flat, Portugal Trip, Side Hustle…" maxlength="60"
+      <label>${t('circlesPage.circleName')}</label>
+      <input class="input" id="circle-name-input" placeholder="${t('circlesPage.circleNamePlaceholder')}" maxlength="60"
         onkeydown="if(event.key==='Enter')submitCreateCircle()"/>
     </div>
     <div class="form-row" style="margin-top:16px;border-top:1px solid var(--border);padding-top:14px">
-      <div class="text-xs text-dim mb12" style="font-weight:600;text-transform:uppercase;letter-spacing:.04em">Features</div>
+      <div class="text-xs text-dim mb12" style="font-weight:600;text-transform:uppercase;letter-spacing:.04em">${t('circlesPage.features')}</div>
       <div class="circle-feature-toggle-row" style="border-top:none">
         <div>
-          <div style="font-size:13px;font-weight:500">Shared task list</div>
-          <div class="text-xs text-dim mt4">A simple list of tasks for everyone in the Circle</div>
+          <div style="font-size:13px;font-weight:500">${t('circlesPage.sharedTaskList')}</div>
+          <div class="text-xs text-dim mt4">${t('circlesPage.sharedTaskListCreateCopy')}</div>
         </div>
         <label class="toggle-switch">
           <input type="checkbox" id="create-tasks-enabled" checked/>
@@ -5702,8 +5792,8 @@ function openCreateCircle() {
       </div>
       <div class="circle-feature-toggle-row">
         <div>
-          <div style="font-size:13px;font-weight:500">Shared projects</div>
-          <div class="text-xs text-dim mt4">Structured projects with task lists inside — for trips, events, side hustles</div>
+          <div style="font-size:13px;font-weight:500">${t('circlesPage.sharedProjects')}</div>
+          <div class="text-xs text-dim mt4">${t('circlesPage.sharedProjectsCreateCopy')}</div>
         </div>
         <label class="toggle-switch">
           <input type="checkbox" id="create-projects-enabled"/>
@@ -5932,11 +6022,11 @@ async function checkCircleInviteParam() {
     }
 
     document.getElementById('modal-content').innerHTML = `
-      <h3>You've been invited</h3>
-      <div class="text-sm text-dim mb16" style="line-height:1.6">You've been invited to join <strong style="color:var(--text)">${escHtml(circleName)}</strong> on Kairo.</div>
+      <h3>${t('circlesPage.invitedTitle')}</h3>
+      <div class="text-sm text-dim mb16" style="line-height:1.6">${formatTemplateString(t('circlesPage.invitedMessage'), { name: escHtml(circleName) })}</div>
       <div style="display:flex;gap:8px;justify-content:flex-end">
         <button class="btn btn-ghost" onclick="closeModal()">${t('common.decline')}</button>
-        <button class="btn btn-primary" onclick="acceptCircleInvite('${invite.id}','${invite.circle_id}')">Join Circle</button>
+        <button class="btn btn-primary" onclick="acceptCircleInvite('${invite.id}','${invite.circle_id}')">${t('circlesPage.joinCircle')}</button>
       </div>`;
     document.getElementById('modal-overlay').style.display = 'flex';
   } catch(e) {
@@ -5967,7 +6057,7 @@ async function acceptCircleInvite(inviteId, circleId) {
     console.error('Accept invite error:', e);
     if (e.code === '23514') toast(t('toast.circleFull'), 'error');
     else toast(t('toast.couldNotJoinCircle'), 'error');
-    if (btn) { btn.disabled = false; btn.textContent = 'Join Circle'; }
+    if (btn) { btn.disabled = false; btn.textContent = t('circlesPage.joinCircle'); }
   }
 }
 

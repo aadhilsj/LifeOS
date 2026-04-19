@@ -11,10 +11,12 @@ const STATIC_PRECACHE = [
 
 // ── Install ───────────────────────────────────────────────────────────────────
 self.addEventListener('install', e => {
-  self.skipWaiting();
   e.waitUntil(
     caches.open(CACHE).then(c => c.addAll(STATIC_PRECACHE))
   );
+  // Note: skipWaiting() is NOT called here — it only fires via the message
+  // handler when the user explicitly clicks "Reload now" in the update banner.
+  // Calling it here caused controllerchange → auto-reload → blank screen.
 });
 
 // ── Activate ──────────────────────────────────────────────────────────────────

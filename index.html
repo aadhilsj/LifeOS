@@ -412,6 +412,18 @@ input[type="date"].input,input[type="time"].input{color-scheme:dark}
 .circle-avatar-strip{display:flex;gap:4px;align-items:center}
 .circle-avatar-sm{width:26px;height:26px;border-radius:50%;background:var(--surface3);border:1px solid var(--border);display:inline-flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;color:var(--text-2)}
 .circle-avatar-sm.pending{opacity:.45;font-style:normal}
+.circles-home-row{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);cursor:pointer;transition:opacity var(--transition)}
+.circles-home-row:last-child{border-bottom:none}
+.circles-home-row:hover{opacity:.8}
+.circles-home-left{display:flex;align-items:center;gap:8px;min-width:0;flex:1}
+.circles-home-right{display:flex;align-items:center;gap:10px;flex-shrink:0}
+.circles-home-name{font-size:13px;font-weight:500;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.circles-home-stat{display:flex;flex-direction:column;align-items:flex-end}
+.circles-home-count{font-size:15px;font-weight:500;color:var(--text);line-height:1}
+.circles-home-count.dim{color:var(--text-3)}
+.circles-home-label{font-size:10px;color:var(--text-3);margin-top:1px;white-space:nowrap}
+.circles-home-divider{width:1px;height:24px;background:var(--border)}
+.circles-new-dot{width:7px;height:7px;border-radius:50%;background:var(--accent);flex-shrink:0}
 .circle-members-bar{display:flex;align-items:center;justify-content:space-between;padding:12px 0;cursor:pointer;user-select:none}
 .circle-members-bar:hover .manage-link{color:var(--text-2)}
 .manage-link{font-size:11px;color:var(--text-3);transition:color var(--transition);white-space:nowrap}
@@ -913,6 +925,13 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;heigh
                 <span class="text-xs text-dim" style="cursor:pointer" onclick="event.stopPropagation();navigate('projects');setTimeout(()=>switchHub('projects'),50)">All →</span>
               </div>
               <div id="home-projects-list"></div>
+            </div>
+            <div class="card mt14" id="home-circles-card" style="display:none">
+              <div class="flex-between mb12">
+                <div class="card-title" style="margin:0">Circles</div>
+                <span class="text-xs text-dim" style="cursor:pointer" onclick="navigate('circles')">All →</span>
+              </div>
+              <div id="home-circles-list"></div>
             </div>
             <div class="card mt14">
               <div class="card-title">Habits</div>
@@ -3075,6 +3094,74 @@ async function processTasksFabVoice(){
 }
 
 // ─── Home ─────────────────────────────────────────────────────────────────────
+function renderHomeCirclesCard() {
+  const card = document.getElementById('home-circles-card');
+  const el = document.getElementById('home-circles-list') || card;
+  if (!card || !el) return;
+  if (!CIRCLES_DATA.length) { card.style.display = 'none'; return; }
+  card.style.display = '';
+
+  const rows = CIRCLE_SUMMARIES.length
+    ? CIRCLE_SUMMARIES.map(s => {
+        const entry = CIRCLES_DATA.find(e => e.circle.id === s.circle_id);
+        if (!entry) return '';
+        const { circle, members } = entry;
+        const activeMembers = members.filter(m => m.status === 'active');
+        const tasksOn = circle.tasks_enabled !== false;
+        const projectsOn = circle.projects_enabled === true;
+
+        // "new activity" dot: latest_activity_at > my last_seen_circles_at
+        const myMember = members.find(m => m.user_id === currentUser?.id);
+        const lastSeen = myMember?.last_seen_circles_at;
+        const hasNew = s.latest_activity_at && (!lastSeen || s.latest_activity_at > lastSeen);
+
+        const avatars = activeMembers.slice(0, 4).map(m => {
+          const isYou = m.user_id === currentUser?.id;
+          const init = isYou ? (getUserName()[0] || 'Y').toUpperCase() : '?';
+          return `<div class="circle-avatar-sm">${escHtml(init)}</div>`;
+        }).join('');
+
+        const taskChip = tasksOn && s.open_task_count > 0
+          ? `<div class="circles-home-stat"><span class="circles-home-count${s.open_task_count === 0 ? ' dim' : ''}">${s.open_task_count}</span><span class="circles-home-label">open task${s.open_task_count !== 1 ? 's' : ''}</span></div>`
+          : (tasksOn ? `<div class="circles-home-stat"><span class="circles-home-count dim">0</span><span class="circles-home-label">open tasks</span></div>` : '');
+
+        const projectChip = projectsOn
+          ? `<div class="circles-home-stat"><span class="circles-home-count${s.active_project_count === 0 ? ' dim' : ''}">${s.active_project_count}</span><span class="circles-home-label">active project${s.active_project_count !== 1 ? 's' : ''}</span></div>`
+          : '';
+
+        return `
+          <div class="circles-home-row" onclick="navigate('circles');setTimeout(()=>openCircleDetail('${circle.id}'),60)">
+            <div class="circles-home-left">
+              ${hasNew ? '<div class="circles-new-dot"></div>' : ''}
+              <div class="circle-avatar-strip">${avatars}</div>
+              <div class="circles-home-name">${escHtml(circle.name)}</div>
+            </div>
+            <div class="circles-home-right">
+              ${taskChip}${projectChip ? `<div class="circles-home-divider"></div>${projectChip}` : ''}
+              <svg width="12" height="12" viewBox="0 0 12 12" fill="none" style="flex-shrink:0;opacity:.35"><path d="M4 2.5l3.5 3.5L4 9.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+          </div>`;
+      }).join('')
+    : CIRCLES_DATA.map(({ circle, members }) => {
+        const activeMembers = members.filter(m => m.status === 'active');
+        const avatars = activeMembers.slice(0, 4).map(m => {
+          const isYou = m.user_id === currentUser?.id;
+          const init = isYou ? (getUserName()[0] || 'Y').toUpperCase() : '?';
+          return `<div class="circle-avatar-sm">${escHtml(init)}</div>`;
+        }).join('');
+        return `
+          <div class="circles-home-row" onclick="navigate('circles');setTimeout(()=>openCircleDetail('${circle.id}'),60)">
+            <div class="circles-home-left">
+              <div class="circle-avatar-strip">${avatars}</div>
+              <div class="circles-home-name">${escHtml(circle.name)}</div>
+            </div>
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none" style="flex-shrink:0;opacity:.35"><path d="M4 2.5l3.5 3.5L4 9.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>`;
+      }).join('');
+
+  el.innerHTML = rows;
+}
+
 function renderHome(){
   const td=today();
   const datedTodayTasks=DATA.tasks.filter(t=>!t.completed&&!t.dismissed&&t.dueDate===td);
@@ -3229,6 +3316,9 @@ function renderHome(){
     </div>`;
   }).join('');
   document.getElementById('home-habits-list').innerHTML=habitStatus.length?habitsSummary+habitRows:`<div class="empty" style="padding:10px 0"><div class="empty-icon">↺</div>No habits yet. Add one to start building rhythm.</div>`;
+
+  // Circles card
+  renderHomeCirclesCard();
 
   // Projects
   const active=DATA.projects.filter(p=>p.status==='Active').slice(0,3);
@@ -3519,6 +3609,7 @@ function renderReviewOutput(text){
 
 // ─── Circles ──────────────────────────────────────────────────────────────────
 let CIRCLES_DATA = []; // [{circle, members, invites}]
+let CIRCLE_SUMMARIES = []; // [{circle_id, circle_name, open_task_count, active_project_count, latest_activity_at}]
 let circleDetailId = null;
 let circleProjectDetailId = null;
 let circlesLoading = false;
@@ -3945,9 +4036,18 @@ async function loadCircles() {
       circleProjectDetailId = null;
     }
 
+    // Fetch summaries for Home dashboard card (non-blocking — don't throw on failure)
+    try {
+      const { data: summaries } = await sb.rpc('get_circle_summaries');
+      CIRCLE_SUMMARIES = summaries || [];
+    } catch(_) {
+      CIRCLE_SUMMARIES = [];
+    }
+
     circlesLoading = false;
     updateCirclesBadge();
     if (currentPage === 'circles') renderCircles();
+    if (currentPage === 'home') renderHomeCirclesCard();
   } catch(e) {
     console.error('Circles load error:', e);
     circlesLoading = false;
@@ -4043,6 +4143,26 @@ function openCircleDetail(id) {
   renderCircleDetail(id);
   loadCircleTasks(id);
   loadCircleProjects(id);
+  // Mark this circle as seen — used for "new activity" dot on Home dashboard
+  if (sb && currentUser) {
+    sb.from('circle_members')
+      .update({ last_seen_circles_at: new Date().toISOString() })
+      .eq('circle_id', id)
+      .eq('user_id', currentUser.id)
+      .then(() => {
+        // Update local member record so dot clears immediately without reload
+        CIRCLES_DATA = CIRCLES_DATA.map(e => e.circle.id === id ? {
+          ...e,
+          members: e.members.map(m => m.user_id === currentUser.id
+            ? { ...m, last_seen_circles_at: new Date().toISOString() }
+            : m)
+        } : e);
+        // Refresh summaries so Home card dot clears
+        sb.rpc('get_circle_summaries').then(({ data }) => {
+          if (data) { CIRCLE_SUMMARIES = data; renderHomeCirclesCard(); }
+        });
+      });
+  }
 }
 
 function backToCircles() {

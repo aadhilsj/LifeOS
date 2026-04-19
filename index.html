@@ -1614,6 +1614,11 @@ function renderAll(){
   ensureSettingsShape();
   applyTheme();
   updateModuleVisibility();
+  if(currentPage==='home'){
+    document.getElementById('page-title').textContent=getGreeting();
+    document.getElementById('page-sub').textContent=todayLong();
+    document.getElementById('bc-current').textContent='Home';
+  }
   renderPage(currentPage);
   updateBadges();
   requestAnimationFrame(attachSwipeHandlers);

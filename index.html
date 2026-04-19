@@ -1191,7 +1191,6 @@ async function handleAuth() {
 
   // Rely exclusively on onAuthStateChange — do NOT call getSession() as it
   // deadlocks in Supabase v2 when a session exists in localStorage.
-  // INITIAL_SESSION fires reliably on every page load with an existing session.
   sb.auth.onAuthStateChange(async (event, session) => {
     console.log('[Kairo] auth event:', event, !!session);
     if (event === 'SIGNED_IN' || event === 'INITIAL_SESSION') {
@@ -1199,17 +1198,22 @@ async function handleAuth() {
       await applyAuthSession(session);
     } else if (event === 'SIGNED_OUT') {
       await applyAuthSession(null);
+    } else if (event === 'TOKEN_REFRESHED') {
+      // session refreshed silently — update currentUser
+      if (session) currentUser = session.user;
     }
   });
 
-  // Safety net: if INITIAL_SESSION never fires within 4s, show login screen
+  // Safety net: only show login screen if NO auth event fires within 8s
+  // (SIGNED_IN can take a few seconds when restoring from localStorage)
   setTimeout(() => {
-    if (document.querySelector('.app').style.display === 'none') {
-      console.warn('[Kairo] Auth timeout — no INITIAL_SESSION received');
+    if (document.querySelector('.app').style.display === 'none' &&
+        document.getElementById('login-screen').style.display === 'none') {
+      console.warn('[Kairo] Auth timeout — no auth event received, showing login');
       showLoginScreen();
       document.getElementById('login-box').style.display = 'flex';
     }
-  }, 4000);
+  }, 8000);
 }
 
 // ─── State ────────────────────────────────────────────────────────────────────

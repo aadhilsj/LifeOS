@@ -4310,13 +4310,25 @@ async function sendCircleInvite(circleId) {
 async function generateCircleInviteLink(circleId) {
   if (!sb || !currentUser) return;
   try {
-    const code = Math.random().toString(36).slice(2,10) + Math.random().toString(36).slice(2,6);
-    const expires = new Date(Date.now() + 7*24*60*60*1000).toISOString();
-    const { error } = await sb.from('circle_invites').insert({
-      circle_id: circleId, invited_by: currentUser.id,
-      invite_code: code, expires_at: expires,
-    });
-    if (error && error.code !== '23505') throw error;
+    // Reuse existing link-only invite (no invited_email) rather than creating a new row each click
+    const entry = CIRCLES_DATA.find(e => e.circle.id === circleId);
+    const existing = entry?.invites.find(i => !i.invited_email);
+    let code;
+    if (existing) {
+      code = existing.invite_code;
+    } else {
+      code = Math.random().toString(36).slice(2,10) + Math.random().toString(36).slice(2,6);
+      const expires = new Date(Date.now() + 7*24*60*60*1000).toISOString();
+      const { error } = await sb.from('circle_invites').insert({
+        circle_id: circleId, invited_by: currentUser.id,
+        invite_code: code, expires_at: expires,
+      });
+      if (error) throw error;
+      // Load circles to update CIRCLES_DATA, then re-render with link visible
+      await loadCircles();
+    }
+    // Re-render first so the DOM is fresh, then inject the link
+    renderCircleDetail(circleId);
     const link = `${window.location.origin}?join=${code}`;
     const area = document.getElementById(`circle-invite-link-area-${circleId}`);
     if (area) {
@@ -4325,9 +4337,8 @@ async function generateCircleInviteLink(circleId) {
           <span class="invite-link-text">${escHtml(link)}</span>
           <button class="btn btn-ghost btn-xs" onclick="copyCircleLink('${escHtml(link)}')">Copy</button>
         </div>
-        <div class="text-xs text-dim mt4">Expires in 7 days</div>`;
+        <div class="text-xs text-dim mt4">Expires in 7 days · Revoke via the members list above</div>`;
     }
-    await loadCircles();
   } catch(e) {
     console.error('Generate link error:', e);
     toast('Could not generate link', 'error');
@@ -4343,6 +4354,20 @@ function copyCircleLink(link) {
       document.execCommand('copy'); document.body.removeChild(el);
       toast('Link copied', 'success');
     });
+}
+
+async function revokeCircleInvite(inviteId, circleId) {
+  if (!sb || !currentUser) return;
+  try {
+    const { error } = await sb.from('circle_invites').delete().eq('id', inviteId);
+    if (error) throw error;
+    toast('Invite revoked', 'info');
+    await loadCircles();
+    renderCircleDetail(circleId);
+  } catch(e) {
+    console.error('Revoke invite error:', e);
+    toast('Could not revoke invite', 'error');
+  }
 }
 
 function confirmDeleteCircle(id) {

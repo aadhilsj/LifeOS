@@ -1085,6 +1085,8 @@ const SUPA_KEY = 'sb_publishable_Sdzm9TR3gKYwRbZ960xDdg_l3GALVBQ';
 let sb = null;
 let currentUser = null;
 let currentStorageKey = 'kairo_v1_anon';
+let authEventQueue = [];
+let authEventProcessing = false;
 
 async function initSupabase() {
   if (typeof supabase === 'undefined') {
@@ -1181,6 +1183,43 @@ async function applyAuthSession(session) {
   document.getElementById('name-setup-box').style.display = 'none';
 }
 
+function enqueueAuthEvent(event, session) {
+  authEventQueue.push({ event, session });
+  if (authEventProcessing) return;
+  authEventProcessing = true;
+  setTimeout(processAuthEventQueue, 0);
+}
+
+async function processAuthEventQueue() {
+  try {
+    while (authEventQueue.length) {
+      const { event, session } = authEventQueue.shift();
+      console.log('[Kairo] auth event:', event, !!session);
+
+      if (event === 'SIGNED_IN' || event === 'INITIAL_SESSION') {
+        if (window.location.hash) history.replaceState(null, '', window.location.pathname);
+        await applyAuthSession(session);
+      } else if (event === 'SIGNED_OUT') {
+        await applyAuthSession(null);
+      } else if (event === 'TOKEN_REFRESHED') {
+        if (session) currentUser = session.user;
+      }
+    }
+  } catch (error) {
+    console.error('[Kairo] auth handling failed:', error);
+    setSyncStatus('error', 'Auth failed');
+    showLoginScreen();
+    document.getElementById('login-box').style.display = 'flex';
+    document.getElementById('name-setup-box').style.display = 'none';
+  } finally {
+    authEventProcessing = false;
+    if (authEventQueue.length) {
+      authEventProcessing = true;
+      setTimeout(processAuthEventQueue, 0);
+    }
+  }
+}
+
 async function handleAuth() {
   const ok = await initSupabase();
   if (!ok) {
@@ -1191,17 +1230,8 @@ async function handleAuth() {
 
   // Rely exclusively on onAuthStateChange — do NOT call getSession() as it
   // deadlocks in Supabase v2 when a session exists in localStorage.
-  sb.auth.onAuthStateChange(async (event, session) => {
-    console.log('[Kairo] auth event:', event, !!session);
-    if (event === 'SIGNED_IN' || event === 'INITIAL_SESSION') {
-      if (window.location.hash) history.replaceState(null, '', window.location.pathname);
-      await applyAuthSession(session);
-    } else if (event === 'SIGNED_OUT') {
-      await applyAuthSession(null);
-    } else if (event === 'TOKEN_REFRESHED') {
-      // session refreshed silently — update currentUser
-      if (session) currentUser = session.user;
-    }
+  sb.auth.onAuthStateChange((event, session) => {
+    enqueueAuthEvent(event, session);
   });
 
   // No timeout needed — SIGNED_IN fires reliably on every load when a session

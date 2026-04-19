@@ -3094,6 +3094,14 @@ async function processTasksFabVoice(){
 }
 
 // ─── Home ─────────────────────────────────────────────────────────────────────
+async function refreshCircleSummaries() {
+  if (!sb || !currentUser) return;
+  try {
+    const { data } = await sb.rpc('get_circle_summaries');
+    if (data) { CIRCLE_SUMMARIES = data; renderHomeCirclesCard(); }
+  } catch(_) {}
+}
+
 function renderHomeCirclesCard() {
   const card = document.getElementById('home-circles-card');
   const el = document.getElementById('home-circles-list') || card;
@@ -3892,6 +3900,7 @@ async function addCircleTask(circleId) {
     if (dueInput) dueInput.value = '';
     await loadCircleTasks(circleId, { silent: true });
     renderCircleDetail(circleId);
+    refreshCircleSummaries();
     toast('Shared task added', 'success');
   } catch (e) {
     console.error('Add circle task error:', e);
@@ -3921,6 +3930,7 @@ async function addCircleProjectTask(circleId, projectId) {
     if (assigneeInput) assigneeInput.value = '';
     await loadCircleTasks(circleId, { silent: true });
     renderCircleDetail(circleId);
+    refreshCircleSummaries();
     toast('Project task added', 'success');
   } catch (e) {
     console.error('Add circle project task error:', e);
@@ -3949,6 +3959,7 @@ async function toggleCircleTask(circleId, taskId) {
       completed_at: nextCompleted ? new Date().toISOString() : null,
     } : t));
     renderCircleDetail(circleId);
+    refreshCircleSummaries();
   } catch (e) {
     console.error('Toggle circle task error:', e);
     toast('Could not update shared task', 'error');
@@ -3962,6 +3973,7 @@ async function deleteCircleTask(circleId, taskId) {
     if (error) throw error;
     CIRCLE_TASKS[circleId] = (CIRCLE_TASKS[circleId] || []).filter(t => t.id !== taskId);
     renderCircleDetail(circleId);
+    refreshCircleSummaries();
     toast('Shared task removed', 'info');
   } catch (e) {
     console.error('Delete circle task error:', e);

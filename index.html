@@ -408,6 +408,21 @@ input[type="date"].input,input[type="time"].input{color-scheme:dark}
 .circle-card-name{font-family:var(--font-serif);font-size:17px;color:var(--text);letter-spacing:-.2px}
 .circle-card-meta{font-size:11px;color:var(--text-3);margin-top:3px}
 .circle-members-row{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-top:10px}
+.circle-members-compact{display:flex;align-items:center;gap:6px;flex:1;min-width:0}
+.circle-avatar-strip{display:flex;gap:4px;align-items:center}
+.circle-avatar-sm{width:26px;height:26px;border-radius:50%;background:var(--surface3);border:1px solid var(--border);display:inline-flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;color:var(--text-2)}
+.circle-avatar-sm.pending{opacity:.45;font-style:normal}
+.circle-members-bar{display:flex;align-items:center;justify-content:space-between;padding:12px 0;cursor:pointer;user-select:none}
+.circle-members-bar:hover .manage-link{color:var(--text-2)}
+.manage-link{font-size:11px;color:var(--text-3);transition:color var(--transition);white-space:nowrap}
+.circle-feature-toggle-row{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-top:1px solid var(--border)}
+.circle-feature-toggle-row:first-child{border-top:none}
+.toggle-switch{position:relative;width:36px;height:20px;flex-shrink:0}
+.toggle-switch input{opacity:0;width:0;height:0;position:absolute}
+.toggle-slider{position:absolute;inset:0;background:var(--surface3);border-radius:20px;cursor:pointer;transition:background var(--transition)}
+.toggle-slider::before{content:'';position:absolute;width:14px;height:14px;left:3px;top:3px;background:var(--text-3);border-radius:50%;transition:all var(--transition)}
+.toggle-switch input:checked + .toggle-slider{background:var(--accent)}
+.toggle-switch input:checked + .toggle-slider::before{transform:translateX(16px);background:#fff}
 .circle-member-chip{display:inline-flex;align-items:center;gap:5px;padding:4px 9px;
   border-radius:20px;background:var(--surface2);border:1px solid var(--border);font-size:11px;color:var(--text-2)}
 .circle-member-chip.you{background:var(--accent-soft);border-color:#c8392b22;color:var(--accent)}
@@ -4036,7 +4051,20 @@ function renderCircleDetail(id) {
   const usedSlots = activeMembers.length + invites.length;
   const slotsLeft = 5 - usedSlots;
   const isCreator = circle.created_by === currentUser.id;
+  const tasksOn = circle.tasks_enabled !== false;
+  const projectsOn = circle.projects_enabled === true;
 
+  // Compact avatar strip for collapsed members bar
+  const avatarStrip = [
+    ...activeMembers.map(m => {
+      const isYou = m.user_id === currentUser.id;
+      const init = isYou ? (getUserName()[0] || 'Y').toUpperCase() : '?';
+      return `<div class="circle-avatar-sm">${escHtml(init)}</div>`;
+    }),
+    ...invites.map(() => `<div class="circle-avatar-sm pending" style="opacity:.4">?</div>`),
+  ].join('');
+
+  // Expanded member rows (inside card when toggled)
   const memberRows = activeMembers.map(m => {
     const isYou = m.user_id === currentUser.id;
     const initials = isYou ? (getUserName()[0] || 'Y').toUpperCase() : '?';
@@ -4068,37 +4096,54 @@ function renderCircleDetail(id) {
       </div>
     </div>`).join('');
 
-  const inviteSection = slotsLeft > 0 ? `
-    <div class="card mt14">
-      <div class="card-title">Invite Someone</div>
-      <div class="text-sm text-dim mb12">${slotsLeft} slot${slotsLeft !== 1 ? 's' : ''} remaining · Max 5 members per Circle.</div>
-      <div class="form-row">
-        <label>Invite by email</label>
-        <div class="flex-gap">
-          <input class="input" id="circle-invite-email" type="email" placeholder="their@email.com" style="flex:1"
-            onkeydown="if(event.key==='Enter')sendCircleInvite('${circle.id}')"/>
-          <button class="btn btn-primary btn-sm" onclick="sendCircleInvite('${circle.id}')">Send Invite</button>
-        </div>
+  const inviteForm = slotsLeft > 0 ? `
+    <div class="form-row mt14">
+      <label>Invite by email</label>
+      <div class="flex-gap">
+        <input class="input" id="circle-invite-email" type="email" placeholder="their@email.com" style="flex:1"
+          onkeydown="if(event.key==='Enter')sendCircleInvite('${circle.id}')"/>
+        <button class="btn btn-primary btn-sm" onclick="sendCircleInvite('${circle.id}')">Send Invite</button>
       </div>
-      <div class="form-row mt8">
-        <label>Or share an invite link</label>
-        <div id="circle-invite-link-area-${circle.id}">
-          <button class="btn btn-ghost btn-sm" onclick="generateCircleInviteLink('${circle.id}')">Generate link</button>
-        </div>
+    </div>
+    <div class="form-row mt8">
+      <label>Or share an invite link</label>
+      <div id="circle-invite-link-area-${circle.id}">
+        <button class="btn btn-ghost btn-sm" onclick="generateCircleInviteLink('${circle.id}')">Generate link</button>
       </div>
-    </div>` : `
-    <div class="card mt14" style="opacity:.6">
-      <div class="card-title">Circle Full</div>
-      <div class="text-sm text-dim">This Circle has reached its 5-member limit.</div>
-    </div>`;
+    </div>` : `<div class="text-sm text-dim mt12">Circle is full (5/5).</div>`;
 
-  const dangerSection = isCreator
-    ? `<div class="mt14" style="padding-top:14px;border-top:1px solid var(--border)">
-        <button class="btn btn-danger btn-sm" onclick="confirmDeleteCircle('${circle.id}')">Delete Circle</button>
-      </div>`
-    : `<div class="mt14" style="padding-top:14px;border-top:1px solid var(--border)">
-        <button class="btn btn-danger btn-sm" onclick="confirmLeaveCircle('${circle.id}')">Leave Circle</button>
-      </div>`;
+  // Circle settings panel — feature flags + danger
+  const settingsSection = `
+    <div class="card mt14">
+      <div class="card-title mb12">Circle Settings</div>
+      <div class="circle-feature-toggle-row" style="border-top:none">
+        <div>
+          <div style="font-size:13px;font-weight:500">Shared task list</div>
+          <div class="text-xs text-dim mt4">A simple shared list of tasks</div>
+        </div>
+        <label class="toggle-switch">
+          <input type="checkbox" id="settings-tasks-enabled" ${tasksOn ? 'checked' : ''}
+            onchange="updateCircleFeatureFlag('${circle.id}','tasks_enabled',this.checked)"/>
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+      <div class="circle-feature-toggle-row">
+        <div>
+          <div style="font-size:13px;font-weight:500">Shared projects</div>
+          <div class="text-xs text-dim mt4">Structured projects for trips, events, side hustles</div>
+        </div>
+        <label class="toggle-switch">
+          <input type="checkbox" id="settings-projects-enabled" ${projectsOn ? 'checked' : ''}
+            onchange="updateCircleFeatureFlag('${circle.id}','projects_enabled',this.checked)"/>
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+      <div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--border)">
+        ${isCreator
+          ? `<button class="btn btn-danger btn-sm" onclick="confirmDeleteCircle('${circle.id}')">Delete Circle</button>`
+          : `<button class="btn btn-danger btn-sm" onclick="confirmLeaveCircle('${circle.id}')">Leave Circle</button>`}
+      </div>
+    </div>`;
 
   if (circleProjectDetailId) {
     detail.innerHTML = renderCircleProjectDetail(circle.id, circleProjectDetailId, activeMembers);
@@ -4110,14 +4155,69 @@ function renderCircleDetail(id) {
       <div class="circle-detail-name">${escHtml(circle.name)}</div>
       <div class="text-xs text-dim">Created ${new Date(circle.created_at).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'})}</div>
     </div>
+
     <div class="card">
-      <div class="card-title">Members (${usedSlots} / 5)</div>
-      ${memberRows}${inviteRows}
+      <div class="circle-members-bar" onclick="toggleCircleMembersExpand('${circle.id}')">
+        <div class="circle-members-compact">
+          <div class="circle-avatar-strip">${avatarStrip}</div>
+          <span class="text-xs text-dim" style="margin-left:8px">${usedSlots} / 5 members</span>
+        </div>
+        <span class="manage-link">Manage ›</span>
+      </div>
+      <div id="circle-members-expanded-${circle.id}" style="display:none">
+        ${memberRows}${inviteRows}
+        ${inviteForm}
+      </div>
     </div>
-    ${renderCircleTasksSection(circle.id)}
-    ${renderCircleProjectsSection(circle.id, activeMembers)}
-    ${inviteSection}
-    ${dangerSection}`;
+
+    ${tasksOn ? renderCircleTasksSection(circle.id) : ''}
+    ${projectsOn ? renderCircleProjectsSection(circle.id, activeMembers) : ''}
+    ${settingsSection}`;
+}
+
+function toggleCircleMembersExpand(circleId) {
+  const el = document.getElementById(`circle-members-expanded-${circleId}`);
+  if (!el) return;
+  const isOpen = el.style.display !== 'none';
+  el.style.display = isOpen ? 'none' : '';
+  const bar = el.previousElementSibling;
+  if (bar) bar.querySelector('.manage-link').textContent = isOpen ? 'Manage ›' : 'Close ‹';
+}
+
+async function updateCircleFeatureFlag(circleId, flag, value) {
+  if (!sb || !currentUser) return;
+  // Warn if turning off a feature that has existing data
+  if (!value && flag === 'tasks_enabled') {
+    const tasks = (CIRCLE_TASKS[circleId] || []).filter(t => !t.project_id);
+    if (tasks.length > 0) {
+      if (!confirm(`You have ${tasks.length} shared task${tasks.length !== 1 ? 's' : ''} — disabling this will hide them but not delete them. Continue?`)) {
+        document.getElementById('settings-tasks-enabled').checked = true;
+        return;
+      }
+    }
+  }
+  if (!value && flag === 'projects_enabled') {
+    const projects = CIRCLE_PROJECTS[circleId] || [];
+    if (projects.length > 0) {
+      if (!confirm(`You have ${projects.length} shared project${projects.length !== 1 ? 's' : ''} — disabling this will hide them but not delete them. Continue?`)) {
+        document.getElementById('settings-projects-enabled').checked = true;
+        return;
+      }
+    }
+  }
+  try {
+    const { error } = await sb.from('circles').update({ [flag]: value }).eq('id', circleId);
+    if (error) throw error;
+    // Update local CIRCLES_DATA
+    CIRCLES_DATA = CIRCLES_DATA.map(e =>
+      e.circle.id === circleId ? { ...e, circle: { ...e.circle, [flag]: value } } : e
+    );
+    renderCircleDetail(circleId);
+    toast(value ? 'Feature enabled' : 'Feature hidden', 'info');
+  } catch(e) {
+    console.error('Update feature flag error:', e);
+    toast('Could not update setting', 'error');
+  }
 }
 
 function openAddCircleProject(circleId) {
@@ -4268,6 +4368,29 @@ function openCreateCircle() {
       <input class="input" id="circle-name-input" placeholder="e.g. The Flat, Portugal Trip, Side Hustle…" maxlength="60"
         onkeydown="if(event.key==='Enter')submitCreateCircle()"/>
     </div>
+    <div class="form-row" style="margin-top:16px;border-top:1px solid var(--border);padding-top:14px">
+      <div class="text-xs text-dim mb12" style="font-weight:600;text-transform:uppercase;letter-spacing:.04em">Features</div>
+      <div class="circle-feature-toggle-row" style="border-top:none">
+        <div>
+          <div style="font-size:13px;font-weight:500">Shared task list</div>
+          <div class="text-xs text-dim mt4">A simple list of tasks for everyone in the Circle</div>
+        </div>
+        <label class="toggle-switch">
+          <input type="checkbox" id="create-tasks-enabled" checked/>
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+      <div class="circle-feature-toggle-row">
+        <div>
+          <div style="font-size:13px;font-weight:500">Shared projects</div>
+          <div class="text-xs text-dim mt4">Structured projects with task lists inside — for trips, events, side hustles</div>
+        </div>
+        <label class="toggle-switch">
+          <input type="checkbox" id="create-projects-enabled"/>
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+    </div>
     <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:16px">
       <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
       <button class="btn btn-primary" onclick="submitCreateCircle()">Create Circle</button>
@@ -4281,11 +4404,13 @@ async function submitCreateCircle() {
   const name = nameInput?.value.trim();
   if (!name) { nameInput?.focus(); return; }
   if (!sb || !currentUser) return;
+  const tasks_enabled = document.getElementById('create-tasks-enabled')?.checked ?? true;
+  const projects_enabled = document.getElementById('create-projects-enabled')?.checked ?? false;
   const btn = document.querySelector('#modal-content .btn-primary');
   if (btn) { btn.disabled = true; btn.textContent = 'Creating…'; }
   try {
     const { data: circle, error: cErr } = await sb
-      .from('circles').insert({ name, created_by: currentUser.id }).select().single();
+      .from('circles').insert({ name, created_by: currentUser.id, tasks_enabled, projects_enabled }).select().single();
     if (cErr) throw cErr;
     const { error: mErr } = await sb
       .from('circle_members').insert({ circle_id: circle.id, user_id: currentUser.id, status: 'active' });

@@ -308,9 +308,13 @@ input[type="date"].input,input[type="time"].input{color-scheme:var(--date-color-
 .task-title-wrap{flex:1;min-width:0}
 .task-title-text{font-size:13px;cursor:pointer;line-height:1.4;word-break:break-word}
 .task-title-text.done{text-decoration:line-through;color:var(--text-3)}
-.task-expand-indicator{font-size:12px;color:var(--text-3);opacity:.7;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;white-space:nowrap;transition:all var(--transition);width:18px;flex-shrink:0}
-.task-expand-indicator:hover{color:var(--text-2);opacity:1}
-.task-expand-indicator.open{color:var(--accent);opacity:1}
+.task-expand-indicator{
+  width:22px;height:22px;border-radius:999px;border:1px solid transparent;background:transparent;
+  color:var(--text-3);opacity:.82;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;
+  white-space:nowrap;transition:all var(--transition);flex-shrink:0;font-size:13px;line-height:1;font-weight:700
+}
+.task-expand-indicator:hover{color:var(--text-2);opacity:1;background:var(--surface2);border-color:var(--border)}
+.task-expand-indicator.open{color:var(--accent);opacity:1;background:var(--accent-soft);border-color:rgba(var(--accent-rgb),.18)}
 .task-meta{display:flex;gap:4px;margin-top:4px;flex-wrap:wrap;align-items:center}
 .task-actions{display:flex;gap:2px;opacity:0;transition:opacity var(--transition);flex-shrink:0;padding-top:1px}
 .task-item:hover .task-actions{opacity:1}
@@ -2943,6 +2947,7 @@ function navigate(page) {
   }
   syncFab();
   updateModuleVisibility();
+  if(page==='circles') markAllCirclesSeen();
   renderPage(page);
 }
 
@@ -3124,7 +3129,7 @@ function taskHTML(task,isFocus){
           <div class="task-title-wrap">
             <span class="task-title-text${task.completed?' done':''}" onclick="toggleExpand('${task.id}')">${escHtml(task.title)}</span>
           </div>
-          <span class="task-expand-indicator" id="expand-indicator-${task.id}" onclick="toggleExpand('${task.id}')" title="${t('tasksPage.showMore')}">▾</span>
+          <span class="task-expand-indicator" id="expand-indicator-${task.id}" onclick="toggleExpand('${task.id}')" title="${t('tasksPage.showMore')}" aria-label="${t('tasksPage.showMore')}">⌄</span>
         </div>
         <div class="task-actions flex-gap-sm">
           <button class="focus-btn${isFocus?' active':''}" onclick="toggleFocus('${task.id}')" title="${t('tasksPage.toggleFocus')}" data-tip="${isFocus?t('tasksPage.unstarFocus'):t('tasksPage.starFocus')}">★</button>
@@ -3199,7 +3204,7 @@ function toggleExpand(id){
   el.style.display=isOpen?'none':'';
   const indicator=document.getElementById('expand-indicator-'+id);
   if(indicator){
-    indicator.textContent=isOpen?'▾':'▴';
+    indicator.textContent=isOpen?'⌄':'⌃';
     indicator.classList.toggle('open', !isOpen);
   }
   // Show mobile delete button only when expanded and on mobile
@@ -3709,17 +3714,17 @@ function saveTask(editId=null,forceProjectId=null){
 }
 
 function openEditTask(id){
-  const t=DATA.tasks.find(x=>x.id===id);if(!t) return;
-  const fa=t.focusArea||migrateFocusArea(t);
+  const task=DATA.tasks.find(x=>x.id===id);if(!task) return;
+  const fa=task.focusArea||migrateFocusArea(task);
   openModal(`<h3>${t('forms.editTask')}</h3>
-    <div class="form-row"><label>${t('forms.title')}</label><input class="input" id="m-title" value="${escHtml(t.title)}"/></div>
+    <div class="form-row"><label>${t('forms.title')}</label><input class="input" id="m-title" value="${escHtml(task.title)}"/></div>
     <div class="form-row"><label>${t('forms.focusArea')}</label>${renderAreaPills(fa)}</div>
     <div class="form-grid">
-      <div class="form-row"><label>${t('forms.dueDate')} <span class="text-dim" style="text-transform:none;letter-spacing:0;font-size:10px">${t('common.optional')}</span></label><input type="date" class="input" id="m-due" value="${t.dueDate||''}"/></div>
-      <div class="form-row"><label>${t('forms.dueTime')}</label><input type="time" class="input" id="m-time" value="${t.dueTime||''}"/></div>
+      <div class="form-row"><label>${t('forms.dueDate')} <span class="text-dim" style="text-transform:none;letter-spacing:0;font-size:10px">${t('common.optional')}</span></label><input type="date" class="input" id="m-due" value="${task.dueDate||''}"/></div>
+      <div class="form-row"><label>${t('forms.dueTime')}</label><input type="time" class="input" id="m-time" value="${task.dueTime||''}"/></div>
     </div>
-    <div class="form-row"><label>${t('forms.project')}</label><select class="input" id="m-proj"><option value="">${t('common.none')}</option>${DATA.projects.map(p=>`<option value="${p.id}"${p.id===t.projectId?' selected':''}>${escHtml(p.title)}</option>`).join('')}</select></div>
-    <div class="form-row"><label>${t('forms.notes')}</label><textarea class="input" id="m-notes">${escHtml(t.notes||'')}</textarea></div>
+    <div class="form-row"><label>${t('forms.project')}</label><select class="input" id="m-proj"><option value="">${t('common.none')}</option>${DATA.projects.map(p=>`<option value="${p.id}"${p.id===task.projectId?' selected':''}>${escHtml(p.title)}</option>`).join('')}</select></div>
+    <div class="form-row"><label>${t('forms.notes')}</label><textarea class="input" id="m-notes">${escHtml(task.notes||'')}</textarea></div>
     <div class="flex-gap" style="justify-content:flex-end;margin-top:6px">
       <button class="btn btn-ghost" onclick="closeModal()">${t('common.cancel')}</button>
       <button class="btn btn-primary" onclick="saveTask('${id}')">${t('common.save')}</button>
@@ -5465,7 +5470,39 @@ async function loadCircles() {
 function updateCirclesBadge() {
   const badge = document.getElementById('circles-badge');
   if (!badge) return;
-  badge.style.display = CIRCLES_DATA.length > 0 ? '' : 'none';
+  badge.style.display = hasUnreadCircleActivity() ? '' : 'none';
+}
+
+function hasUnreadCircleActivity() {
+  if (!currentUser || !CIRCLE_SUMMARIES.length || !CIRCLES_DATA.length) return false;
+  return CIRCLE_SUMMARIES.some(summary => {
+    if (!summary?.latest_activity_at) return false;
+    const entry = CIRCLES_DATA.find(e => e.circle.id === summary.circle_id);
+    const myMember = entry?.members?.find(m => m.user_id === currentUser.id);
+    const lastSeen = myMember?.last_seen_circles_at;
+    return !lastSeen || summary.latest_activity_at > lastSeen;
+  });
+}
+
+function markAllCirclesSeen() {
+  if (!sb || !currentUser || !CIRCLES_DATA.length) return;
+  const now = new Date().toISOString();
+  const circleIds = CIRCLES_DATA.map(entry => entry.circle.id);
+  sb.from('circle_members')
+    .update({ last_seen_circles_at: now })
+    .eq('user_id', currentUser.id)
+    .in('circle_id', circleIds)
+    .then(({ error }) => {
+      if (error) return;
+      CIRCLES_DATA = CIRCLES_DATA.map(entry => ({
+        ...entry,
+        members: entry.members.map(member => member.user_id === currentUser.id
+          ? { ...member, last_seen_circles_at: now }
+          : member)
+      }));
+      updateCirclesBadge();
+      if (currentPage === 'home') renderHomeCirclesCard();
+    });
 }
 
 function renderCircles() {

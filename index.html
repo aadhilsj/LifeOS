@@ -1013,6 +1013,13 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;heigh
               </div>
               <div id="home-tasks-list"></div>
             </div>
+            <div class="card mt14" id="home-active-projects" style="cursor:pointer" onclick="navigate('projects');setTimeout(()=>switchHub('projects'),50)">
+              <div class="flex-between mb12">
+                <div class="card-title" style="margin:0" id="home-active-projects-title">Active Projects</div>
+                <span class="text-xs text-dim" style="cursor:pointer" onclick="event.stopPropagation();navigate('projects');setTimeout(()=>switchHub('projects'),50)" id="home-active-projects-all">All →</span>
+              </div>
+              <div id="home-projects-list"></div>
+            </div>
           </div>
           <div id="home-col-right">
             <div class="card mb14">
@@ -1022,14 +1029,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;heigh
               </div>
               <div id="home-calendar-card"></div>
             </div>
-            <div class="card" id="home-active-projects" style="cursor:pointer" onclick="navigate('projects');setTimeout(()=>switchHub('projects'),50)">
-              <div class="flex-between mb12">
-                <div class="card-title" style="margin:0" id="home-active-projects-title">Active Projects</div>
-                <span class="text-xs text-dim" style="cursor:pointer" onclick="event.stopPropagation();navigate('projects');setTimeout(()=>switchHub('projects'),50)" id="home-active-projects-all">All →</span>
-              </div>
-              <div id="home-projects-list"></div>
-            </div>
-            <div class="card mt14" id="home-circles-card" style="display:none">
+            <div class="card" id="home-circles-card" style="display:none">
               <div class="flex-between mb12">
                 <div class="card-title" style="margin:0" id="home-circles-title">Circles</div>
                 <span class="text-xs text-dim" style="cursor:pointer" onclick="navigate('circles')">All →</span>
@@ -4038,12 +4038,25 @@ function getHabitConsistency(habit, days = 30) {
   return Math.min(100, Math.round((completed / expected) * 100));
 }
 
-function getHabitAttentionRank(habit) {
-  const info = getHabitWindowInfo(habit);
+function getHabitAttentionRank(habit, refDate = today()) {
+  const info = getHabitWindowInfo(habit, refDate);
   const consistency = getHabitConsistency(habit);
-  if (info.isComplete) return 1000 + consistency;
-  if (habit.frequencyType === 'daily') return info.remaining * 100 - consistency;
-  return info.remaining * 100 + info.daysLeft * 5 - consistency;
+  if (info.isComplete) return -1000 + consistency / 100;
+
+  const totalDays = Math.max(1, enumerateDates(info.start, info.end).length);
+  const daysRemaining = Math.max(1, enumerateDates(refDate, info.end).length);
+  const periodProgress = Math.min(1, (totalDays - daysRemaining + 1) / totalDays);
+  const deficitRatio = info.remaining / Math.max(1, info.target);
+  const atRisk = info.remaining > daysRemaining ? 1 : 0;
+  const typeBoost = habit.frequencyType === 'daily' ? 320 : habit.frequencyType === 'weekly' ? 180 : 120;
+
+  return (
+    typeBoost +
+    atRisk * 260 +
+    deficitRatio * 180 +
+    periodProgress * 140 +
+    (100 - consistency) * 1.15
+  );
 }
 
 function renderHabitHistoryGrid(habit) {
@@ -4704,13 +4717,15 @@ function renderHome(){
     :nonDtn.map(t=>taskHTML(t,false)).join('');
 
   // Habits
-  const habitStatus=DATA.habitDefs.map(h=>({habit:h,info:getHabitWindowInfo(h),consistency:getHabitConsistency(h)})).sort((a,b)=>getHabitAttentionRank(a.habit)-getHabitAttentionRank(b.habit));
+  const habitStatus=DATA.habitDefs
+    .map(h=>({habit:h,info:getHabitWindowInfo(h),consistency:getHabitConsistency(h),rank:getHabitAttentionRank(h)}))
+    .sort((a,b)=>b.rank-a.rank);
   const habitsOnTrack=habitStatus.filter(entry=>entry.info.isComplete).length;
   const attentionCount=habitStatus.length-habitsOnTrack;
   const habitsSummary=`<div class="home-habits-summary ${attentionCount===0?'good':'attention'}">
     ${attentionCount===0?`✓ ${t('home.habitsOnTrack')}`:t('home.habitsNeedAttention',{count:attentionCount,plural:pluralSuffix(attentionCount)})}
   </div>`;
-  const habitRows=habitStatus.slice(0,4).map(({habit:h,info,consistency})=>{
+  const habitRows=habitStatus.slice(0,3).map(({habit:h,info,consistency})=>{
     const doneToday=getHabitCompletionCount(h.id, td)>0;
     return `<div class="habit-strip-row" onclick="toggleHabit('${h.id}','${td}')" style="cursor:pointer;border-radius:8px;margin:-4px;padding:8px 6px;transition:background var(--transition)" onmouseenter="this.style.background='var(--glass-hover)'" onmouseleave="this.style.background=''">
       <div class="flex-between">

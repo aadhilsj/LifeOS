@@ -2557,7 +2557,11 @@ function calcProjectProgress(pid) {
 const focusAreaClass = a => ({'Career':'badge-career','Health':'badge-health','Personal':'badge-personal','Life Admin':'badge-life-admin','Growth':'badge-growth'}[a]||'badge-other');
 const oppStageClass  = s => ({'Exploring':'stage-exploring','Contacted':'stage-contacted','In Progress':'stage-in-progress','Won':'stage-won','Dropped':'stage-dropped'}[s]||'stage-exploring');
 const stageClass     = s => oppStageClass(s); // alias
-const statusClass    = s => ({Active:'status-active',Paused:'status-paused',Completed:'status-completed'}[s]||'status-active');
+function normalizeProjectStatus(status) {
+  const raw = String(status || '').trim().toLowerCase();
+  return ({ active:'Active', paused:'Paused', completed:'Completed' }[raw]) || 'Active';
+}
+const statusClass    = s => ({Active:'status-active',Paused:'status-paused',Completed:'status-completed'}[normalizeProjectStatus(s)]||'status-active');
 
 function ensureSettingsShape() {
   DATA.settings = DATA.settings || {};
@@ -2673,7 +2677,8 @@ function labelFocusArea(area) {
 }
 
 function labelProjectStatus(status) {
-  return t(`projectStatus.${status}`) === `projectStatus.${status}` ? status : t(`projectStatus.${status}`);
+  const normalized = normalizeProjectStatus(status);
+  return t(`projectStatus.${normalized}`) === `projectStatus.${normalized}` ? normalized : t(`projectStatus.${normalized}`);
 }
 
 function labelOpportunityStage(stage) {
@@ -5240,7 +5245,7 @@ function renderCircleProjectDetail(circleId, projectId, members = []) {
       </div>
       <div class="circle-project-status-row">
         ${['active','paused','completed'].map(status => `
-          <button class="circle-status-btn status-${status}${(project.status || 'active') === status ? ' active' : ''}" onclick="updateCircleProjectStatus('${circleId}','${project.id}','${status}')">${t(`projectStatus.${status}`)}</button>
+          <button class="circle-status-btn status-${status}${String(project.status || 'active').toLowerCase() === status ? ' active' : ''}" onclick="updateCircleProjectStatus('${circleId}','${project.id}','${status}')">${labelProjectStatus(status)}</button>
         `).join('')}
       </div>
       <div class="progress-track" style="height:6px;margin-top:14px"><div class="progress-fill" style="width:${pct}%"></div></div>

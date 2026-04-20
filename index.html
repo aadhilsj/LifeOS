@@ -399,6 +399,9 @@ input[type="date"].input,input[type="time"].input{color-scheme:var(--date-color-
 .theme-option.active{border-color:var(--accent);background:var(--accent-soft);color:var(--text)}
 .theme-swatch{width:28px;height:28px;border-radius:50%;margin:0 auto 8px;border:2px solid var(--border-active);box-shadow:inset 0 0 0 1px rgba(0,0,0,.15)}
 .theme-label{font-size:11px;font-weight:600}
+.language-options-row{display:flex;gap:8px;flex-wrap:wrap}
+.language-option{min-width:0;flex:0 1 118px;flex-direction:row;gap:8px;justify-content:flex-start;padding:8px 10px;border-radius:10px}
+.language-option .theme-label{font-size:11px}
 .settings-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:1px solid var(--border)}
 .settings-row:last-child{border-bottom:none;padding-bottom:0}
 .settings-copy{flex:1}
@@ -1072,7 +1075,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;heigh
         <!-- Opportunities sub-view -->
         <div id="hub-opportunities" style="display:none">
           <div class="card mb20">
-            <div class="card-title">Pipeline Overview</div>
+            <div class="card-title" id="jobs-pipeline-title">Pipeline Overview</div>
             <div class="flex" id="jobs-pipeline"></div>
           </div>
           <div id="jobs-list"></div>
@@ -1082,13 +1085,13 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;heigh
         <div id="hub-review" style="display:none">
           <div class="stat-row" id="review-stats"></div>
           <div class="card mb14">
-            <div class="card-title">Focus Area Distribution</div>
+            <div class="card-title" id="review-area-title">Focus Area Distribution</div>
             <div id="review-areas"></div>
           </div>
           <div class="card">
             <div class="flex-between mb14">
               <div>
-                <div class="card-title" style="margin:0">AI Weekly Review</div>
+                <div class="card-title" style="margin:0" id="review-ai-title">AI Weekly Review</div>
                 <div class="text-xs text-dim mt4" id="review-last-generated"></div>
               </div>
               <div id="review-week-tabs" style="display:flex;gap:6px;flex-wrap:wrap"></div>
@@ -2721,6 +2724,9 @@ function applyStaticTranslations() {
   setText('hub-tab-projects', t('workspace.projectsTab'));
   setText('hub-tab-opportunities', t('workspace.opportunitiesTab'));
   setText('hub-tab-review', t('workspace.reviewTab'));
+  setText('jobs-pipeline-title', t('workspace.pipelineOverview'));
+  setText('review-area-title', t('workspace.reviewAreaDistribution'));
+  setText('review-ai-title', t('workspace.aiWeeklyReview'));
   setText('settings-profile-title', t('settings.profile'));
   setText('settings-name-label', t('settings.name'));
   setText('settings-name-copy', t('settings.nameCopy'));
@@ -3527,11 +3533,11 @@ function renderSettings(){
   if(languageEl) {
     const currentLanguage = getCurrentLanguage();
     languageEl.innerHTML = `
-      <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <div class="language-options-row">
         ${Object.entries(LANGUAGES).map(([key, language]) => `
-          <button type="button" class="theme-option${currentLanguage===key?' active':''}" onclick="setLanguage('${key}')" style="min-width:140px;flex:1;flex-direction:row;gap:8px;justify-content:flex-start;padding:10px 12px">
+          <button type="button" class="theme-option language-option${currentLanguage===key?' active':''}" onclick="setLanguage('${key}')">
             <span style="font-size:16px">${key === 'fr' ? 'FR' : 'EN'}</span>
-            <div class="theme-label" style="font-size:12px">${language.label}</div>
+            <div class="theme-label">${language.label}</div>
           </button>
         `).join('')}
       </div>

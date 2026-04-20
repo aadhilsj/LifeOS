@@ -115,6 +115,7 @@ function normalizeCalendarConnection(connection, index = 0) {
     email,
     displayName: connection.displayName || connection.summary || email || `Google Calendar ${index + 1}`,
     calendarId: connection.calendarId || email || 'primary',
+    timeZone: connection.timeZone || 'UTC',
     accessToken: connection.accessToken || '',
     refreshToken: connection.refreshToken || '',
     expiresAt: connection.expiresAt || null,
@@ -284,6 +285,7 @@ async function buildCalendarConnection(tokenData, existingConnection = null) {
     email,
     displayName,
     calendarId: primaryCalendar.id || existingConnection?.calendarId || 'primary',
+    timeZone: primaryCalendar.timeZone || existingConnection?.timeZone || 'UTC',
     accessToken: tokenData.access_token,
     refreshToken: tokenData.refresh_token || existingConnection?.refreshToken || '',
     expiresAt: new Date(now + (tokenData.expires_in || 3600) * 1000).toISOString(),
@@ -327,18 +329,56 @@ function formatEvent(event) {
   };
 }
 
+function getDatePartsInTimeZone(date, timeZone) {
+  const formatter = new Intl.DateTimeFormat('en-CA', {
+    timeZone,
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  });
+  const parts = formatter.formatToParts(date);
+  const year = parts.find(part => part.type === 'year')?.value;
+  const month = parts.find(part => part.type === 'month')?.value;
+  const day = parts.find(part => part.type === 'day')?.value;
+  return { year, month, day };
+}
+
+function getTimeZoneDateKey(date, timeZone) {
+  const { year, month, day } = getDatePartsInTimeZone(date, timeZone);
+  return `${year}-${month}-${day}`;
+}
+
+function isEventOnDateInTimeZone(event, dateKey, timeZone) {
+  if (!event?.start) return false;
+
+  if (event.isAllDay) {
+    return event.start === dateKey;
+  }
+
+  return getTimeZoneDateKey(new Date(event.start), timeZone) === dateKey;
+}
+
 async function fetchTodayEvents(accessToken, source = {}) {
-  const timeMin = startOfDay().toISOString();
-  const timeMax = endOfDay().toISOString();
+  const timeZone = source.timeZone || 'UTC';
+  const now = new Date();
+  const todayKey = getTimeZoneDateKey(now, timeZone);
+  const queryStart = new Date(now);
+  queryStart.setUTCDate(queryStart.getUTCDate() - 1);
+  queryStart.setUTCHours(0, 0, 0, 0);
+  const queryEnd = new Date(now);
+  queryEnd.setUTCDate(queryEnd.getUTCDate() + 2);
+  queryEnd.setUTCHours(23, 59, 59, 999);
   const params = new URLSearchParams({
-    timeMin,
-    timeMax,
+    timeMin: queryStart.toISOString(),
+    timeMax: queryEnd.toISOString(),
     singleEvents: 'true',
     orderBy: 'startTime',
     maxResults: '10',
+    timeZone,
   });
 
-  const response = await fetch(`${GOOGLE_CALENDAR_BASE}/calendars/primary/events?${params.toString()}`, {
+  const calendarId = encodeURIComponent(source.calendarId || 'primary');
+  const response = await fetch(`${GOOGLE_CALENDAR_BASE}/calendars/${calendarId}/events?${params.toString()}`, {
     headers: {
       Authorization: `Bearer ${accessToken}`,
     },
@@ -350,12 +390,14 @@ async function fetchTodayEvents(accessToken, source = {}) {
   }
 
   const data = await response.json();
-  return (data.items || []).map(event => ({
-    ...formatEvent(event),
-    sourceId: source.id || '',
-    sourceEmail: source.email || '',
-    sourceLabel: source.displayName || source.email || '',
-  }));
+  return (data.items || [])
+    .map(event => ({
+      ...formatEvent(event),
+      sourceId: source.id || '',
+      sourceEmail: source.email || '',
+      sourceLabel: source.displayName || source.email || '',
+    }))
+    .filter(event => isEventOnDateInTimeZone(event, todayKey, timeZone));
 }
 
 function computeFreeWindows(events) {

@@ -48,6 +48,22 @@ module.exports = async function handler(req, res) {
     );
     const events = eventGroups
       .flat()
+      .filter((event, index, list) => {
+        const key = [
+          event.sourceEmail || '',
+          event.summary || '',
+          event.start || '',
+          event.end || '',
+          event.isAllDay ? 'all-day' : 'timed',
+        ].join('::');
+        return index === list.findIndex(candidate => [
+          candidate.sourceEmail || '',
+          candidate.summary || '',
+          candidate.start || '',
+          candidate.end || '',
+          candidate.isAllDay ? 'all-day' : 'timed',
+        ].join('::') === key);
+      })
       .sort((a, b) => new Date(a.start || 0).getTime() - new Date(b.start || 0).getTime());
     const freeWindows = computeFreeWindows(events);
 

@@ -566,6 +566,10 @@ input[type="date"].input,input[type="time"].input{color-scheme:var(--date-color-
 .circle-task-title{font-size:13px;color:var(--text);line-height:1.45}
 .circle-task-title.done{text-decoration:line-through;color:var(--text-3)}
 .circle-task-meta{font-size:10.5px;color:var(--text-3);display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:4px}
+.circle-task-note{margin-top:7px;padding:8px 10px;border-radius:10px;background:var(--surface);border:1px solid var(--border);font-size:11px;line-height:1.55;color:var(--text-2)}
+.circle-task-note-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:7px}
+.circle-task-note-btn{padding:0;background:none;border:none;color:var(--text-3);font-size:10.5px;font-weight:600;cursor:pointer;font-family:var(--font-sans);transition:color var(--transition)}
+.circle-task-note-btn:hover{color:var(--accent)}
 .circle-task-empty{font-size:12px;color:var(--text-3);line-height:1.6;padding:4px 0}
 .circle-task-add{display:grid;grid-template-columns:minmax(0,1fr) 130px auto;gap:8px}
 .circle-project-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:14px 15px;cursor:pointer;transition:all var(--transition);margin-bottom:10px}
@@ -1766,6 +1770,12 @@ const I18N = {
       noSharedTasks: 'No shared tasks yet. Add one to get this Circle moving.',
       sharedTasksTitle: 'Shared Tasks',
       addSharedTask: 'Add a shared task…',
+      taskNote: 'Task note',
+      taskNotePlaceholder: 'Add a short shared note…',
+      addNote: 'Add note',
+      editNote: 'Edit note',
+      createdBy: 'Added by {{name}}',
+      completedBy: 'Completed by {{name}}',
       completed: 'Completed',
       open: 'Open',
       dueOn: 'Due {{date}}',
@@ -2264,6 +2274,12 @@ const I18N = {
       noSharedTasks: 'Aucune tâche partagée pour le moment. Ajoutez-en une pour lancer ce cercle.',
       sharedTasksTitle: 'Tâches partagées',
       addSharedTask: 'Ajouter une tâche partagée…',
+      taskNote: 'Note de tâche',
+      taskNotePlaceholder: 'Ajoutez une courte note partagée…',
+      addNote: 'Ajouter une note',
+      editNote: 'Modifier la note',
+      createdBy: 'Ajoutée par {{name}}',
+      completedBy: 'Terminée par {{name}}',
       completed: 'Terminée',
       open: 'Ouverte',
       dueOn: 'Pour le {{date}}',
@@ -5126,9 +5142,33 @@ function getCircleTaskStatus(task) {
   return t('circlesPage.dueOn', { date: formatDueLabel(task.due_date) });
 }
 
+function getCircleTaskMetaItems(task, circleId, members = [], { includeAssignee = false } = {}) {
+  const items = [`<span>${escHtml(getCircleTaskStatus(task))}</span>`];
+  if (includeAssignee && task.assigned_to) {
+    items.push(`<span class="circle-assignee-chip">${escHtml(getCircleMemberLabel(circleId, task.assigned_to, members))}</span>`);
+  }
+  if (task.created_by) {
+    items.push(`<span>${escHtml(t('circlesPage.createdBy', {
+      name: getCircleMemberLabel(circleId, task.created_by, members),
+    }))}</span>`);
+  }
+  if (task.completed && task.completed_by) {
+    items.push(`<span>${escHtml(t('circlesPage.completedBy', {
+      name: getCircleMemberLabel(circleId, task.completed_by, members),
+    }))}</span>`);
+  }
+  if (task.completed_at) {
+    items.push(`<span>${escHtml(t('circlesPage.doneOn', {
+      date: new Date(task.completed_at).toLocaleDateString(getCurrentLocale(), { day:'numeric', month:'short' }),
+    }))}</span>`);
+  }
+  return items;
+}
+
 function renderCircleTasksSection(circleId) {
   const tasks = (CIRCLE_TASKS[circleId] || []).filter(task => !task.project_id);
   const loading = !!circleTasksLoading[circleId];
+  const members = getCircleEntry(circleId)?.members || [];
   const openCount = tasks.filter(t => !t.completed).length;
   const rows = loading
     ? `<div class="circle-task-empty">${t('circlesPage.loadingSharedTasks')}</div>`
@@ -5140,8 +5180,11 @@ function renderCircleTasksSection(circleId) {
           <div class="circle-task-main">
             <div class="circle-task-title${task.completed ? ' done' : ''}">${escHtml(task.title)}</div>
             <div class="circle-task-meta">
-              <span>${escHtml(getCircleTaskStatus(task))}</span>
-              ${task.completed_at ? `<span>${t('circlesPage.doneOn', { date: new Date(task.completed_at).toLocaleDateString(getCurrentLocale(),{day:'numeric',month:'short'}) })}</span>` : ''}
+              ${getCircleTaskMetaItems(task, circleId, members).join('')}
+            </div>
+            ${task.notes ? `<div class="circle-task-note">${escHtml(task.notes)}</div>` : ''}
+            <div class="circle-task-note-actions">
+              <button class="circle-task-note-btn" onclick="editCircleTaskNote('${circleId}','${task.id}')">${t(task.notes ? 'circlesPage.editNote' : 'circlesPage.addNote')}</button>
             </div>
           </div>
           <button class="btn-icon" onclick="deleteCircleTask('${circleId}','${task.id}')" style="color:var(--accent)">✕</button>
@@ -5223,9 +5266,7 @@ function renderCircleProjectDetail(circleId, projectId, members = []) {
           <div class="circle-task-main">
             <div class="circle-task-title${task.completed ? ' done' : ''}">${escHtml(task.title)}</div>
             <div class="circle-task-meta">
-              <span>${escHtml(getCircleTaskStatus(task))}</span>
-              ${task.assigned_to ? `<span class="circle-assignee-chip">${escHtml(getCircleMemberLabel(circleId, task.assigned_to, members))}</span>` : ''}
-              ${task.completed_at ? `<span>${t('circlesPage.doneOn', { date: new Date(task.completed_at).toLocaleDateString(getCurrentLocale(),{day:'numeric',month:'short'}) })}</span>` : ''}
+              ${getCircleTaskMetaItems(task, circleId, members, { includeAssignee: true }).join('')}
             </div>
           </div>
           <button class="btn-icon" onclick="deleteCircleTask('${circleId}','${task.id}')" style="color:var(--accent)">✕</button>
@@ -5330,6 +5371,46 @@ async function addCircleProjectTask(circleId, projectId) {
   } catch (e) {
     console.error('Add circle project task error:', e);
     toast(t('toast.couldNotAddProjectTask'), 'error');
+  }
+}
+
+function editCircleTaskNote(circleId, taskId) {
+  const task = (CIRCLE_TASKS[circleId] || []).find(entry => entry.id === taskId);
+  if (!task) return;
+  document.getElementById('modal-content').innerHTML = `
+    <h3>${t('circlesPage.taskNote')}</h3>
+    <div class="text-sm text-dim mb12" style="line-height:1.6">${escHtml(task.title)}</div>
+    <div class="form-row" style="margin-top:12px">
+      <textarea class="input" id="circle-task-note-input" rows="3" maxlength="100" placeholder="${t('circlesPage.taskNotePlaceholder')}" style="resize:none;line-height:1.6">${escHtml(task.notes || '')}</textarea>
+    </div>
+    <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:16px">
+      <button class="btn btn-ghost" onclick="closeModal()">${t('common.cancel')}</button>
+      <button class="btn btn-primary" onclick="saveCircleTaskNote('${circleId}','${taskId}')">${t('common.save')}</button>
+    </div>`;
+  document.getElementById('modal-overlay').style.display = 'flex';
+  setTimeout(() => document.getElementById('circle-task-note-input')?.focus(), 80);
+}
+
+async function saveCircleTaskNote(circleId, taskId) {
+  if (!sb || !currentUser) return;
+  const notes = (document.getElementById('circle-task-note-input')?.value || '').trim().slice(0, 100);
+  const btn = document.querySelector('#modal-content .btn-primary');
+  if (btn) { btn.disabled = true; btn.textContent = t('common.saving'); }
+  try {
+    const { error } = await sb.from('circle_tasks')
+      .update({ notes: notes || null })
+      .eq('id', taskId);
+    if (error) throw error;
+    CIRCLE_TASKS[circleId] = sortCircleTasks((CIRCLE_TASKS[circleId] || []).map(task =>
+      task.id === taskId ? { ...task, notes } : task
+    ));
+    closeModal();
+    renderCircleDetail(circleId);
+    toast(t('toast.notesSaved'), 'success');
+  } catch (e) {
+    console.error('Edit circle task note error:', e);
+    toast(t('toast.couldNotSaveNotes'), 'error');
+    if (btn) { btn.disabled = false; btn.textContent = t('common.save'); }
   }
 }
 

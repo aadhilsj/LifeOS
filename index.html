@@ -1573,7 +1573,7 @@ const I18N = {
       connect: 'Connect',
       loadingSchedule: "Loading today's schedule…",
       calendarUnavailable: 'Calendar unavailable.',
-      connectCalendar: "Connect Google Calendar to see today's events and free windows here.",
+      connectCalendar: "Connect Google Calendar to see today's events here.",
       calendarsConnected: '{{count}} calendar{{plural}} connected.',
       noEventsToday: 'No events on your calendar today.',
       linked: 'Linked',
@@ -1590,6 +1590,16 @@ const I18N = {
       commandHint: 'Speak or type naturally —',
       commandHintEmphasis: 'Kairo will sort it into tasks',
       commandPlaceholder: 'e.g. Call dentist, pay rent…',
+      overdueBacklog: '{{count}} tasks overdue — clear the backlog first.',
+      overdueStart: '{{count}} overdue task{{plural}} — start there.',
+      habitsNeedProgressNow: '{{count}} habits need progress right now. Reset the rhythm today.',
+      habitsStrongDay: 'Habits on track + {{count}} task{{plural}} completed. Strong day.',
+      allHabitsOnTrackPrompt: 'All habits on track — now tackle the tasks.',
+      habitsMixedState: '{{onTrack}} habits on track, {{needAttention}} still need attention.',
+      noTasksDoneWeek: "No tasks completed yet this week — let's change that.",
+      strongMomentum: '{{count}} tasks done today. Good momentum.',
+      strongWeek: 'Strong week — {{count}} tasks done. Stay consistent.',
+      calendarUnavailableConfig: 'Calendar unavailable until Google and Vercel are configured.',
     },
     tasksPage: {
       all: 'All',
@@ -1606,6 +1616,9 @@ const I18N = {
       delete: 'Delete',
       edit: 'Edit',
       showMore: 'Show more',
+      toggleFocus: 'Toggle focus',
+      starFocus: 'Star as focus',
+      unstarFocus: 'Unstar focus',
       noDueDate: 'no due date',
       dueToday: 'due today',
       dueDate: 'due {{date}}',
@@ -1650,6 +1663,15 @@ const I18N = {
       consistency: '{{count}}% consistency',
       noStreak: 'No streak',
       streakDays: '{{count}}d streak',
+      perWeek: '{{count}}x / week',
+      perMonth: '{{count}}x / month',
+      windowThisWeek: 'This week',
+      windowThisMonth: 'This month',
+      doneToday: 'Done today',
+      onTrack: 'On track',
+      dueToday: 'Due today',
+      leftThisWeek: '{{count}} left this week',
+      leftThisMonth: '{{count}} left this month',
     },
     capturePage: {
       inbox: 'Inbox ({{count}})',
@@ -1733,12 +1755,26 @@ const I18N = {
       projectNotFound: 'Project not found.',
       sharedProjectInsideCircle: 'Shared project inside this Circle',
       noProjectTasks: 'No project tasks yet. Add the first one below.',
+      loadingSharedTasks: 'Loading shared tasks…',
+      noSharedTasks: 'No shared tasks yet. Add one to get this Circle moving.',
+      sharedTasksTitle: 'Shared Tasks',
+      addSharedTask: 'Add a shared task…',
+      completed: 'Completed',
+      open: 'Open',
+      dueOn: 'Due {{date}}',
+      overdueOn: 'Overdue · {{date}}',
+      doneOn: 'Done {{date}}',
       hideSharedTaskListTitle: 'Hide shared task list?',
       hideSharedTaskListMessage: 'You have {{count}} shared task{{plural}} in this Circle. Disabling this will hide them, but it will not delete them.',
       hideTasks: 'Hide tasks',
       hideSharedProjectsTitle: 'Hide shared projects?',
       hideSharedProjectsMessage: 'You have {{count}} shared project{{plural}} in this Circle. Disabling this will hide them, but it will not delete them.',
       hideProjects: 'Hide projects',
+      linkExpiryNote: 'Expires in 7 days · Revoke via the members list above',
+      deleteCircleConfirm: 'Delete "{{name}}"?',
+      deleteCircleMessage: 'This will permanently delete the Circle and remove all members. This cannot be undone.',
+      leaveCircleConfirm: 'Leave "{{name}}"?',
+      leaveCircleMessage: "You'll lose access to shared tasks and projects in this Circle.",
     },
     settings: {
       profile: 'Profile',
@@ -1786,6 +1822,10 @@ const I18N = {
       creating: 'Creating…',
       sending: 'Sending…',
       joining: 'Joining…',
+      allDay: 'All day',
+      event: 'Event',
+      untitledEvent: 'Untitled event',
+      removeLink: 'Remove Link',
     },
     toast: {
       taskDeleted: 'Task deleted',
@@ -1798,6 +1838,7 @@ const I18N = {
       habitSaved: 'Habit saved',
       taskUpdated: 'Task updated',
       taskAdded: 'Task added',
+      voiceTasksRemoved: 'Voice tasks removed',
       removed: 'Removed',
       undo: 'Undo',
       featureEnabled: 'Feature enabled',
@@ -1833,6 +1874,8 @@ const I18N = {
       couldNotLeaveCircle: 'Could not leave circle',
       couldNotJoinCircle: 'Could not join circle',
       circleFull: 'Circle is full',
+      calendarLinked: 'Calendar event linked',
+      calendarUnlinked: 'Calendar link removed',
     },
     status: {
       syncing: 'Syncing…',
@@ -1864,6 +1907,10 @@ const I18N = {
       type: 'Type',
       link: 'Link',
       deadline: 'Deadline',
+      opportunityNamePlaceholder: 'Google, Bali Trip, Local Bar…',
+      opportunityDescPlaceholder: 'Role, deal type, goal…',
+      linkPlaceholder: 'https://…',
+      iconPlaceholder: 'e.g. 🏃 🧘 💊',
       newHabit: 'New Habit',
       editHabit: 'Edit Habit',
       frequency: 'Frequency',
@@ -1890,6 +1937,14 @@ const I18N = {
       micDenied: 'Microphone access denied',
       micDeniedPeriod: 'Microphone access denied.',
       processing: 'Processing…',
+      thinking: 'Thinking…',
+      addedToCaptureInbox: 'Added to capture inbox',
+      fallbackAddedToCapture: 'Added to capture (AI unavailable)',
+      tryAgain: "Didn't quite catch that. Try again.",
+      tryAgainOrType: "Didn't fully catch that. Try again or type it instead.",
+      singleTaskReady: '1 task ready — review before saving',
+      tasksAdded: '{{count}} tasks added',
+      tasksCreated: '{{count}} tasks created',
     },
     reviewMeta: {
       coachPromptIntro: 'You are a direct, honest personal productivity coach. Weekly review for {{name}}.',
@@ -2020,6 +2075,16 @@ const I18N = {
       commandHint: 'Parlez ou écrivez naturellement —',
       commandHintEmphasis: 'Kairo le transformera en tâches',
       commandPlaceholder: 'ex. Appeler le dentiste, payer le loyer…',
+      overdueBacklog: 'Il y a {{count}} tâches en retard — videz d’abord le backlog.',
+      overdueStart: '{{count}} tâche{{plural}} en retard — commencez par là.',
+      habitsNeedProgressNow: '{{count}} habitudes demandent du progrès maintenant. Relancez le rythme aujourd’hui.',
+      habitsStrongDay: 'Habitudes sur la bonne voie + {{count}} tâche{{plural}} terminée{{plural}}. Bonne journée.',
+      allHabitsOnTrackPrompt: 'Toutes les habitudes sont sur la bonne voie — attaquez maintenant les tâches.',
+      habitsMixedState: '{{onTrack}} habitudes sur la bonne voie, {{needAttention}} demandent encore de l’attention.',
+      noTasksDoneWeek: 'Aucune tâche terminée cette semaine — changeons ça.',
+      strongMomentum: '{{count}} tâches faites aujourd’hui. Bon élan.',
+      strongWeek: 'Bonne semaine — {{count}} tâches faites. Restez régulier.',
+      calendarUnavailableConfig: 'Calendrier indisponible tant que Google et Vercel ne sont pas configurés.',
     },
     tasksPage: {
       all: 'Tout',
@@ -2036,6 +2101,9 @@ const I18N = {
       delete: 'Supprimer',
       edit: 'Modifier',
       showMore: 'Voir plus',
+      toggleFocus: 'Basculer le focus',
+      starFocus: 'Mettre en focus',
+      unstarFocus: 'Retirer du focus',
       noDueDate: 'sans échéance',
       dueToday: "à faire aujourd'hui",
       dueDate: 'pour le {{date}}',
@@ -2080,6 +2148,15 @@ const I18N = {
       consistency: '{{count}}% de régularité',
       noStreak: 'Aucune série',
       streakDays: 'Série de {{count}} j',
+      perWeek: '{{count}}x / semaine',
+      perMonth: '{{count}}x / mois',
+      windowThisWeek: 'Cette semaine',
+      windowThisMonth: 'Ce mois-ci',
+      doneToday: 'Fait aujourd’hui',
+      onTrack: 'Sur la bonne voie',
+      dueToday: 'À faire aujourd’hui',
+      leftThisWeek: 'Il en reste {{count}} cette semaine',
+      leftThisMonth: 'Il en reste {{count}} ce mois-ci',
     },
     capturePage: {
       inbox: 'Boîte ({{count}})',
@@ -2163,12 +2240,26 @@ const I18N = {
       projectNotFound: 'Projet introuvable.',
       sharedProjectInsideCircle: 'Projet partagé dans ce cercle',
       noProjectTasks: 'Aucune tâche de projet pour le moment. Ajoutez-en une juste en dessous.',
+      loadingSharedTasks: 'Chargement des tâches partagées…',
+      noSharedTasks: 'Aucune tâche partagée pour le moment. Ajoutez-en une pour lancer ce cercle.',
+      sharedTasksTitle: 'Tâches partagées',
+      addSharedTask: 'Ajouter une tâche partagée…',
+      completed: 'Terminée',
+      open: 'Ouverte',
+      dueOn: 'Pour le {{date}}',
+      overdueOn: 'En retard · {{date}}',
+      doneOn: 'Fait le {{date}}',
       hideSharedTaskListTitle: 'Masquer la liste de tâches partagée ?',
       hideSharedTaskListMessage: 'Vous avez {{count}} tâche{{plural}} partagée{{plural}} dans ce cercle. La désactiver les masquera, sans les supprimer.',
       hideTasks: 'Masquer les tâches',
       hideSharedProjectsTitle: 'Masquer les projets partagés ?',
       hideSharedProjectsMessage: 'Vous avez {{count}} projet{{plural}} partagé{{plural}} dans ce cercle. Les désactiver les masquera, sans les supprimer.',
       hideProjects: 'Masquer les projets',
+      linkExpiryNote: 'Expire dans 7 jours · Révoquez-le depuis la liste des membres ci-dessus',
+      deleteCircleConfirm: 'Supprimer « {{name}} » ?',
+      deleteCircleMessage: 'Cela supprimera définitivement le cercle et retirera tous ses membres. Cette action est irréversible.',
+      leaveCircleConfirm: 'Quitter « {{name}} » ?',
+      leaveCircleMessage: 'Vous perdrez l’accès aux tâches et projets partagés de ce cercle.',
     },
     settings: {
       profile: 'Profil',
@@ -2216,6 +2307,10 @@ const I18N = {
       creating: 'Création…',
       sending: 'Envoi…',
       joining: 'Connexion…',
+      allDay: 'Toute la journée',
+      event: 'Événement',
+      untitledEvent: 'Événement sans titre',
+      removeLink: 'Retirer le lien',
     },
     toast: {
       taskDeleted: 'Tâche supprimée',
@@ -2228,6 +2323,7 @@ const I18N = {
       habitSaved: 'Habitude enregistrée',
       taskUpdated: 'Tâche mise à jour',
       taskAdded: 'Tâche ajoutée',
+      voiceTasksRemoved: 'Tâches vocales supprimées',
       removed: 'Supprimé',
       undo: 'Annuler',
       featureEnabled: 'Fonction activée',
@@ -2263,6 +2359,8 @@ const I18N = {
       couldNotLeaveCircle: 'Impossible de quitter le cercle',
       couldNotJoinCircle: 'Impossible de rejoindre le cercle',
       circleFull: 'Le cercle est complet',
+      calendarLinked: 'Événement lié au projet',
+      calendarUnlinked: 'Lien du calendrier supprimé',
     },
     status: {
       syncing: 'Synchronisation…',
@@ -2294,6 +2392,10 @@ const I18N = {
       type: 'Type',
       link: 'Lien',
       deadline: 'Date limite',
+      opportunityNamePlaceholder: 'Google, voyage à Bali, bar du coin…',
+      opportunityDescPlaceholder: 'Rôle, type d’opportunité, objectif…',
+      linkPlaceholder: 'https://…',
+      iconPlaceholder: 'ex. 🏃 🧘 💊',
       newHabit: 'Nouvelle habitude',
       editHabit: 'Modifier l’habitude',
       frequency: 'Fréquence',
@@ -2320,6 +2422,14 @@ const I18N = {
       micDenied: 'Accès au micro refusé',
       micDeniedPeriod: 'Accès au micro refusé.',
       processing: 'Traitement…',
+      thinking: 'Réflexion…',
+      addedToCaptureInbox: 'Ajouté à la boîte de capture',
+      fallbackAddedToCapture: 'Ajouté à la capture (IA indisponible)',
+      tryAgain: 'Je n’ai pas bien compris. Réessayez.',
+      tryAgainOrType: 'Je n’ai pas tout compris. Réessayez ou tapez-le directement.',
+      singleTaskReady: '1 tâche prête — vérifiez avant d’enregistrer',
+      tasksAdded: '{{count}} tâches ajoutées',
+      tasksCreated: '{{count}} tâches créées',
     },
     reviewMeta: {
       coachPromptIntro: 'Vous êtes un coach de productivité personnel direct et honnête. Revue hebdomadaire pour {{name}}.',
@@ -2570,6 +2680,7 @@ function applyStaticTranslations() {
   setText('home-dtn-label', t('home.dtnTitle'));
   setText('home-today-tasks-title', t('home.todayTasksTitle'));
   setText('home-today-tasks-all', t('home.seeAll'));
+  setText('tasks-done-title', t('tasksPage.completed'));
   setText('home-schedule-title', t('home.scheduleTitle'));
   setText('home-active-projects-title', t('home.activeProjectsTitle'));
   setText('home-active-projects-all', t('home.all'));
@@ -2802,17 +2913,17 @@ function syncFab(){
   fab.style.display=showFab?'flex':'none';
   if(currentPage==='tasks'){
     fab.innerHTML='🎙';
-    fab.title='Voice add task';
+    fab.title=t('nav.tasks');
     fab.onclick=()=>toggleTasksFabVoice();
     fab.classList.remove('recording');
   } else if(currentPage==='projects' && currentHub!=='review'){
     fab.innerHTML='+';
-    fab.title=currentHub==='opportunities'?'New opportunity':'New project';
+    fab.title=currentHub==='opportunities'?t('forms.newOpportunity'):t('forms.newProject');
     fab.onclick=()=>openAddProjectOrOpp();
     fab.classList.remove('recording');
   } else {
     fab.innerHTML='+';
-    fab.title='Add task';
+    fab.title=t('forms.addTask');
     fab.onclick=()=>openAddTask();
     fab.classList.remove('recording');
   }
@@ -2973,10 +3084,10 @@ function taskHTML(task,isFocus){
           <div class="task-title-wrap">
             <span class="task-title-text${task.completed?' done':''}" onclick="toggleExpand('${task.id}')">${escHtml(task.title)}</span>
           </div>
-          <span class="task-expand-indicator" id="expand-indicator-${task.id}" onclick="toggleExpand('${task.id}')" title="Show more">▾</span>
+          <span class="task-expand-indicator" id="expand-indicator-${task.id}" onclick="toggleExpand('${task.id}')" title="${t('tasksPage.showMore')}">▾</span>
         </div>
         <div class="task-actions flex-gap-sm">
-          <button class="focus-btn${isFocus?' active':''}" onclick="toggleFocus('${task.id}')" title="Toggle focus" data-tip="${isFocus?'Unstar focus':'Star as focus'}">★</button>
+          <button class="focus-btn${isFocus?' active':''}" onclick="toggleFocus('${task.id}')" title="${t('tasksPage.toggleFocus')}" data-tip="${isFocus?t('tasksPage.unstarFocus'):t('tasksPage.starFocus')}">★</button>
           <button class="dismiss-btn" onclick="dismissTask('${task.id}')" title="${task.dismissed?t('tasksPage.restore'):t('tasksPage.dismiss')}" data-tip="${task.dismissed?t('tasksPage.restore'):t('tasksPage.dismiss')}">${task.dismissed?'↺':'↷'}</button>
           <button class="btn-icon" onclick="openEditTask('${task.id}')" title="${t('tasksPage.edit')}" data-tip="${t('tasksPage.edit')}">✎</button>
           <button class="btn-icon delete-btn" onclick="deleteTask('${task.id}')" title="${t('tasksPage.delete')}" data-tip="${t('tasksPage.delete')}" style="color:var(--accent)">🗑</button>
@@ -3607,11 +3718,11 @@ function openAddJob(editId=null){
   const j=editId?migrateJob(DATA.jobs.find(x=>x.id===editId)||{}):({});
   openModal(`<h3>${editId?t('forms.editOpportunity'):t('forms.newOpportunity')}</h3>
     <div class="form-grid">
-      <div class="form-row"><label>${t('forms.name')}</label><input class="input" id="m-jco" value="${escHtml(j.name||j.company||'')}" placeholder="Google, Bali Trip, Local Bar…" autofocus/></div>
+      <div class="form-row"><label>${t('forms.name')}</label><input class="input" id="m-jco" value="${escHtml(j.name||j.company||'')}" placeholder="${t('forms.opportunityNamePlaceholder')}" autofocus/></div>
       <div class="form-row"><label>${t('forms.type')}</label><select class="input" id="m-jtype">${OPP_TYPES.map(type=>`<option${type===(j.type||'Job')?' selected':''}>${type}</option>`).join('')}</select></div>
     </div>
-    <div class="form-row"><label>${t('forms.description')}</label><input class="input" id="m-jrole" value="${escHtml(j.description||j.role||'')}" placeholder="Role, deal type, goal…"/></div>
-    <div class="form-row"><label>${t('forms.link')}</label><input class="input" id="m-jurl" value="${escHtml(j.url||'')}" placeholder="https://…"/></div>
+    <div class="form-row"><label>${t('forms.description')}</label><input class="input" id="m-jrole" value="${escHtml(j.description||j.role||'')}" placeholder="${t('forms.opportunityDescPlaceholder')}"/></div>
+    <div class="form-row"><label>${t('forms.link')}</label><input class="input" id="m-jurl" value="${escHtml(j.url||'')}" placeholder="${t('forms.linkPlaceholder')}"/></div>
     <div class="form-grid">
       <div class="form-row"><label>${t('forms.status')}</label><select class="input" id="m-jstage">${OPP_STAGES.map(s=>`<option${s===(j.stage||'Exploring')?' selected':''}>${s}</option>`).join('')}</select></div>
       <div class="form-row"><label>${t('forms.deadline')}</label><input type="date" class="input" id="m-jdead" value="${j.deadline||''}"/></div>
@@ -3664,7 +3775,7 @@ function openAddHabit(editId=null){
         <input class="input" id="m-htarget" type="number" min="1" max="${normalized.frequencyType==='monthly'?'31':'7'}" value="${normalized.targetCount||1}"/>
       </div>
     </div>
-    <div class="form-row"><label>${t('forms.iconEmoji')}</label><input class="input" id="m-hicon" value="${normalized.icon||''}" placeholder="e.g. 🏃 🧘 💊"/></div>
+    <div class="form-row"><label>${t('forms.iconEmoji')}</label><input class="input" id="m-hicon" value="${normalized.icon||''}" placeholder="${t('forms.iconPlaceholder')}"/></div>
     <div class="flex-gap" style="justify-content:flex-end;margin-top:6px">
       <button class="btn btn-ghost" onclick="closeModal()">${t('common.cancel')}</button>
       <button class="btn btn-primary" onclick="saveHabit('${editId||''}')">${t('common.save')}</button>
@@ -3807,8 +3918,8 @@ function setHabitCompletionCount(habitId, dateStr, count) {
 }
 
 function getHabitFrequencyLabel(habit) {
-  if (habit.frequencyType === 'weekly') return `${habit.targetCount}x / ${getCurrentLanguage()==='fr' ? 'semaine' : 'week'}`;
-  if (habit.frequencyType === 'monthly') return `${habit.targetCount}x / ${getCurrentLanguage()==='fr' ? 'mois' : 'month'}`;
+  if (habit.frequencyType === 'weekly') return t('habitsPage.perWeek', { count: habit.targetCount });
+  if (habit.frequencyType === 'monthly') return t('habitsPage.perMonth', { count: habit.targetCount });
   return t('forms.daily');
 }
 
@@ -3818,7 +3929,11 @@ function getHabitWindowInfo(habit, refDate = today()) {
   const completed = enumerateDates(start, end).reduce((sum, dateKey) => sum + getHabitCompletionCount(habit.id, dateKey), 0);
   const target = habit.frequencyType === 'daily' ? 1 : habit.targetCount;
   const remaining = Math.max(0, target - completed);
-  const windowLabel = habit.frequencyType === 'monthly' ? 'This month' : habit.frequencyType === 'weekly' ? 'This week' : 'Today';
+  const windowLabel = habit.frequencyType === 'monthly'
+    ? t('habitsPage.windowThisMonth')
+    : habit.frequencyType === 'weekly'
+      ? t('habitsPage.windowThisWeek')
+      : t('labels.today');
   const endDate = parseDateKey(end);
   const ref = parseDateKey(refDate);
   const daysLeft = Math.max(0, Math.ceil((endDate - ref) / 86400000));
@@ -3832,12 +3947,12 @@ function getHabitWindowInfo(habit, refDate = today()) {
     windowLabel,
     progressLabel: `${windowLabel}: ${Math.min(completed, target)}/${target}`,
     statusLabel: remaining === 0
-      ? habit.frequencyType === 'daily' ? (getCurrentLanguage()==='fr' ? "Fait aujourd'hui" : 'Done today') : (getCurrentLanguage()==='fr' ? 'Sur la bonne voie' : 'On track')
+      ? habit.frequencyType === 'daily' ? t('habitsPage.doneToday') : t('habitsPage.onTrack')
       : habit.frequencyType === 'daily'
-        ? (getCurrentLanguage()==='fr' ? "À faire aujourd'hui" : 'Due today')
-        : getCurrentLanguage()==='fr'
-          ? `${remaining} restant${remaining>1?'s':''} ${habit.frequencyType === 'weekly' ? 'cette semaine' : 'ce mois-ci'}`
-          : `${remaining} left ${habit.frequencyType === 'weekly' ? 'this week' : 'this month'}`,
+        ? t('habitsPage.dueToday')
+        : habit.frequencyType === 'weekly'
+          ? t('habitsPage.leftThisWeek', { count: remaining })
+          : t('habitsPage.leftThisMonth', { count: remaining }),
     daysLeft,
   };
 }
@@ -3931,15 +4046,15 @@ function getContextBar(){
   const habitsNeedingAttention=DATA.habitDefs.filter(h=>!getHabitWindowInfo(h, td).isComplete).length;
   const habitsOnTrack=DATA.habitDefs.length-habitsNeedingAttention;
 
-  if(overdue.length>=3) return{cls:'warn',icon:'⚠️',msg:getCurrentLanguage()==='fr'?`${overdue.length} tâches en retard — videz le backlog d'abord.`:`${overdue.length} tasks overdue — clear the backlog first.`};
-  if(overdue.length>0&&doneToday.length===0) return{cls:'warn',icon:'⌛︎',msg:getCurrentLanguage()==='fr'?`${overdue.length} tâche${overdue.length>1?'s':''} en retard — commencez par là.`:`${overdue.length} overdue task${overdue.length>1?'s':''} — start there.`};
-  if(habitsNeedingAttention>=2&&doneToday.length===0) return{cls:'gold',icon:'〰️',msg:getCurrentLanguage()==='fr'?`${habitsNeedingAttention} habitudes demandent du progrès maintenant. Relancez le rythme aujourd'hui.`:`${habitsNeedingAttention} habits need progress right now. Reset the rhythm today.`};
-  if(habitsNeedingAttention===0&&doneToday.length>0) return{cls:'green',icon:'🔥',msg:getCurrentLanguage()==='fr'?`Habitudes sur la bonne voie + ${doneToday.length} tâche${doneToday.length>1?'s':''} terminée${doneToday.length>1?'s':''}. Bonne journée.`:`Habits on track + ${doneToday.length} task${doneToday.length>1?'s':''} completed. Strong day.`};
-  if(habitsNeedingAttention===0&&DATA.habitDefs.length>0) return{cls:'green',icon:'✓',msg:getCurrentLanguage()==='fr'?`Toutes les habitudes sont sur la bonne voie — attaquez maintenant les tâches.`:`All habits on track — now tackle the tasks.`};
-  if(habitsOnTrack>0&&habitsNeedingAttention>0) return{cls:'gold',icon:'↺',msg:getCurrentLanguage()==='fr'?`${habitsOnTrack} habitudes sur la bonne voie, ${habitsNeedingAttention} demandent encore de l'attention.`:`${habitsOnTrack} habits on track, ${habitsNeedingAttention} still need attention.`};
-  if(doneWeek.length===0&&new Date().getDay()>=3) return{cls:'warn',icon:'📉',msg:getCurrentLanguage()==='fr'?`Aucune tâche terminée cette semaine — changeons ça.`:`No tasks completed yet this week — let's change that.`};
-  if(doneToday.length>=3) return{cls:'green',icon:'⚡',msg:getCurrentLanguage()==='fr'?`${doneToday.length} tâches faites aujourd'hui. Bon élan.`:`${doneToday.length} tasks done today. Good momentum.`};
-  if(doneWeek.length>=5) return{cls:'gold',icon:'📈',msg:getCurrentLanguage()==='fr'?`Bonne semaine — ${doneWeek.length} tâches faites. Restez régulier.`:`Strong week — ${doneWeek.length} tasks done. Stay consistent.`};
+  if(overdue.length>=3) return{cls:'warn',icon:'⚠️',msg:t('home.overdueBacklog',{count:overdue.length})};
+  if(overdue.length>0&&doneToday.length===0) return{cls:'warn',icon:'⌛︎',msg:t('home.overdueStart',{count:overdue.length,plural:pluralSuffix(overdue.length)})};
+  if(habitsNeedingAttention>=2&&doneToday.length===0) return{cls:'gold',icon:'〰️',msg:t('home.habitsNeedProgressNow',{count:habitsNeedingAttention})};
+  if(habitsNeedingAttention===0&&doneToday.length>0) return{cls:'green',icon:'🔥',msg:t('home.habitsStrongDay',{count:doneToday.length,plural:pluralSuffix(doneToday.length)})};
+  if(habitsNeedingAttention===0&&DATA.habitDefs.length>0) return{cls:'green',icon:'✓',msg:t('home.allHabitsOnTrackPrompt')};
+  if(habitsOnTrack>0&&habitsNeedingAttention>0) return{cls:'gold',icon:'↺',msg:t('home.habitsMixedState',{onTrack:habitsOnTrack,needAttention:habitsNeedingAttention})};
+  if(doneWeek.length===0&&new Date().getDay()>=3) return{cls:'warn',icon:'📉',msg:t('home.noTasksDoneWeek')};
+  if(doneToday.length>=3) return{cls:'green',icon:'⚡',msg:t('home.strongMomentum',{count:doneToday.length})};
+  if(doneWeek.length>=5) return{cls:'gold',icon:'📈',msg:t('home.strongWeek',{count:doneWeek.length})};
   return null;
 }
 
@@ -3950,7 +4065,7 @@ function formatDueLabel(dateStr){
 
 function formatCalendarTime(isoString, isAllDay){
   if(!isoString) return '';
-  if(isAllDay) return getCurrentLanguage()==='fr' ? 'Toute la journée' : 'All day';
+  if(isAllDay) return t('common.allDay');
   return new Date(isoString).toLocaleTimeString(getCurrentLocale(),{hour:'numeric',minute:'2-digit'});
 }
 
@@ -3989,11 +4104,11 @@ function openCalendarLinkModal(eventKey){
   const event = CALENDAR_STATE.events.find(item=>getCalendarEventKey(item)===eventKey);
   if(!event) return;
   const linkedProject = getCalendarLinkedProject(event);
-  openModal(`<h3>${getCurrentLanguage()==='fr' ? 'Lier un événement à un projet' : 'Link Event to Project'}</h3>
+  openModal(`<h3>${t('workspace.editLink')}</h3>
     <div class="form-row">
-      <label>${getCurrentLanguage()==='fr' ? 'Événement' : 'Event'}</label>
+      <label>${t('common.event')}</label>
       <div class="note-block" style="min-height:auto">
-        <div style="font-weight:600;color:var(--text)">${escHtml(event.summary||(getCurrentLanguage()==='fr' ? 'Événement sans titre' : 'Untitled event'))}</div>
+        <div style="font-weight:600;color:var(--text)">${escHtml(event.summary||t('common.untitledEvent'))}</div>
         <div class="text-xs text-dim" style="margin-top:4px">${escHtml(formatCalendarTime(event.start,event.isAllDay))}${event.end&&!event.isAllDay?` - ${escHtml(formatCalendarTime(event.end,false))}`:''}${event.sourceLabel?` · ${escHtml(event.sourceLabel)}`:''}</div>
       </div>
     </div>
@@ -4005,7 +4120,7 @@ function openCalendarLinkModal(eventKey){
       </select>
     </div>
     <div class="flex-gap" style="justify-content:space-between;margin-top:6px">
-      <button class="btn btn-ghost" onclick="removeCalendarLink('${eventKey}')">${getCurrentLanguage()==='fr' ? 'Retirer le lien' : 'Remove Link'}</button>
+      <button class="btn btn-ghost" onclick="removeCalendarLink('${eventKey}')">${t('common.removeLink')}</button>
       <div class="flex-gap">
         <button class="btn btn-ghost" onclick="closeModal()">${t('common.cancel')}</button>
           <button class="btn btn-primary" onclick="saveCalendarLinkFromModal('${eventKey}')">${t('common.save')}</button>
@@ -4020,7 +4135,7 @@ function saveCalendarLinkFromModal(eventKey){
   saveCalendarProjectLink(event, projectId || null);
   closeModal();
   renderAll();
-  toast(projectId ? (getCurrentLanguage()==='fr' ? 'Événement lié au projet' : 'Calendar event linked') : (getCurrentLanguage()==='fr' ? 'Lien du calendrier supprimé' : 'Calendar link removed'),'success');
+  toast(projectId ? t('toast.calendarLinked') : t('toast.calendarUnlinked'),'success');
 }
 
 function removeCalendarLink(eventKey){
@@ -4029,7 +4144,7 @@ function removeCalendarLink(eventKey){
   saveCalendarProjectLink(event, null);
   closeModal();
   renderAll();
-  toast(getCurrentLanguage()==='fr' ? 'Lien du calendrier supprimé' : 'Calendar link removed','info');
+  toast(t('toast.calendarUnlinked'),'info');
 }
 
 function formatFreeWindow(window){
@@ -4073,7 +4188,7 @@ async function fetchCalendarData(){
       message:'',
       connections:[],
       connectedCount:0,
-      error:getCurrentLanguage()==='fr' ? 'Calendrier indisponible tant que Google et Vercel ne sont pas configurés.' : 'Calendar unavailable until Google and Vercel are configured.',
+      error:t('home.calendarUnavailableConfig'),
     };
   }
   if(currentPage==='home') renderHome();
@@ -4109,7 +4224,7 @@ async function sendToVoiceAPI(text, audioB64, mimeType, overrideStatusEl){
     }
   }
 
-  setStatus(getCurrentLanguage()==='fr' ? 'Réflexion…' : 'Thinking…','processing');
+  setStatus(t('voice.thinking'),'processing');
 
   try{
     const body = isTextMode
@@ -4144,20 +4259,20 @@ async function sendToVoiceAPI(text, audioB64, mimeType, overrideStatusEl){
       if(isTextMode){
         const inp=document.getElementById('capture-input');
         if(inp) inp.value=transcript;
-        setStatus('Added to capture inbox','info');
+        setStatus(t('voice.addedToCaptureInbox'),'info');
         DATA.captures.unshift({id:uid(),text:transcript,createdAt:today()});
         scheduleSave(); renderAll();
       } else {
         const cleanTranscript = transcript.trim();
         const unclear = !cleanTranscript || cleanTranscript.length < 4;
-        setStatus(unclear ? `Didn't quite catch that. Try again.` : `Didn't fully catch that. Try again or type it instead.`, 'error');
+        setStatus(unclear ? t('voice.tryAgain') : t('voice.tryAgainOrType'), 'error');
       }
       setTimeout(()=>setStatus(''),3000);
       return;
     }
 
     if(tasks.length===1){
-      setStatus(`1 task ready — review before saving`,'done');
+      setStatus(t('voice.singleTaskReady'),'done');
       pendingVoiceReview = true;
       pendingReviewStatusTarget = statusEl || null;
       openAddTask(tasks[0].projectId||'', { kind:'voice-single-task-review' });
@@ -4177,14 +4292,14 @@ async function sendToVoiceAPI(text, audioB64, mimeType, overrideStatusEl){
           notes:t.notes||'',completed:false,completedDate:null,subtasks:[],createdAt:td});
       });
       scheduleSave(); renderAll();
-      setStatus(`${tasks.length} tasks added`,'done');
+      setStatus(t('voice.tasksAdded',{count:tasks.length}),'done');
 
       // Undo toast
       clearTimeout(toastTimer);
       const toastEl=document.getElementById('toast');
       document.getElementById('toast-dot').className='toast-dot info';
       document.getElementById('toast-msg').innerHTML=
-        `${tasks.length} tasks created &nbsp;<button onclick="undoVoiceTasks(${JSON.stringify(newIds)})" style="background:none;border:none;color:var(--gold);font-size:12px;cursor:pointer;font-family:inherit;font-weight:600;padding:0">Undo</button>`;
+        `${t('voice.tasksCreated',{count:tasks.length})} &nbsp;<button onclick="undoVoiceTasks(${JSON.stringify(newIds)})" style="background:none;border:none;color:var(--gold);font-size:12px;cursor:pointer;font-family:inherit;font-weight:600;padding:0">${t('toast.undo')}</button>`;
       toastEl.style.display='flex'; toastEl.className='toast';
       toastTimer=setTimeout(()=>{toastEl.classList.add('hide');setTimeout(()=>toastEl.style.display='none',250);},5000);
       setTimeout(()=>setStatus(''),3000);
@@ -4196,9 +4311,9 @@ async function sendToVoiceAPI(text, audioB64, mimeType, overrideStatusEl){
       if(inp) inp.value=text;
       DATA.captures.unshift({id:uid(),text,createdAt:today()});
       scheduleSave(); renderAll();
-      setStatus('Added to capture (AI unavailable)','info');
+      setStatus(t('voice.fallbackAddedToCapture'),'info');
     } else {
-      setStatus(`Didn't quite catch that. Try again.`, 'error');
+      setStatus(t('voice.tryAgain'), 'error');
     }
     setTimeout(()=>setStatus(''),3000);
   }
@@ -4272,7 +4387,7 @@ async function toggleTasksFabVoice(){
   }
 
   if(!navigator.mediaDevices?.getUserMedia){
-    if(pill){pill.textContent='Mic not supported';pill.className='fab-voice-status visible error';}
+    if(pill){pill.textContent=t('voice.micNotSupported');pill.className='fab-voice-status visible error';}
     setTimeout(()=>{if(pill)pill.className='fab-voice-status';},3000);
     return;
   }
@@ -4288,7 +4403,7 @@ async function toggleTasksFabVoice(){
     if(fab){fab.innerHTML='⏹';fab.classList.add('recording');}
     if(pill){pill.textContent=t('voice.listeningTapToStop');pill.className='fab-voice-status visible active';}
   }catch(e){
-    if(pill){pill.textContent='Mic access denied';pill.className='fab-voice-status visible error';}
+    if(pill){pill.textContent=t('voice.micDenied');pill.className='fab-voice-status visible error';}
     setTimeout(()=>{if(pill)pill.className='fab-voice-status';},3000);
   }
 }
@@ -4625,7 +4740,7 @@ function undoVoiceTasks(ids){
   const toastEl=document.getElementById('toast');
   toastEl.classList.add('hide');
   setTimeout(()=>toastEl.style.display='none',250);
-  toast('Voice tasks removed','info');
+  toast(t('toast.voiceTasksRemoved'),'info');
 }
 
 // ─── Review (with cache) ──────────────────────────────────────────────────────
@@ -4954,11 +5069,11 @@ async function loadCircleProjects(circleId, { silent = false } = {}) {
 }
 
 function getCircleTaskStatus(task) {
-  if (task.completed) return 'Completed';
-  if (!task.due_date) return 'Open';
-  if (task.due_date < today()) return `Overdue · ${formatDueLabel(task.due_date)}`;
-  if (task.due_date === today()) return 'Due today';
-  return `Due ${formatDueLabel(task.due_date)}`;
+  if (task.completed) return t('circlesPage.completed');
+  if (!task.due_date) return t('circlesPage.open');
+  if (task.due_date < today()) return t('circlesPage.overdueOn', { date: formatDueLabel(task.due_date) });
+  if (task.due_date === today()) return t('tasksPage.dueToday');
+  return t('circlesPage.dueOn', { date: formatDueLabel(task.due_date) });
 }
 
 function renderCircleTasksSection(circleId) {
@@ -4966,9 +5081,9 @@ function renderCircleTasksSection(circleId) {
   const loading = !!circleTasksLoading[circleId];
   const openCount = tasks.filter(t => !t.completed).length;
   const rows = loading
-    ? `<div class="circle-task-empty">Loading shared tasks…</div>`
+    ? `<div class="circle-task-empty">${t('circlesPage.loadingSharedTasks')}</div>`
     : tasks.length === 0
-      ? `<div class="circle-task-empty">No shared tasks yet. Add one to get this Circle moving.</div>`
+      ? `<div class="circle-task-empty">${t('circlesPage.noSharedTasks')}</div>`
       : tasks.map(task => `
         <div class="circle-task-row">
           <div class="circle-task-check${task.completed ? ' done' : ''}" onclick="toggleCircleTask('${circleId}','${task.id}')"></div>
@@ -4976,7 +5091,7 @@ function renderCircleTasksSection(circleId) {
             <div class="circle-task-title${task.completed ? ' done' : ''}">${escHtml(task.title)}</div>
             <div class="circle-task-meta">
               <span>${escHtml(getCircleTaskStatus(task))}</span>
-              ${task.completed_at ? `<span>Done ${new Date(task.completed_at).toLocaleDateString('en-GB',{day:'numeric',month:'short'})}</span>` : ''}
+              ${task.completed_at ? `<span>${t('circlesPage.doneOn', { date: new Date(task.completed_at).toLocaleDateString(getCurrentLocale(),{day:'numeric',month:'short'}) })}</span>` : ''}
             </div>
           </div>
           <button class="btn-icon" onclick="deleteCircleTask('${circleId}','${task.id}')" style="color:var(--accent)">✕</button>
@@ -4986,13 +5101,13 @@ function renderCircleTasksSection(circleId) {
   return `
     <div class="card mt14">
       <div class="flex-between mb12">
-        <div class="card-title" style="margin:0">Shared Tasks</div>
-        <span class="text-xs text-dim">${openCount} open</span>
+        <div class="card-title" style="margin:0">${t('circlesPage.sharedTasksTitle')}</div>
+        <span class="text-xs text-dim">${t('circlesPage.openCount',{count:openCount})}</span>
       </div>
       <div class="circle-task-add">
-        <input class="input" id="circle-task-title-${circleId}" placeholder="Add a shared task…" onkeydown="if(event.key==='Enter')addCircleTask('${circleId}')"/>
+        <input class="input" id="circle-task-title-${circleId}" placeholder="${t('circlesPage.addSharedTask')}" onkeydown="if(event.key==='Enter')addCircleTask('${circleId}')"/>
         <input class="input" id="circle-task-due-${circleId}" type="date"/>
-        <button class="btn btn-primary btn-sm" onclick="addCircleTask('${circleId}')">Add</button>
+        <button class="btn btn-primary btn-sm" onclick="addCircleTask('${circleId}')">${t('common.add')}</button>
       </div>
       <div style="margin-top:10px">${rows}</div>
     </div>`;
@@ -5060,7 +5175,7 @@ function renderCircleProjectDetail(circleId, projectId, members = []) {
             <div class="circle-task-meta">
               <span>${escHtml(getCircleTaskStatus(task))}</span>
               ${task.assigned_to ? `<span class="circle-assignee-chip">${escHtml(getCircleMemberLabel(circleId, task.assigned_to, members))}</span>` : ''}
-              ${task.completed_at ? `<span>Done ${new Date(task.completed_at).toLocaleDateString('en-GB',{day:'numeric',month:'short'})}</span>` : ''}
+              ${task.completed_at ? `<span>${t('circlesPage.doneOn', { date: new Date(task.completed_at).toLocaleDateString(getCurrentLocale(),{day:'numeric',month:'short'}) })}</span>` : ''}
             </div>
           </div>
           <button class="btn-icon" onclick="deleteCircleTask('${circleId}','${task.id}')" style="color:var(--accent)">✕</button>
@@ -5893,7 +6008,7 @@ async function generateCircleInviteLink(circleId) {
           <span class="invite-link-text">${escHtml(link)}</span>
           <button class="btn btn-ghost btn-xs" onclick="copyCircleLink('${escHtml(link)}')">${t('common.copy')}</button>
         </div>
-        <div class="text-xs text-dim mt4">Expires in 7 days · Revoke via the members list above</div>`;
+        <div class="text-xs text-dim mt4">${t('circlesPage.linkExpiryNote')}</div>`;
     }
   } catch(e) {
     console.error('Generate link error:', e);
@@ -5930,8 +6045,8 @@ function confirmDeleteCircle(id) {
   const entry = CIRCLES_DATA.find(e => e.circle.id === id);
   if (!entry) return;
   document.getElementById('modal-content').innerHTML = `
-    <h3>Delete "${escHtml(entry.circle.name)}"?</h3>
-    <div class="text-sm text-dim mb16" style="line-height:1.6">This will permanently delete the Circle and remove all members. This cannot be undone.</div>
+    <h3>${t('circlesPage.deleteCircleConfirm', { name: escHtml(entry.circle.name) })}</h3>
+    <div class="text-sm text-dim mb16" style="line-height:1.6">${t('circlesPage.deleteCircleMessage')}</div>
     <div style="display:flex;gap:8px;justify-content:flex-end">
       <button class="btn btn-ghost" onclick="closeModal()">${t('common.cancel')}</button>
       <button class="btn btn-danger" onclick="deleteCircle('${id}')">${t('circlesPage.deleteCircle')}</button>
@@ -5960,8 +6075,8 @@ function confirmLeaveCircle(id) {
   const entry = CIRCLES_DATA.find(e => e.circle.id === id);
   if (!entry) return;
   document.getElementById('modal-content').innerHTML = `
-    <h3>Leave "${escHtml(entry.circle.name)}"?</h3>
-    <div class="text-sm text-dim mb16" style="line-height:1.6">You'll lose access to shared tasks and projects in this Circle.</div>
+    <h3>${t('circlesPage.leaveCircleConfirm', { name: escHtml(entry.circle.name) })}</h3>
+    <div class="text-sm text-dim mb16" style="line-height:1.6">${t('circlesPage.leaveCircleMessage')}</div>
     <div style="display:flex;gap:8px;justify-content:flex-end">
       <button class="btn btn-ghost" onclick="closeModal()">${t('common.cancel')}</button>
       <button class="btn btn-danger" onclick="leaveCircle('${id}')">${t('circlesPage.leaveCircle')}</button>

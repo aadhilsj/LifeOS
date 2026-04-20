@@ -757,6 +757,9 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;heigh
   .task-title-text{font-size:14px}
   /* Hide trash in header row on mobile — available in expanded view */
   .task-actions .delete-btn{display:none}
+  /* Reduce demo/hint text in command bar and capture */
+  .command-bar-hint{font-size:9.5px}
+  .command-bar-input{font-size:13px}
 }
 .page-tabs{display:flex;gap:2px;background:var(--surface);padding:3px;border-radius:10px;margin-bottom:16px}
 .page-tab{flex:1;padding:7px 8px;text-align:center;font-size:12px;font-weight:500;color:var(--text-3);
@@ -2591,6 +2594,7 @@ function ensureSettingsShape() {
   };
   DATA.settings.modules = {
     opportunities: DATA.settings.modules?.opportunities !== false,
+    taskBadge: DATA.settings.modules?.taskBadge !== false,
   };
 }
 
@@ -2982,6 +2986,12 @@ function syncFab(){
     fab.title=t('nav.tasks');
     fab.onclick=()=>toggleTasksFabVoice();
     fab.classList.remove('recording');
+  } else if(currentPage==='projects' && projectDetailId){
+    // Inside a project detail — FAB creates a task for this project
+    fab.innerHTML='+';
+    fab.title=t('forms.addTask');
+    fab.onclick=()=>openAddProjectTask(projectDetailId);
+    fab.classList.remove('recording');
   } else if(currentPage==='projects' && currentHub!=='review'){
     fab.innerHTML='+';
     fab.title=currentHub==='opportunities'?t('forms.newOpportunity'):t('forms.newProject');
@@ -3039,7 +3049,6 @@ function renderAll(){
   updateTopbarActions(currentPage);
   renderPage(currentPage);
   updateBadges();
-  requestAnimationFrame(attachSwipeHandlers);
 }
 function renderPage(p){
   if(p==='home')     renderHome();
@@ -3054,12 +3063,13 @@ function renderPage(p){
 function updateBadges(){
   const ov=DATA.tasks.filter(t=>isOverdue(t)).length;
   const cap=DATA.captures.length;
+  const showTaskBadge = DATA.settings?.modules?.taskBadge !== false;
   const tb=document.getElementById('tasks-badge');
-  if(ov>0){tb.style.display='';tb.textContent=ov;}else tb.style.display='none';
+  if(ov>0&&showTaskBadge){tb.style.display='';tb.textContent=ov;}else tb.style.display='none';
   const cb=document.getElementById('capture-badge');
   if(cap>0){cb.style.display='';cb.textContent=cap;}else cb.style.display='none';
   const tbm=document.getElementById('tasks-badge-mob');
-  if(tbm){if(ov>0){tbm.style.display='';tbm.textContent=ov;}else tbm.style.display='none';}
+  if(tbm){if(ov>0&&showTaskBadge){tbm.style.display='';tbm.textContent=ov;}else tbm.style.display='none';}
   const cbm=document.getElementById('capture-badge-mob');
   if(cbm){if(cap>0){cbm.style.display='';cbm.textContent=cap;}else cbm.style.display='none';}
 }
@@ -3101,10 +3111,13 @@ function renderTasks(){
   document.getElementById('tasks-tabs').innerHTML=['All',...FOCUS_AREAS].map(a=>
     `<div class="tab${taskFilter===a?' active':''}" onclick="setTaskFilter('${a}')">${a==='All'?t('tasksPage.all'):labelFocusArea(a)}</div>`).join('');
   const sel=document.getElementById('tasks-project-filter'), cur=sel.value;
-  sel.innerHTML=`<option value="">${t('tasksPage.allTasks')}</option>`+DATA.projects.map(p=>`<option value="${p.id}"${p.id===cur?' selected':''}>${escHtml(p.title)}</option>`).join('');
+  sel.innerHTML=`<option value="">${t('tasksPage.allTasks')}</option>`
+    +`<option value="__none__"${cur==='__none__'?' selected':''}>No Project</option>`
+    +DATA.projects.map(p=>`<option value="${p.id}"${p.id===cur?' selected':''}>${escHtml(p.title)}</option>`).join('');
   const pf=sel.value;
   const filtered=DATA.tasks.filter(t=>{
     if(taskFilter!=='All'&&t.focusArea!==taskFilter) return false;
+    if(pf==='__none__') return !t.projectId;
     if(pf&&t.projectId!==pf) return false;
     return true;
   });
@@ -3320,6 +3333,7 @@ function openProjectDetail(id){
   projectDetailId=id;
   document.getElementById('projects-list-view').style.display='none';
   document.getElementById('project-detail-view').style.display='';
+  syncFab();
   renderProjectDetail(id);
 }
 
@@ -3383,9 +3397,24 @@ function renderProjectDetail(id){
     </div>`;
 }
 
-function backToProjects(){projectDetailId=null;document.getElementById('projects-list-view').style.display='';document.getElementById('project-detail-view').style.display='none';renderProjects();}
+function backToProjects(){projectDetailId=null;document.getElementById('projects-list-view').style.display='';document.getElementById('project-detail-view').style.display='none';syncFab();renderProjects();}
 function updateProjectStatus(id,status){DATA.projects=DATA.projects.map(p=>p.id===id?{...p,status,lastUpdated:today()}:p);scheduleSave();renderProjectDetail(id);}
-function editProjectNotes(id){const p=DATA.projects.find(x=>x.id===id);if(!p) return;const notes=prompt(t('forms.projectNotesPrompt'),p.notes||'');if(notes===null) return;DATA.projects=DATA.projects.map(x=>x.id===id?{...x,notes,lastUpdated:today()}:x);scheduleSave();renderProjectDetail(id);}
+function editProjectNotes(id){
+  const p=DATA.projects.find(x=>x.id===id);if(!p) return;
+  openModal(`<h3>${t('workspace.notes')}</h3>
+    <div class="form-row">
+      <textarea class="input" id="m-project-notes" style="min-height:120px;resize:vertical;line-height:1.6">${escHtml(p.notes||'')}</textarea>
+    </div>
+    <div class="flex-gap" style="justify-content:flex-end;margin-top:6px">
+      <button class="btn btn-ghost" onclick="closeModal()">${t('common.cancel')}</button>
+      <button class="btn btn-primary" onclick="saveProjectNotes('${id}')">${t('common.save')}</button>
+    </div>`);
+}
+function saveProjectNotes(id){
+  const notes=document.getElementById('m-project-notes')?.value||'';
+  DATA.projects=DATA.projects.map(x=>x.id===id?{...x,notes,lastUpdated:today()}:x);
+  scheduleSave();closeModal();renderProjectDetail(id);
+}
 function deleteProject(id){
   if(!confirm(t('forms.deleteProjectConfirm'))) return;
   DATA.projects=DATA.projects.filter(p=>p.id!==id);
@@ -3452,15 +3481,17 @@ function deleteJob(id){DATA.jobs=DATA.jobs.filter(j=>j.id!==id);scheduleSave();r
 const calcStreak=hid=>{let s=0,d=new Date();while(true){const k=d.toISOString().split('T')[0];if(getHabitCompletionCount(hid,k)>0){s++;d.setDate(d.getDate()-1);}else break;}return s;};
 
 function renderHabits(){
+  const td=today();
   document.getElementById('habits-grid').innerHTML=DATA.habitDefs.map(h=>{
     const streak=calcStreak(h.id);
     const total=Object.keys(DATA.habits).reduce((sum,dateKey)=>sum+getHabitCompletionCount(h.id,dateKey),0);
     const info=getHabitWindowInfo(h);
     const consistency=getHabitConsistency(h);
+    const doneToday=getHabitCompletionCount(h.id,td)>0;
     return `<div class="habit-card">
       <div class="flex-between">
         <div class="flex-gap">
-          <span style="font-size:20px">${h.icon}</span>
+          <div class="habit-dot${doneToday?' done':' today-ring'}" style="width:36px;height:36px;border-radius:10px;cursor:pointer;flex-shrink:0;font-size:${doneToday?'14px':'18px'}" onclick="toggleHabit('${h.id}','${td}')" title="${doneToday?t('habitsPage.doneToday'):t('habitsPage.dueToday')}">${doneToday?'✓':h.icon}</div>
           <div>
             <div style="font-weight:500;font-size:14px">${escHtml(h.label)}</div>
             <div class="text-xs text-dim" style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
@@ -3588,6 +3619,13 @@ function renderSettings(){
         enabled:DATA.settings.notifications.overdueNudge,
       },
       {
+        key:'taskBadge',
+        group:'modules',
+        title:'Overdue badge',
+        copy:'Show a count of overdue tasks on the Tasks nav item.',
+        enabled:DATA.settings.modules.taskBadge,
+      },
+      {
         key:'opportunities',
         group:'modules',
         title:t('settings.prefOpps'),
@@ -3704,9 +3742,11 @@ function openAddTask(projectId='', options={}){
 }
 
 function openAddProjectTask(projectId){
+  const proj=DATA.projects.find(p=>p.id===projectId);
+  const defaultArea=proj?.focusArea||'Career';
   openModal(`<h3>${t('forms.newTask')}</h3>
     <div class="form-row"><label>${t('forms.title')}</label><input class="input" id="m-title" placeholder="${t('forms.whatNeedsDone')}" autofocus onkeydown="if(event.key==='Enter')saveTask(null,'${projectId}')"/></div>
-    <div class="form-row"><label>${t('forms.focusArea')}</label>${renderAreaPills('Career')}</div>
+    <div class="form-row"><label>${t('forms.focusArea')}</label>${renderAreaPills(defaultArea)}</div>
     <div class="form-grid">
       <div class="form-row"><label>${t('forms.dueDate')} <span class="text-dim" style="text-transform:none;letter-spacing:0;font-size:10px">${t('common.optional')}</span></label><input type="date" class="input" id="m-due"/></div>
       <div class="form-row"><label>${t('forms.dueTime')} <span class="text-dim" style="text-transform:none;letter-spacing:0;font-size:10px">${t('common.optional')}</span></label><input type="time" class="input" id="m-time"/></div>
@@ -3737,6 +3777,13 @@ function saveTask(editId=null,forceProjectId=null){
 function openEditTask(id){
   const task=DATA.tasks.find(x=>x.id===id);if(!task) return;
   const fa=task.focusArea||migrateFocusArea(task);
+  const subtasks=task.subtasks||[];
+  const subtaskHTML=subtasks.length?`<div class="subtask-list mt8">${subtasks.map(s=>`
+    <div class="subtask-item">
+      <div class="subtask-check${s.done?' done':''}" onclick="toggleSubtask('${id}','${s.id}');renderEditTaskSubtasks('${id}')"></div>
+      <span class="subtask-title${s.done?' done':''}">${escHtml(s.title)}</span>
+      <button class="btn-icon" onclick="deleteSubtask('${id}','${s.id}');renderEditTaskSubtasks('${id}')" style="color:var(--accent);font-size:10px">✕</button>
+    </div>`).join('')}</div>`:'';
   openModal(`<h3>${t('forms.editTask')}</h3>
     <div class="form-row"><label>${t('forms.title')}</label><input class="input" id="m-title" value="${escHtml(task.title)}"/></div>
     <div class="form-row"><label>${t('forms.focusArea')}</label>${renderAreaPills(fa)}</div>
@@ -3746,10 +3793,32 @@ function openEditTask(id){
     </div>
     <div class="form-row"><label>${t('forms.project')}</label><select class="input" id="m-proj"><option value="">${t('common.none')}</option>${DATA.projects.map(p=>`<option value="${p.id}"${p.id===task.projectId?' selected':''}>${escHtml(p.title)}</option>`).join('')}</select></div>
     <div class="form-row"><label>${t('forms.notes')}</label><textarea class="input" id="m-notes">${escHtml(task.notes||'')}</textarea></div>
+    <div class="form-row"><label>Subtasks</label><div id="edit-subtask-list">${subtaskHTML}</div>
+      <div class="add-subtask-row mt8" style="padding-left:0">
+        <input class="input" id="edit-sti-${id}" placeholder="${t('tasksPage.addSubtask')}" style="font-size:12px;flex:1"
+          onkeydown="if(event.key==='Enter'){addSubtask('${id}');renderEditTaskSubtasks('${id}')}"/>
+        <button class="btn btn-ghost btn-xs" onclick="addSubtask('${id}');renderEditTaskSubtasks('${id}')">${t('tasksPage.add')}</button>
+      </div>
+    </div>
     <div class="flex-gap" style="justify-content:flex-end;margin-top:6px">
       <button class="btn btn-ghost" onclick="closeModal()">${t('common.cancel')}</button>
       <button class="btn btn-primary" onclick="saveTask('${id}')">${t('common.save')}</button>
     </div>`, { kind:'task-form' });
+  // point sti- alias so addSubtask finds the right input
+  setTimeout(()=>{ const orig=document.getElementById('sti-'+id); if(!orig){ const alias=document.getElementById('edit-sti-'+id); if(alias) alias.id='sti-'+id; } },50);
+}
+
+function renderEditTaskSubtasks(taskId){
+  const task=DATA.tasks.find(x=>x.id===taskId);
+  const container=document.getElementById('edit-subtask-list');
+  if(!task||!container) return;
+  const subtasks=task.subtasks||[];
+  container.innerHTML=subtasks.length?`<div class="subtask-list mt8">${subtasks.map(s=>`
+    <div class="subtask-item">
+      <div class="subtask-check${s.done?' done':''}" onclick="toggleSubtask('${taskId}','${s.id}');renderEditTaskSubtasks('${taskId}')"></div>
+      <span class="subtask-title${s.done?' done':''}">${escHtml(s.title)}</span>
+      <button class="btn-icon" onclick="deleteSubtask('${taskId}','${s.id}');renderEditTaskSubtasks('${taskId}')" style="color:var(--accent);font-size:10px">✕</button>
+    </div>`).join('')}</div>`:'';
 }
 
 function openAddProject(){
@@ -4710,11 +4779,15 @@ function renderHome(){
           :'');
       }).join('');
 
-  // Today's Tasks — exclude DTN tasks
-  const nonDtn=[...overdueTasks,...todayTasks].filter(t=>!dtnIds.has(t.id)&&!DATA.focusTasks.includes(t.id)).slice(0,6);
+  // Today's Tasks — exclude DTN tasks, cap at 5 with overflow link
+  const allNonDtn=[...overdueTasks,...todayTasks].filter(t=>!dtnIds.has(t.id)&&!DATA.focusTasks.includes(t.id));
+  const nonDtn=allNonDtn.slice(0,5);
+  const nonDtnOverflow=allNonDtn.length-5;
   document.getElementById('home-tasks-list').innerHTML=nonDtn.length===0
     ?`<div class="empty" style="padding:10px 0"><div class="empty-icon">✅</div>${t('home.todayTasksClear')}</div>`
-    :nonDtn.map(t=>taskHTML(t,false)).join('');
+    :nonDtn.map(t=>taskHTML(t,false)).join('')+(nonDtnOverflow>0
+      ?`<div style="padding:8px 0 2px;font-size:11.5px;color:var(--text-3);cursor:pointer" onclick="navigate('tasks')" onmouseenter="this.style.color='var(--accent)'" onmouseleave="this.style.color='var(--text-3)'">+${nonDtnOverflow} more task${nonDtnOverflow>1?'s':''} today →</div>`
+      :'');
 
   // Habits
   const habitStatus=DATA.habitDefs
@@ -4753,7 +4826,7 @@ function renderHome(){
   renderHomeCirclesCard();
 
   // Projects
-  const active=DATA.projects.filter(p=>p.status==='Active').slice(0,3);
+  const active=DATA.projects.filter(p=>p.status==='Active').sort((a,b)=>new Date(b.lastUpdated||0)-new Date(a.lastUpdated||0)).slice(0,3);
   document.getElementById('home-projects-list').innerHTML=active.length===0
     ?`<div class="text-dim text-sm">${t('home.noActiveProjects')}</div>`
     :active.map(p=>{
@@ -5842,8 +5915,13 @@ function renderCircleDetail(id) {
 
   detail.innerHTML = `
     <div class="mb20">
-      <div class="circle-detail-name">${escHtml(circle.name)}</div>
-      <div class="text-xs text-dim">${t('circlesPage.created',{date:new Date(circle.created_at).toLocaleDateString(getCurrentLocale(),{day:'numeric',month:'short',year:'numeric'})})}</div>
+      <div class="flex-between" style="align-items:flex-start">
+        <div>
+          <div class="circle-detail-name">${escHtml(circle.name)}</div>
+          <div class="text-xs text-dim">${t('circlesPage.created',{date:new Date(circle.created_at).toLocaleDateString(getCurrentLocale(),{day:'numeric',month:'short',year:'numeric'})})}</div>
+        </div>
+        ${isCreator?`<button class="btn btn-ghost btn-xs" onclick="openRenameCircle('${circle.id}')">✎ Rename</button>`:''}
+      </div>
     </div>
 
     <div class="card">
@@ -5920,6 +5998,43 @@ async function updateCircleFeatureFlag(circleId, flag, value) {
     console.error('Update feature flag error:', e);
     if (toggle) toggle.checked = !value;
     toast(t('toast.couldNotUpdateSetting'), 'error');
+  }
+}
+
+function openRenameCircle(circleId) {
+  const entry = CIRCLES_DATA.find(e => e.circle.id === circleId);
+  if (!entry) return;
+  openModal(`<h3>Rename Circle</h3>
+    <div class="form-row">
+      <label>Circle name</label>
+      <input class="input" id="rename-circle-input" value="${escHtml(entry.circle.name)}" maxlength="60" autofocus
+        onkeydown="if(event.key==='Enter')saveRenameCircle('${circleId}')"/>
+    </div>
+    <div class="flex-gap" style="justify-content:flex-end;margin-top:6px">
+      <button class="btn btn-ghost" onclick="closeModal()">${t('common.cancel')}</button>
+      <button class="btn btn-primary" onclick="saveRenameCircle('${circleId}')">${t('common.save')}</button>
+    </div>`);
+}
+
+async function saveRenameCircle(circleId) {
+  if (!sb || !currentUser) return;
+  const name = document.getElementById('rename-circle-input')?.value?.trim();
+  if (!name) return;
+  const btn = document.querySelector('#modal-content .btn-primary');
+  if (btn) { btn.disabled = true; btn.textContent = t('common.saving'); }
+  try {
+    const { error } = await sb.from('circles').update({ name }).eq('id', circleId);
+    if (error) throw error;
+    CIRCLES_DATA = CIRCLES_DATA.map(e =>
+      e.circle.id === circleId ? { ...e, circle: { ...e.circle, name } } : e
+    );
+    closeModal();
+    renderCircleDetail(circleId);
+    toast(t('toast.saved'), 'success');
+  } catch(e) {
+    console.error('Rename circle error:', e);
+    toast(t('toast.couldNotUpdateSetting'), 'error');
+    if (btn) { btn.disabled = false; btn.textContent = t('common.save'); }
   }
 }
 
@@ -6352,32 +6467,6 @@ async function acceptCircleInvite(inviteId, circleId) {
     else toast(t('toast.couldNotJoinCircle'), 'error');
     if (btn) { btn.disabled = false; btn.textContent = t('circlesPage.joinCircle'); }
   }
-}
-
-// ─── Swipe to complete (mobile) ───────────────────────────────────────────────
-function attachSwipeHandlers(){
-  if(window.innerWidth>600) return;
-  document.querySelectorAll('.task-item').forEach(el=>{
-    if(el.dataset.swipe) return;
-    el.dataset.swipe='1';
-    let startX=0,startY=0,dx=0;
-    const id=el.id.replace('task-','');
-    el.addEventListener('touchstart',e=>{startX=e.touches[0].clientX;startY=e.touches[0].clientY;dx=0;},{passive:true});
-    el.addEventListener('touchmove',e=>{
-      dx=e.touches[0].clientX-startX;
-      const dy=Math.abs(e.touches[0].clientY-startY);
-      if(Math.abs(dx)<dy){dx=0;return;}
-      if(dx>0&&dx<80){el.style.transform=`translateX(${dx}px)`;el.style.background=`rgba(74,158,110,${dx/160})`;}
-    },{passive:true});
-    el.addEventListener('touchend',()=>{
-      if(dx>60){
-        el.style.transform='translateX(100%)';el.style.opacity='0';
-        el.style.transition='transform .25s ease,opacity .25s ease';
-        setTimeout(()=>toggleTask(id),220);
-      } else {el.style.transform='';el.style.background='';}
-      dx=0;
-    },{passive:true});
-  });
 }
 
 // ─── Boot ─────────────────────────────────────────────────────────────────────

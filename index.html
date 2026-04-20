@@ -1981,6 +1981,19 @@ const I18N = {
       'Life Admin': 'Life Admin',
       Growth: 'Growth',
     },
+    opportunityStages: {
+      Exploring: 'Exploring',
+      Contacted: 'Contacted',
+      'In Progress': 'In Progress',
+      Won: 'Won',
+      Dropped: 'Dropped',
+    },
+    opportunityTypes: {
+      Job: 'Job',
+      Business: 'Business',
+      Personal: 'Personal',
+      Other: 'Other',
+    },
     projectStatus: {
       Active: 'Active',
       Paused: 'Paused',
@@ -2466,6 +2479,19 @@ const I18N = {
       'Life Admin': 'Admin perso',
       Growth: 'Croissance',
     },
+    opportunityStages: {
+      Exploring: 'Exploration',
+      Contacted: 'Contacté',
+      'In Progress': 'En cours',
+      Won: 'Gagné',
+      Dropped: 'Abandonné',
+    },
+    opportunityTypes: {
+      Job: 'Emploi',
+      Business: 'Business',
+      Personal: 'Personnel',
+      Other: 'Autre',
+    },
     projectStatus: {
       Active: 'Actif',
       Paused: 'En pause',
@@ -2641,6 +2667,14 @@ function labelFocusArea(area) {
 
 function labelProjectStatus(status) {
   return t(`projectStatus.${status}`) === `projectStatus.${status}` ? status : t(`projectStatus.${status}`);
+}
+
+function labelOpportunityStage(stage) {
+  return t(`opportunityStages.${stage}`) === `opportunityStages.${stage}` ? stage : t(`opportunityStages.${stage}`);
+}
+
+function labelOpportunityType(type) {
+  return t(`opportunityTypes.${type}`) === `opportunityTypes.${type}` ? type : t(`opportunityTypes.${type}`);
 }
 
 function getGreeting() {
@@ -3351,14 +3385,14 @@ function renderJobs(){
     .filter(s=>s!=='Dropped').map(s=>`
       <div class="pipeline-stage">
         <div class="pipeline-count" style="color:${groups[s].length?'var(--accent)':'var(--text-3)'}">${groups[s].length}</div>
-        <div class="pipeline-label">${s}</div>
+        <div class="pipeline-label">${labelOpportunityStage(s)}</div>
       </div>`).join('');
 
   document.getElementById('jobs-list').innerHTML = OPP_STAGES.map(stage=>{
     const opps = groups[stage]; if(!opps.length) return '';
     return `
       <div style="margin-bottom:18px">
-        <div class="text-xs text-dim mb8" style="letter-spacing:.09em;text-transform:uppercase;font-weight:600">${stage}</div>
+        <div class="text-xs text-dim mb8" style="letter-spacing:.09em;text-transform:uppercase;font-weight:600">${labelOpportunityStage(stage)}</div>
         ${opps.map(j=>`
           <div class="card mb10">
             <div class="flex-between">
@@ -3367,8 +3401,8 @@ function renderJobs(){
                 <div class="text-sm text-muted mt4">${escHtml(j.description||j.role||'')}</div>
               </div>
               <div class="flex-gap">
-                <span class="stage ${oppStageClass(j.stage)}">${j.stage}</span>
-                <span class="badge badge-other" style="font-size:9px">${escHtml(j.type||'Job')}</span>
+                <span class="stage ${oppStageClass(j.stage)}">${labelOpportunityStage(j.stage)}</span>
+                <span class="badge badge-other" style="font-size:9px">${escHtml(labelOpportunityType(j.type||'Job'))}</span>
                 <button class="btn btn-ghost btn-sm" onclick="openEditJob('${j.id}')">${t('common.edit')}</button>
                 <button class="btn btn-danger btn-sm" onclick="deleteJob('${j.id}')">✕</button>
               </div>
@@ -3719,12 +3753,12 @@ function openAddJob(editId=null){
   openModal(`<h3>${editId?t('forms.editOpportunity'):t('forms.newOpportunity')}</h3>
     <div class="form-grid">
       <div class="form-row"><label>${t('forms.name')}</label><input class="input" id="m-jco" value="${escHtml(j.name||j.company||'')}" placeholder="${t('forms.opportunityNamePlaceholder')}" autofocus/></div>
-      <div class="form-row"><label>${t('forms.type')}</label><select class="input" id="m-jtype">${OPP_TYPES.map(type=>`<option${type===(j.type||'Job')?' selected':''}>${type}</option>`).join('')}</select></div>
+      <div class="form-row"><label>${t('forms.type')}</label><select class="input" id="m-jtype">${OPP_TYPES.map(type=>`<option value="${type}"${type===(j.type||'Job')?' selected':''}>${labelOpportunityType(type)}</option>`).join('')}</select></div>
     </div>
     <div class="form-row"><label>${t('forms.description')}</label><input class="input" id="m-jrole" value="${escHtml(j.description||j.role||'')}" placeholder="${t('forms.opportunityDescPlaceholder')}"/></div>
     <div class="form-row"><label>${t('forms.link')}</label><input class="input" id="m-jurl" value="${escHtml(j.url||'')}" placeholder="${t('forms.linkPlaceholder')}"/></div>
     <div class="form-grid">
-      <div class="form-row"><label>${t('forms.status')}</label><select class="input" id="m-jstage">${OPP_STAGES.map(s=>`<option${s===(j.stage||'Exploring')?' selected':''}>${s}</option>`).join('')}</select></div>
+      <div class="form-row"><label>${t('forms.status')}</label><select class="input" id="m-jstage">${OPP_STAGES.map(s=>`<option value="${s}"${s===(j.stage||'Exploring')?' selected':''}>${labelOpportunityStage(s)}</option>`).join('')}</select></div>
       <div class="form-row"><label>${t('forms.deadline')}</label><input type="date" class="input" id="m-jdead" value="${j.deadline||''}"/></div>
     </div>
     <div class="form-row"><label>${t('forms.notes')}</label><textarea class="input" id="m-jnotes">${escHtml(j.notes||'')}</textarea></div>

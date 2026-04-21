@@ -355,6 +355,14 @@ input[type="date"].input,input[type="time"].input{color-scheme:var(--date-color-
 .habit-dot.done{background:var(--green);border-color:var(--green);color:#fff;font-size:11px}
 .habit-dot.today-ring{border-color:var(--border-active)}
 .habit-dot:hover:not(.done){background:var(--green-soft);border-color:var(--green)}
+.habit-history-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:8px 10px;margin-top:6px}
+.habit-history-cell{text-align:center;min-width:0}
+.habit-history-label{margin-bottom:4px;font-size:10px;color:var(--text-3)}
+.habit-history-dot{width:18px;height:18px;border-radius:5px;border:1px solid var(--border-active);cursor:pointer;
+  display:flex;align-items:center;justify-content:center;font-size:9px;color:var(--green);transition:all var(--transition);margin:0 auto}
+.habit-history-dot.done{background:var(--green);border-color:var(--green);color:#fff}
+.habit-history-dot.today-ring{border-color:var(--green)}
+.habit-history-dot:hover:not(.done){background:var(--green-soft);border-color:var(--green)}
 
 /* Projects */
 .project-card{background:var(--glass);border:1px solid var(--glass-border);border-radius:var(--radius);
@@ -1131,7 +1139,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;heigh
       <div class="page" id="page-capture">
         <div class="card mb16">
           <div class="flex-gap">
-            <input class="input" id="capture-input" placeholder="What's on your mind? Press Enter to capture." style="flex:1"
+            <input class="input" id="capture-input" placeholder="What's on your mind?" style="flex:1"
               onkeydown="if(event.key==='Enter')addCapture()"/>
             <button class="voice-btn" id="voice-btn" onclick="toggleVoice()" title="Voice capture">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -1187,13 +1195,6 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;heigh
             <div class="card">
               <div class="card-title" id="settings-preferences-title">Preferences</div>
               <div id="settings-preferences"></div>
-            </div>
-
-            <div class="card">
-              <div class="card-title" id="settings-controls-title">Product Controls</div>
-              <div class="text-sm text-muted" style="line-height:1.6" id="settings-controls-copy">
-                These switches are intentionally lightweight for now, so we can grow the product without hardcoding every choice.
-              </div>
             </div>
 
             <div class="card">
@@ -1488,7 +1489,7 @@ function createDefaultData() {
       colorMode:'dark',
       language:'en',
       notifications:{weeklyReview:true,overdueNudge:true},
-      modules:{opportunities:true},
+      modules:{taskBadge:true},
     },
   };
 }
@@ -1693,7 +1694,7 @@ const I18N = {
       assignProject: '→ Assign to project',
       captured: 'Captured!',
       addedAsTask: 'Added as task',
-      capturePlaceholder: "What's on your mind? Press Enter to capture.",
+      capturePlaceholder: "What's on your mind?",
       captureBtn: 'Capture',
     },
     circlesPage: {
@@ -1808,8 +1809,6 @@ const I18N = {
       languageTitle: 'Language',
       languageCopy: 'Choose the language Kairo uses across the interface.',
       preferences: 'Preferences',
-      controlsTitle: 'Product Controls',
-      controlsCopy: 'These switches are intentionally lightweight for now, so we can grow the product without hardcoding every choice.',
       account: 'Account',
       signOut: 'Sign out',
       dark: 'Dark',
@@ -1818,8 +1817,6 @@ const I18N = {
       prefWeeklyReviewCopy: 'Keep the Sunday review reminder enabled as we build the actual notification system.',
       prefOverdue: 'Overdue task nudge',
       prefOverdueCopy: 'Store your preference now so daily reminders are ready when notifications go live.',
-      prefOpps: 'Show Opportunities',
-      prefOppsCopy: 'Hide or show the Opportunities section in navigation while the product is evolving.',
       on: 'On',
       off: 'Off',
     },
@@ -2197,7 +2194,7 @@ const I18N = {
       assignProject: '→ Assigner à un projet',
       captured: 'Capturé !',
       addedAsTask: 'Ajouté comme tâche',
-      capturePlaceholder: 'Que voulez-vous noter ? Appuyez sur Entrée pour capturer.',
+      capturePlaceholder: 'Que voulez-vous noter ?',
       captureBtn: 'Capturer',
     },
     circlesPage: {
@@ -2312,8 +2309,6 @@ const I18N = {
       languageTitle: 'Langue',
       languageCopy: "Choisissez la langue utilisée par Kairo dans l'interface.",
       preferences: 'Préférences',
-      controlsTitle: 'Contrôles produit',
-      controlsCopy: "Ces interrupteurs restent volontairement légers pour l'instant, afin de faire évoluer le produit sans tout figer.",
       account: 'Compte',
       signOut: 'Se déconnecter',
       dark: 'Sombre',
@@ -2322,8 +2317,6 @@ const I18N = {
       prefWeeklyReviewCopy: 'Gardez le rappel du dimanche activé pendant que nous construisons le vrai système de notifications.',
       prefOverdue: 'Rappel des tâches en retard',
       prefOverdueCopy: 'Enregistrez votre préférence maintenant pour que les rappels quotidiens soient prêts quand les notifications arriveront.',
-      prefOpps: 'Afficher les opportunités',
-      prefOppsCopy: "Masquez ou affichez la section Opportunités dans la navigation pendant que le produit évolue.",
       on: 'Activé',
       off: 'Désactivé',
     },
@@ -2593,7 +2586,6 @@ function ensureSettingsShape() {
     overdueNudge: DATA.settings.notifications?.overdueNudge !== false,
   };
   DATA.settings.modules = {
-    opportunities: DATA.settings.modules?.opportunities !== false,
     taskBadge: DATA.settings.modules?.taskBadge !== false,
   };
 }
@@ -2766,8 +2758,6 @@ function applyStaticTranslations() {
   setText('settings-language-title', t('settings.languageTitle'));
   setText('settings-language-copy', t('settings.languageCopy'));
   setText('settings-preferences-title', t('settings.preferences'));
-  setText('settings-controls-title', t('settings.controlsTitle'));
-  setText('settings-controls-copy', t('settings.controlsCopy'));
   setText('settings-account-title', t('settings.account'));
   setText('settings-signout-btn', t('settings.signOut'));
   setText('bottom-nav-home', t('nav.home'));
@@ -3012,7 +3002,6 @@ function syncFab(){
 let currentHub = 'projects'; // tracks which sub-view is active in the projects hub
 
 function switchHub(hub) {
-  if(hub==='opportunities' && !DATA.settings?.modules?.opportunities) hub='projects';
   currentHub = hub;
   ['projects','opportunities','review'].forEach(h => {
     const el = document.getElementById('hub-'+h);
@@ -3095,14 +3084,12 @@ function navigateMoreTo(page, hub=''){
 
 function updateModuleVisibility(){
   ensureSettingsShape();
-  const oppVisible = DATA.settings.modules.opportunities;
   const sideOpp = document.getElementById('nav-sub-opportunities');
-  if(sideOpp) sideOpp.style.display = oppVisible ? '' : 'none';
+  if(sideOpp) sideOpp.style.display = '';
   const hubOpp = document.querySelector('.page-tab[data-hub="opportunities"]');
-  if(hubOpp) hubOpp.classList.toggle('hidden', !oppVisible);
+  if(hubOpp) hubOpp.classList.remove('hidden');
   const oppMore = document.querySelector('.more-sheet-btn[onclick*="opportunities"]');
-  if(oppMore) oppMore.style.display = oppVisible ? '' : 'none';
-  if(!oppVisible && currentHub==='opportunities') switchHub('projects');
+  if(oppMore) oppMore.style.display = '';
 }
 
 
@@ -3522,7 +3509,20 @@ function toggleHabit(hid,dateStr){
   scheduleSave();
   renderAll();
 }
-function deleteHabit(id){if(!confirm(t('forms.deleteHabitConfirm'))) return;DATA.habitDefs=DATA.habitDefs.filter(h=>h.id!==id);scheduleSave();renderAll();toast(t('toast.habitDeleted'),'info');}
+async function deleteHabit(id){
+  const habit = DATA.habitDefs.find(h=>h.id===id);
+  const confirmed = await openConfirmModal({
+    title: t('forms.deleteHabitConfirm'),
+    message: habit ? `Delete "${habit.label}"?` : t('forms.deleteHabitConfirm'),
+    confirmLabel: t('forms.deleteLabel'),
+    confirmClass: 'btn-danger',
+  });
+  if(!confirmed) return;
+  DATA.habitDefs=DATA.habitDefs.filter(h=>h.id!==id);
+  scheduleSave();
+  renderAll();
+  toast(t('toast.habitDeleted'),'info');
+}
 
 // ─── Capture ──────────────────────────────────────────────────────────────────
 function renderCapture(){
@@ -3625,13 +3625,6 @@ function renderSettings(){
         copy:'Show a count of overdue tasks on the Tasks nav item.',
         enabled:DATA.settings.modules.taskBadge,
       },
-      {
-        key:'opportunities',
-        group:'modules',
-        title:t('settings.prefOpps'),
-        copy:t('settings.prefOppsCopy'),
-        enabled:DATA.settings.modules.opportunities,
-      },
     ];
 
     prefsEl.innerHTML=rows.map(row=>`
@@ -3672,7 +3665,6 @@ function toggleSetting(group,key){
   scheduleSave();
   updateModuleVisibility();
   if(currentPage==='settings') renderSettings();
-  if(currentPage==='projects' && key==='opportunities' && !DATA.settings.modules.opportunities) switchHub('projects');
 }
 
 
@@ -4139,14 +4131,14 @@ function renderHabitHistoryGrid(habit) {
   return `
     <div id="habit-history-${habit.id}" style="display:none;margin-top:10px" onclick="event.stopPropagation()">
       ${rows.map(row=>`
-        <div class="habit-grid" style="margin-top:6px">
+        <div class="habit-history-grid">
           ${row.map(d=>{
             const done=getHabitCompletionCount(habit.id,d)>0;
             const isT=d===today();
             const dayLabel=new Date(d+'T12:00:00').toLocaleDateString(getCurrentLocale(),{weekday:'short'});
-            return `<div style="text-align:center;flex:1;min-width:0">
-              <div class="text-xs text-dim" style="margin-bottom:3px">${dayLabel}</div>
-              <div class="habit-dot${done?' done':''}${isT?' today-ring':''}" onclick="toggleHabit('${habit.id}','${d}')" title="${d}">${done?'✓':''}</div>
+            return `<div class="habit-history-cell">
+              <div class="habit-history-label">${dayLabel}</div>
+              <div class="habit-history-dot${done?' done':''}${isT?' today-ring':''}" onclick="toggleHabit('${habit.id}','${d}')" title="${d}">${done?'✓':''}</div>
             </div>`;
           }).join('')}
         </div>

@@ -12,7 +12,7 @@ function buildReturnUrl(success, message, returnOrigin = '') {
   const { appBaseUrl } = getConfig();
   const base = returnOrigin || appBaseUrl;
   if (!base) return null;
-  const url = new URL('/', base.startsWith('http') ? base : `https://${base}`);
+  const url = new URL(base.startsWith('http') ? base : `https://${base}`);
   url.searchParams.set('calendar', success ? 'connected' : 'error');
   if (message) url.searchParams.set('message', message);
   return url.toString();

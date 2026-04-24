@@ -1,5 +1,5 @@
-// Cache version — bump this string when you change icons or manifest.json
-const CACHE_VERSION = 'kairo-v2';
+// Cache version — bump this string when you change fetch behavior or static assets
+const CACHE_VERSION = 'kairo-v3';
 const CACHE = CACHE_VERSION;
 
 // Only cache truly static assets — never HTML
@@ -43,6 +43,12 @@ self.addEventListener('fetch', e => {
 
   // Don't intercept cross-origin requests
   if (url.origin !== location.origin) return;
+
+  // API routes must always hit the network so redirects and JSON responses work.
+  if (url.pathname.startsWith('/api/')) {
+    e.respondWith(fetch(e.request));
+    return;
+  }
 
   const isNavigation = e.request.mode === 'navigate' ||
     (e.request.headers.get('accept') || '').includes('text/html');

@@ -2823,7 +2823,11 @@ async function loadData(user) {
   applyTheme();
   DATA.tasks=DATA.tasks.map(t=>({...t,focusArea:migrateFocusArea(t)}));
 
-  if (!sb || !user) { renderAll(); return; }
+  if (!sb || !user) {
+    renderAll();
+    await handleCalendarOAuthReturn();
+    return;
+  }
 
   setSyncStatus('syncing',t('status.syncing'));
   try {
@@ -2846,6 +2850,7 @@ async function loadData(user) {
       localStorage.setItem(currentStorageKey,JSON.stringify(DATA));
       setSyncStatus('ok',t('status.synced'));
       renderAll();
+      await handleCalendarOAuthReturn();
       fetchCalendarData();
       maybeAutoGenerateReview();
       loadCircles();
@@ -2867,13 +2872,19 @@ async function loadData(user) {
         await saveNow();
         setSyncStatus('ok',t('status.synced'));
         renderAll();
+        await handleCalendarOAuthReturn();
         fetchCalendarData();
         maybeAutoGenerateReview();
         loadCircles();
         checkCircleInviteParam();
       }
     }
-  } catch(e){ console.error('Load error:',e); setSyncStatus('error',t('status.offline')); renderAll(); }
+  } catch(e){
+    console.error('Load error:',e);
+    setSyncStatus('error',t('status.offline'));
+    renderAll();
+    await handleCalendarOAuthReturn();
+  }
 }
 
 async function saveNow() {
@@ -4297,8 +4308,48 @@ function formatFreeWindow(window){
 
 function connectGoogleCalendar(){
   const userId = currentUser?.id;
-  if (!userId) return;
-  window.location.href=`/api/calendar/auth?userId=${encodeURIComponent(userId)}&returnOrigin=${encodeURIComponent(window.location.origin)}`;
+  if (!userId) {
+    toast('Sign in again before connecting Google Calendar.','error');
+    return;
+  }
+  const returnOrigin = `${window.location.origin}${window.location.pathname}`;
+  window.location.assign(`/api/calendar/auth?userId=${encodeURIComponent(userId)}&returnOrigin=${encodeURIComponent(returnOrigin)}`);
+}
+
+function getCalendarOAuthMessage(status, rawMessage=''){
+  if (status === 'connected') return 'Google Calendar connected.';
+  if (rawMessage === 'access_denied') return 'Google Calendar connection was cancelled.';
+  if (rawMessage === 'google-calendar-connect-failed') return 'Google Calendar connection failed. Please try again.';
+  if (rawMessage === 'google-calendar-connected') return 'Google Calendar connected.';
+  return rawMessage ? `Google Calendar error: ${rawMessage}` : 'Google Calendar connection failed.';
+}
+
+async function handleCalendarOAuthReturn(){
+  const params = new URLSearchParams(window.location.search);
+  const status = params.get('calendar');
+  if (!status) return;
+
+  const rawMessage = params.get('message') || '';
+  const message = getCalendarOAuthMessage(status, rawMessage);
+  const url = new URL(window.location.href);
+  url.searchParams.delete('calendar');
+  url.searchParams.delete('message');
+  window.history.replaceState({}, '', url.toString());
+
+  if (status === 'connected') {
+    toast(message, 'success');
+    if (currentUser?.id) await fetchCalendarData();
+    return;
+  }
+
+  CALENDAR_STATE = {
+    ...CALENDAR_STATE,
+    status: 'error',
+    connected: false,
+    error: message,
+  };
+  if (currentPage === 'home') renderHome();
+  toast(message, 'error');
 }
 
 async function fetchCalendarData(){

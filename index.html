@@ -1477,11 +1477,7 @@ function createDefaultData() {
   return {
     tasks:[], projects:[], jobs:[],
     habits:{},
-    habitDefs:[
-      {id:'gym',label:'Gym',icon:'🏋️',focusArea:'Health',frequencyType:'weekly',targetCount:3},
-      {id:'reading',label:'Reading',icon:'📚',focusArea:'Growth',frequencyType:'daily',targetCount:1},
-      {id:'journaling',label:'Journaling',icon:'✍️',focusArea:'Personal',frequencyType:'daily',targetCount:1},
-    ],
+    habitDefs:[],
     captures:[], focusTasks:[], weeklyReview:null, calendarLinks:{},
     settings:{
       name:'',
@@ -2620,11 +2616,9 @@ function ensureHabitsShape() {
   if (!DATA.habits || typeof DATA.habits !== 'object' || Array.isArray(DATA.habits)) {
     DATA.habits = {};
   }
-  DATA.habitDefs = (Array.isArray(DATA.habitDefs) && DATA.habitDefs.length ? DATA.habitDefs : [
-    {id:'gym',label:'Gym',icon:'🏋️',focusArea:'Health',frequencyType:'weekly',targetCount:3},
-    {id:'reading',label:'Reading',icon:'📚',focusArea:'Growth',frequencyType:'daily',targetCount:1},
-    {id:'journaling',label:'Journaling',icon:'✍️',focusArea:'Personal',frequencyType:'daily',targetCount:1},
-  ]).map(normalizeHabitDef);
+  DATA.habitDefs = Array.isArray(DATA.habitDefs)
+    ? DATA.habitDefs.map(normalizeHabitDef)
+    : [];
 }
 
 function getUserName() {
@@ -2835,11 +2829,6 @@ async function loadData(user) {
     if (error) throw error;
     if (data?.data && Object.keys(data.data).length>0) {
       DATA={...DATA,...data.data};
-      if (!DATA.habitDefs?.length) DATA.habitDefs=[
-        {id:'gym',label:'Gym',icon:'🏋️',focusArea:'Health',frequencyType:'weekly',targetCount:3},
-        {id:'reading',label:'Reading',icon:'📚',focusArea:'Growth',frequencyType:'daily',targetCount:1},
-        {id:'journaling',label:'Journaling',icon:'✍️',focusArea:'Personal',frequencyType:'daily',targetCount:1},
-      ];
       if (!DATA.focusTasks) DATA.focusTasks=[];
       ensureSettingsShape();
       ensureCalendarLinksShape();

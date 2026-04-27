@@ -1002,7 +1002,8 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;heigh
                 <line x1="8" y1="22" x2="16" y2="22"/>
               </svg>
             </button>
-            <button class="btn btn-primary btn-sm" onclick="submitCommand()">Go</button>
+            <button class="btn btn-ghost btn-sm" id="home-next-btn" onclick="showNextTaskRecommendation()">What next?</button>
+            <button class="btn btn-primary btn-sm" id="home-go-btn" onclick="submitCommand()">Go</button>
           </div>
           <div class="voice-status" id="home-voice-status"></div>
           <div class="command-bar-hint"><span id="home-command-hint-prefix">Speak or type naturally —</span> <span id="home-command-hint-emphasis">Kairo will sort it into tasks</span></div>
@@ -1607,6 +1608,14 @@ const I18N = {
       habitsStrongDay: 'Habits on track + {{count}} task{{plural}} completed. Strong day.',
       allHabitsOnTrackPrompt: 'All habits on track — now tackle the tasks.',
       habitsMixedState: '{{onTrack}} habits on track, {{needAttention}} still need attention.',
+      whatNextTitle: 'What to focus on next',
+      whatNextEmpty: "You're clear. No pending tasks right now.",
+      whatNextReasonFocus: 'You already starred this task, so it should lead.',
+      whatNextReasonOverdue: 'It is overdue, so clearing it first reduces drag.',
+      whatNextReasonToday: 'It is due today, so it is the clearest next move.',
+      whatNextReasonProject: 'It supports an active project, so it keeps momentum up.',
+      whatNextReasonQuick: 'It is a simple next move to build momentum.',
+      whatNextWhy: 'Why this one',
       noTasksDoneWeek: "No tasks completed yet this week — let's change that.",
       strongMomentum: '{{count}} tasks done today. Good momentum.',
       strongWeek: 'Strong week — {{count}} tasks done. Stay consistent.',
@@ -2019,6 +2028,11 @@ const I18N = {
       newCircle: '+ New Circle',
       newProject: '+ New Project',
       addOpportunity: '+ Add Opportunity',
+      go: 'Go',
+      done: 'Done',
+      whatNext: 'What next?',
+      showTask: 'Show task',
+      pickAnother: 'Pick another',
     },
   },
   fr: {
@@ -2107,6 +2121,14 @@ const I18N = {
       habitsStrongDay: 'Habitudes sur la bonne voie + {{count}} tâche{{plural}} terminée{{plural}}. Bonne journée.',
       allHabitsOnTrackPrompt: 'Toutes les habitudes sont sur la bonne voie — attaquez maintenant les tâches.',
       habitsMixedState: '{{onTrack}} habitudes sur la bonne voie, {{needAttention}} demandent encore de l’attention.',
+      whatNextTitle: 'Sur quoi se concentrer maintenant',
+      whatNextEmpty: 'Tout est clair. Aucune tâche en attente pour le moment.',
+      whatNextReasonFocus: 'Vous avez déjà marqué cette tâche comme prioritaire, donc elle doit passer en premier.',
+      whatNextReasonOverdue: 'Elle est en retard, donc la traiter maintenant réduit la friction.',
+      whatNextReasonToday: 'Elle est prévue pour aujourd’hui, donc c’est le prochain pas le plus clair.',
+      whatNextReasonProject: 'Elle soutient un projet actif, donc elle maintient l’élan.',
+      whatNextReasonQuick: 'C’est une action simple pour créer de l’élan.',
+      whatNextWhy: 'Pourquoi celle-ci',
       noTasksDoneWeek: 'Aucune tâche terminée cette semaine — changeons ça.',
       strongMomentum: '{{count}} tâches faites aujourd’hui. Bon élan.',
       strongWeek: 'Bonne semaine — {{count}} tâches faites. Restez régulier.',
@@ -2519,6 +2541,11 @@ const I18N = {
       newCircle: '+ Nouveau cercle',
       newProject: '+ Nouveau projet',
       addOpportunity: '+ Ajouter une opportunité',
+      go: 'Go',
+      done: 'Terminer',
+      whatNext: 'Et ensuite ?',
+      showTask: 'Voir la tâche',
+      pickAnother: 'Une autre',
     },
   },
 };
@@ -2729,6 +2756,7 @@ function applyStaticTranslations() {
   setText('home-command-label', t('home.commandLabel'));
   setText('home-command-hint-prefix', t('home.commandHint'));
   setText('home-command-hint-emphasis', t('home.commandHintEmphasis'));
+  updateHomeCommandControls();
   setText('home-dtn-label', t('home.dtnTitle'));
   setText('home-today-tasks-title', t('home.todayTasksTitle'));
   setText('home-today-tasks-all', t('home.seeAll'));
@@ -4295,6 +4323,19 @@ function formatFreeWindow(window){
   return remainder ? `${hours}h ${remainder}m free` : `${hours}h free`;
 }
 
+function updateHomeCommandControls(){
+  const goBtn=document.getElementById('home-go-btn');
+  const nextBtn=document.getElementById('home-next-btn');
+  if(goBtn){
+    goBtn.textContent=isRecording?t('actions.done'):t('actions.go');
+    goBtn.title=isRecording?t('actions.done'):t('actions.go');
+  }
+  if(nextBtn){
+    nextBtn.textContent=t('actions.whatNext');
+    nextBtn.title=t('actions.whatNext');
+  }
+}
+
 function connectGoogleCalendar(){
   const userId = currentUser?.id;
   if (!userId) {
@@ -4376,6 +4417,10 @@ async function fetchCalendarData(){
 
 // ─── Command bar (Home) ───────────────────────────────────────────────────────
 function submitCommand(){
+  if(isRecording){
+    stopHomeRecording();
+    return;
+  }
   const inp=document.getElementById('command-input');
   const text=inp?.value?.trim();
   if(!text) return;
@@ -4383,6 +4428,83 @@ function submitCommand(){
 
   // Route to voice-style AI parsing if API available, else add as capture
   sendToVoiceAPI(text, null /* no audio, text-only mode */);
+}
+
+function getNextTaskRecommendations(){
+  const pending=DATA.tasks.filter(t=>!t.completed&&!t.dismissed);
+  return [...pending].sort((a,b)=>scoreNextTask(b)-scoreNextTask(a)||compareTaskDates(a,b));
+}
+
+function scoreNextTask(task){
+  let score=0;
+  if(DATA.focusTasks.includes(task.id)) score+=1000;
+  if(isOverdue(task)) score+=700;
+  else if(task.dueDate===today()) score+=450;
+  else if(task.dueDate) score+=220;
+  const project=DATA.projects.find(p=>p.id===task.projectId);
+  if(project?.status==='Active') score+=180;
+  if(!(task.subtasks||[]).length) score+=40;
+  if(task.createdAt) score+=Math.min(60, Math.max(0, Math.floor((Date.now()-new Date(task.createdAt).getTime())/86400000)));
+  return score;
+}
+
+function compareTaskDates(a,b){
+  const aDue=a.dueDate||'9999-12-31';
+  const bDue=b.dueDate||'9999-12-31';
+  if(aDue!==bDue) return aDue.localeCompare(bDue);
+  return new Date(a.createdAt||0).getTime()-new Date(b.createdAt||0).getTime();
+}
+
+function getNextTaskReason(task){
+  if(DATA.focusTasks.includes(task.id)) return t('home.whatNextReasonFocus');
+  if(isOverdue(task)) return t('home.whatNextReasonOverdue');
+  if(task.dueDate===today()) return t('home.whatNextReasonToday');
+  const project=DATA.projects.find(p=>p.id===task.projectId);
+  if(project?.status==='Active') return t('home.whatNextReasonProject');
+  return t('home.whatNextReasonQuick');
+}
+
+function navigateToTask(taskId){
+  closeModal();
+  navigate('tasks');
+  setTimeout(()=>{
+    const card=document.getElementById(`task-${taskId}`);
+    if(card){
+      card.scrollIntoView({behavior:'smooth',block:'center'});
+      const expand=document.getElementById(`expand-${taskId}`);
+      if(expand&&expand.style.display==='none') toggleExpand(taskId);
+    }
+  },80);
+}
+
+function showNextTaskRecommendation(startIndex=0){
+  const ranked=getNextTaskRecommendations();
+  if(!ranked.length){
+    openModal(`<h3>${t('home.whatNextTitle')}</h3><div class="text-sm text-dim" style="line-height:1.6">${t('home.whatNextEmpty')}</div>`);
+    return;
+  }
+  const index=((startIndex%ranked.length)+ranked.length)%ranked.length;
+  const task=ranked[index];
+  const project=DATA.projects.find(p=>p.id===task.projectId);
+  const meta=[
+    `<span class="badge ${focusAreaClass(task.focusArea)}">${labelFocusArea(task.focusArea)}</span>`,
+    task.dueDate?`<span>${isOverdue(task)?t('tasksPage.overdueSince',{date:formatDueLabel(task.dueDate)}):task.dueDate===today()?t('tasksPage.dueToday'):t('tasksPage.dueDate',{date:formatDueLabel(task.dueDate)})}</span>`:`<span>${t('tasksPage.noDueDate')}</span>`,
+    project?`<span>${escHtml(project.title)}</span>`:'',
+  ].filter(Boolean).join(' · ');
+  const anotherBtn=ranked.length>1
+    ? `<button class="btn btn-ghost" onclick="showNextTaskRecommendation(${index+1})">${t('actions.pickAnother')}</button>`
+    : '';
+  openModal(`
+    <h3>${t('home.whatNextTitle')}</h3>
+    <div style="font-size:18px;font-weight:600;color:var(--text);line-height:1.4">${escHtml(task.title)}</div>
+    <div class="text-xs text-dim mt8" style="line-height:1.6">${meta}</div>
+    <div class="divider"></div>
+    <div class="text-xs text-dim" style="text-transform:uppercase;letter-spacing:.08em;font-weight:600">${t('home.whatNextWhy')}</div>
+    <div class="text-sm text-dim mt8" style="line-height:1.7">${escHtml(getNextTaskReason(task))}</div>
+    <div style="display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap;margin-top:18px">
+      ${anotherBtn}
+      <button class="btn btn-primary" onclick="navigateToTask('${task.id}')">${t('actions.showTask')}</button>
+    </div>`);
 }
 
 // Shared processing for home command bar, capture voice, and tasks FAB voice
@@ -4516,6 +4638,7 @@ async function toggleHomeVoice(){
     mediaRecorder.start();
     isRecording=true;
     document.getElementById('home-voice-btn').classList.add('recording');
+    updateHomeCommandControls();
     const s=document.getElementById('home-voice-status');
     if(s){s.textContent=t('voice.listeningTapStop');s.className='voice-status active';}
   }catch(e){
@@ -4531,6 +4654,7 @@ function stopHomeRecording(){
   }
   isRecording=false;
   document.getElementById('home-voice-btn').classList.remove('recording');
+  updateHomeCommandControls();
   const s=document.getElementById('home-voice-status');
   if(s){s.textContent=t('voice.processing');s.className='voice-status processing';}
 }
@@ -4693,6 +4817,7 @@ function renderHomeCirclesCard() {
 }
 
 function renderHome(){
+  updateHomeCommandControls();
   const td=today();
   const datedTodayTasks=DATA.tasks.filter(t=>!t.completed&&!t.dismissed&&t.dueDate===td);
   const undatedTasks=DATA.tasks.filter(t=>!t.completed&&!t.dismissed&&!t.dueDate);

@@ -766,6 +766,11 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;heigh
   /* Hide trash in header row on mobile — available in expanded view */
   .task-actions .delete-btn{display:none}
   /* Reduce demo/hint text in command bar and capture */
+  .command-bar-input-row{display:grid;grid-template-columns:44px minmax(0,1fr) auto;align-items:center}
+  .command-bar-input{grid-column:1 / -1;min-width:0}
+  #home-voice-btn{grid-column:1}
+  #home-next-btn{grid-column:2;min-width:0;width:100%;padding-inline:12px}
+  #home-go-btn{grid-column:3}
   .command-bar-hint{font-size:9.5px}
   .command-bar-input{font-size:13px}
 }
